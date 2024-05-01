@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 
 import Card from '@mui/material/Card';
+import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import Select from '@mui/material/Select';
@@ -9,6 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
+import InputLabel from '@mui/material/InputLabel';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 // import { queueInfo } from 'src/_mock/queue';
@@ -155,13 +157,20 @@ export default function QueuePage() {
         <Container>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4">Queue Information</Typography>
-                <Select value={doctor} onChange={handleDoctorChange}>
-                    {doctorOptions.map((option) => (
-                        <MenuItem key={option.id} value={option.id}>
-                            {option.name}
-                        </MenuItem>
-                    ))}
-                </Select>
+                <Grid container alignItems="center" justifyContent="flex-end">
+                    <Grid item sx={{ marginRight: '20px' }}>
+                        <InputLabel htmlFor="doctor-select">Doctor</InputLabel>
+                    </Grid>
+                    <Grid item>
+                        <Select value={doctor} onChange={handleDoctorChange} id="doctor-select">
+                            {doctorOptions.map((option) => (
+                                <MenuItem key={option.id} value={option.id}>
+                                    {option.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </Grid>
+                </Grid>
             </Stack>
 
             <Card>
