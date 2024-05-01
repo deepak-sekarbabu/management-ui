@@ -85,6 +85,7 @@ export default function QueuePage() {
             try {
                 const data = await fetchDoctorInfo(); // Call the fetchDoctorInfo function
                 setDoctorOptions(data); // Update doctorOptions state with the fetched data
+                setDoctor(data[0].id); // Set the default selected doctor to the first in the list
             } catch (error) {
                 console.error('Error fetching doctor information:', error);
             }
