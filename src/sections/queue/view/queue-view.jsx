@@ -2,7 +2,6 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 
 import Card from '@mui/material/Card';
-import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import Select from '@mui/material/Select';
@@ -65,8 +64,16 @@ export default function QueuePage() {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [doctor, setDoctor] = useState('');
 
-    const handleDoctorChange = (event) => {
-        setDoctor(event.target.value);
+    const handleDoctorChange = async (event) => {
+        const selectedDoctorId = event.target.value;
+        setDoctor(selectedDoctorId);
+
+        try {
+            const response = await axios.get(`${QUEUE_INFO}/5/${selectedDoctorId}`);
+            setQueueInfo(response.data);
+        } catch (error) {
+            console.error('Error fetching queue information for the selected doctor:', error);
+        }
     };
 
     useEffect(() => {
@@ -155,22 +162,22 @@ export default function QueuePage() {
 
     return (
         <Container>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                <Typography variant="h4">Queue Information</Typography>
-                <Grid container alignItems="center" justifyContent="flex-end">
-                    <Grid item sx={{ marginRight: '20px' }}>
-                        <InputLabel htmlFor="doctor-select">Doctor</InputLabel>
-                    </Grid>
-                    <Grid item>
-                        <Select value={doctor} onChange={handleDoctorChange} id="doctor-select">
-                            {doctorOptions.map((option) => (
-                                <MenuItem key={option.id} value={option.id}>
-                                    {option.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </Grid>
-                </Grid>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+                <Typography variant="h3" justifyContent="flex">
+                    Queue Information
+                </Typography>
+                <Stack direction="row" alignItems="center" justifyContent="flex-end">
+                    <InputLabel htmlFor="doctor-select" sx={{ marginRight: '20px' }}>
+                        Doctor
+                    </InputLabel>
+                    <Select value={doctor} onChange={handleDoctorChange} id="doctor-select">
+                        {doctorOptions.map((option) => (
+                            <MenuItem key={option.id} value={option.id}>
+                                {option.name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </Stack>
             </Stack>
 
             <Card>
