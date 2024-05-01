@@ -21,6 +21,7 @@ export default function QueueTableRow({
     avatarUrl,
     patientName,
     doctorName,
+    shift,
     patientReached,
     patientPhoneNumber,
     queueNo,
@@ -54,6 +55,7 @@ export default function QueueTableRow({
                 </TableCell>
 
                 <TableCell>{doctorName}</TableCell>
+                <TableCell>{shift}</TableCell>
                 <TableCell>{queueNo}</TableCell>
                 <TableCell>{patientPhoneNumber}</TableCell>
 
@@ -101,6 +103,7 @@ QueueTableRow.propTypes = {
     avatarUrl: PropTypes.any,
     patientName: PropTypes.any,
     doctorName: PropTypes.any,
+    shift: PropTypes.any,
     patientReached: PropTypes.any,
     patientPhoneNumber: PropTypes.any,
     queueNo: PropTypes.any,

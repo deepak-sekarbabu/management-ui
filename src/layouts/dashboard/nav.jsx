@@ -82,7 +82,9 @@ export default function Nav({ openNav, onCloseNav }) {
             }}
         >
             <Logo sx={{ mt: 3, ml: 4 }} />
-            <h3>Clinic Management</h3>
+            <Box sx={{ textAlign: 'justify', px: 2 }}>
+                <h4>Clinic Management System</h4>
+            </Box>
 
             {renderAccount}
 

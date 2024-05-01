@@ -8,9 +8,8 @@ export default function AppPage() {
     return (
         <>
             <Helmet>
-                <title> Clinic Management Dashboard </title>
+                <title> Clinic Management </title>
             </Helmet>
-
             <AppView />
         </>
     );
