@@ -122,6 +122,8 @@ export default function QueuePage() {
 
     const handleClick = (event, patientName) => {
         const selectedIndex = selected.indexOf(patientName);
+        console.log(`Selected index for ${patientName}:`, selectedIndex); // Log the initial selected index
+
         let newSelected = [];
 
         if (selectedIndex === -1) {
@@ -137,6 +139,7 @@ export default function QueuePage() {
             ];
         }
 
+        console.log(`New selected array:`, newSelected); // Log the new selected array
         setSelected(newSelected);
     };
 
@@ -230,7 +233,7 @@ export default function QueuePage() {
                                             shiftTime={row.shiftTime}
                                             queueNo={row.queueNo}
                                             patientReached={row.patientReached}
-                                            patientPhoneNumber={row.patientPhoneNumber}                                            
+                                            patientPhoneNumber={row.patientPhoneNumber}
                                             time={row.time}
                                             selected={selected.indexOf(row.patientName) !== -1}
                                             handleClick={(event) =>
@@ -240,7 +243,7 @@ export default function QueuePage() {
                                     ))}
 
                                 <QueueEmptyRows
-                                    height={77}
+                                    height={80}
                                     emptyRows={emptyRows(page, rowsPerPage, queueInfo.length)}
                                 />
                                 {notFound && <QueueNoData query={filterName} />}
