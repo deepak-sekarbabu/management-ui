@@ -115,9 +115,9 @@ export default function QueuePage() {
         if (event.target.checked) {
             const newSelecteds = queueInfo.map((n) => n.patientName);
             setSelected(newSelecteds);
-        } else {
-            setSelected([]);
+            return;
         }
+        setSelected([]);
     };
 
     const handleClick = (event, patientName) => {

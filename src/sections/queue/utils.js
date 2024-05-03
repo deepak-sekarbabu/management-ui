@@ -36,29 +36,21 @@ export function getComparator(order, orderBy) {
 }
 
 export function applyFilter({ inputData, comparator, filterName }) {
+  const stabilizedThis = inputData.map((el, index) => [el, index]);
 
-  if(!inputData || !Array.isArray(inputData)) {
-    return [];
-  }
-
-  const stabilizedData = inputData.map((el, index) => [el, index]);
-
-  if(!stabilizedData) {
-    return []; 
-  }
-
-  stabilizedData.sort((a, b) => {
+  stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
 
-  let filteredData = stabilizedData.map((el) => el[0]);
+  inputData = stabilizedThis.map((el) => el[0]);
 
-  if(filterName) {
-    filteredData = filteredData.filter(item => item.patientName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1);
+  if (filterName) {
+    inputData = inputData.filter(
+      (data) => data.patientName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+    );
   }
 
-  return filteredData;
-
+  return inputData;
 }

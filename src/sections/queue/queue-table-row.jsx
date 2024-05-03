@@ -18,8 +18,8 @@ import Iconify from 'src/components/iconify';
 
 export default function QueueTableRow({
     selected,
-    avatarUrl,
     patientName,
+    avatarUrl,
     doctorName,
     shift,
     patientReached,
@@ -99,7 +99,7 @@ export default function QueueTableRow({
 }
 
 QueueTableRow.propTypes = {
-    selected: PropTypes.any,
+   
     avatarUrl: PropTypes.any,
     patientName: PropTypes.any,
     doctorName: PropTypes.any,
@@ -108,5 +108,6 @@ QueueTableRow.propTypes = {
     patientPhoneNumber: PropTypes.any,
     queueNo: PropTypes.any,
     time: PropTypes.any,
+    selected: PropTypes.any,
     handleClick: PropTypes.func,
 };

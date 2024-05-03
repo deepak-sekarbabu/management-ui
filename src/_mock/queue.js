@@ -25,9 +25,10 @@ export const queueInfo = [...Array(50)].map((_, index) => ({
     id: faker.string.uuid(),
     avatarUrl: `/assets/images/avatars/avatar_${Math.floor(Math.random() * 25) + 1}.jpg`,
     patientName: faker.person.fullName(),
-    patientPhoneNumber: faker.phone.number(),
     doctorName: faker.person.fullName(),
+    shift: sample('MORNING', 'EVENING'),
     queueNo: index + 1,
+    patientPhoneNumber: faker.phone.number(),
     patientReached: sample(['true', 'false']),
     time: appointmentTimes[index % appointmentTimes.length].toString(),
 }));
