@@ -5,25 +5,25 @@ import TableCell from '@mui/material/TableCell';
 
 // ----------------------------------------------------------------------
 
-export default function TableEmptyRows({ emptyRows, height }) {
-  if (!emptyRows) {
-    return null;
-  }
+export default function QueueEmptyRows({ emptyRows, height }) {
+    if (!emptyRows) {
+        return null;
+    }
 
-  return (
-    <TableRow
-      sx={{
-        ...(height && {
-          height: height * emptyRows,
-        }),
-      }}
-    >
-      <TableCell colSpan={9} />
-    </TableRow>
-  );
+    return (
+        <TableRow
+            sx={{
+                ...(height && {
+                    height: height * emptyRows,
+                }),
+            }}
+        >
+            <TableCell colSpan={9} />
+        </TableRow>
+    );
 }
 
-TableEmptyRows.propTypes = {
-  emptyRows: PropTypes.number,
-  height: PropTypes.number,
+QueueEmptyRows.propTypes = {
+    emptyRows: PropTypes.number,
+    height: PropTypes.number,
 };

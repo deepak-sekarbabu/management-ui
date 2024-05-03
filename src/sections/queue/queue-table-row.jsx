@@ -21,7 +21,7 @@ export default function QueueTableRow({
     patientName,
     avatarUrl,
     doctorName,
-    shift,
+    shiftTime,
     patientReached,
     patientPhoneNumber,
     queueNo,
@@ -53,20 +53,16 @@ export default function QueueTableRow({
                         </Typography>
                     </Stack>
                 </TableCell>
-
                 <TableCell>{doctorName}</TableCell>
-                <TableCell>{shift}</TableCell>
+                <TableCell>{shiftTime}</TableCell>
                 <TableCell>{queueNo}</TableCell>
                 <TableCell>{patientPhoneNumber}</TableCell>
-
                 <TableCell>
                     <Label color={(patientReached === 'false' && 'error') || 'success'}>
                         {patientReached === 'true' ? 'Yes' : 'No'}
                     </Label>
                 </TableCell>
-
                 <TableCell>{time}</TableCell>
-
                 <TableCell align="right">
                     <IconButton onClick={handleOpenMenu}>
                         <Iconify icon="eva:more-vertical-fill" />
@@ -99,15 +95,14 @@ export default function QueueTableRow({
 }
 
 QueueTableRow.propTypes = {
-   
     avatarUrl: PropTypes.any,
     patientName: PropTypes.any,
+    handleClick: PropTypes.func,
     doctorName: PropTypes.any,
-    shift: PropTypes.any,
+    shiftTime: PropTypes.any,
     patientReached: PropTypes.any,
     patientPhoneNumber: PropTypes.any,
     queueNo: PropTypes.any,
     time: PropTypes.any,
     selected: PropTypes.any,
-    handleClick: PropTypes.func,
 };

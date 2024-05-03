@@ -16,11 +16,11 @@ import TablePagination from '@mui/material/TablePagination';
 
 import Scrollbar from 'src/components/scrollbar';
 
-import TableNoData from '../queue-no-data';
+import QueueNoData from '../queue-no-data';
 import QueueTableRow from '../queue-table-row';
-import UserTableHead from '../queue-table-head';
-import TableEmptyRows from '../queue-empty-rows';
-import UserTableToolbar from '../queue-table-toolbar';
+import QueueTableHead from '../queue-table-head';
+import QueueEmptyRows from '../queue-empty-rows';
+import QueueTableToolbar from '../queue-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // Define the API URL
@@ -61,7 +61,7 @@ export default function QueuePage() {
     const [selected, setSelected] = useState([]);
     const [orderBy, setOrderBy] = useState('name');
     const [filterName, setFilterName] = useState('');
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
     const [doctor, setDoctor] = useState('');
 
     const handleDoctorChange = async (event) => {
@@ -123,18 +123,20 @@ export default function QueuePage() {
     const handleClick = (event, patientName) => {
         const selectedIndex = selected.indexOf(patientName);
         let newSelected = [];
+
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, patientName);
+            newSelected = [...selected, patientName];
         } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
+            newSelected = selected.slice(1);
         } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
+            newSelected = selected.slice(0, -1);
         } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1)
-            );
+            newSelected = [
+                ...selected.slice(0, selectedIndex),
+                ...selected.slice(selectedIndex + 1),
+            ];
         }
+
         setSelected(newSelected);
     };
 
@@ -181,7 +183,7 @@ export default function QueuePage() {
             </Stack>
 
             <Card>
-                <UserTableToolbar
+                <QueueTableToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
@@ -190,7 +192,7 @@ export default function QueuePage() {
                 <Scrollbar>
                     <TableContainer sx={{ overflow: 'unset' }}>
                         <Table sx={{ minWidth: 800 }}>
-                            <UserTableHead
+                            <QueueTableHead
                                 order={order}
                                 orderBy={orderBy}
                                 rowCount={queueInfo.length}
@@ -200,7 +202,7 @@ export default function QueuePage() {
                                 headLabel={[
                                     { id: 'patientName', label: 'Patient Name' },
                                     { id: 'doctorName', label: 'Doctor Name' },
-                                    { id: 'shift', label: 'Shift' },
+                                    { id: 'shiftTime', label: 'Shift Time' },
                                     { id: 'queueNo', label: 'Queue No' },
                                     {
                                         id: 'patientPhoneNumber',
@@ -222,13 +224,13 @@ export default function QueuePage() {
                                     .map((row) => (
                                         <QueueTableRow
                                             key={row.id}
+                                            avatarUrl={row.avatarUrl}
                                             patientName={row.patientName}
                                             doctorName={row.doctorName}
-                                            shift={row.shiftTime}
+                                            shiftTime={row.shiftTime}
                                             queueNo={row.queueNo}
                                             patientReached={row.patientReached}
-                                            patientPhoneNumber={row.patientPhoneNumber}
-                                            avatarUrl={row.avatarUrl}
+                                            patientPhoneNumber={row.patientPhoneNumber}                                            
                                             time={row.time}
                                             selected={selected.indexOf(row.patientName) !== -1}
                                             handleClick={(event) =>
@@ -237,11 +239,11 @@ export default function QueuePage() {
                                         />
                                     ))}
 
-                                <TableEmptyRows
-                                    height={80}
+                                <QueueEmptyRows
+                                    height={77}
                                     emptyRows={emptyRows(page, rowsPerPage, queueInfo.length)}
                                 />
-                                {notFound && <TableNoData query={filterName} />}
+                                {notFound && <QueueNoData query={filterName} />}
                             </TableBody>
                         </Table>
                     </TableContainer>

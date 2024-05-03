@@ -22,7 +22,7 @@ endOfDay.setHours(22, 0, 0, 0); // Assuming appointments end at 5:00 PM
 const appointmentTimes = generateAppointmentTimes(startOfDay, endOfDay);
 
 export const queueInfo = [...Array(50)].map((_, index) => ({
-    id: faker.string.uuid(),
+    id: index + 1,
     avatarUrl: `/assets/images/avatars/avatar_${Math.floor(Math.random() * 25) + 1}.jpg`,
     patientName: faker.person.fullName(),
     doctorName: faker.person.fullName(),
@@ -33,4 +33,3 @@ export const queueInfo = [...Array(50)].map((_, index) => ({
     time: appointmentTimes[index % appointmentTimes.length].toString(),
 }));
 
-console.log(queueInfo);
