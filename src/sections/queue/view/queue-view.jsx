@@ -64,12 +64,20 @@ export default function QueuePage() {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [doctor, setDoctor] = useState('');
 
+    const fetchQueueInfo = async () => {
+        try {
+            const data = await getQueue(); // Call the getQueue function
+            setQueueInfo(data); // Update queueInfo state with the fetched data
+        } catch (error) {
+            console.error('Error fetching queue information:', error);
+        }
+    };
+
     const handleDoctorChange = async (event) => {
         const selectedDoctorId = event.target.value;
         setDoctor(selectedDoctorId);
-
         try {
-            const response = await axios.get(`${QUEUE_INFO}/5/${selectedDoctorId}`);
+            const response = await axios.get(`${QUEUE_INFO}/2/${selectedDoctorId}`);
             setQueueInfo(response.data);
         } catch (error) {
             console.error('Error fetching queue information for the selected doctor:', error);
@@ -77,15 +85,6 @@ export default function QueuePage() {
     };
 
     useEffect(() => {
-        const fetchQueueInfo = async () => {
-            try {
-                const data = await getQueue(); // Call the getQueue function
-                setQueueInfo(data); // Update queueInfo state with the fetched data
-            } catch (error) {
-                console.error('Error fetching queue information:', error);
-            }
-        };
-
         fetchQueueInfo();
     }, []);
 
@@ -235,10 +234,12 @@ export default function QueuePage() {
                                             patientReached={row.patientReached}
                                             patientPhoneNumber={row.patientPhoneNumber}
                                             time={row.time}
+                                            id={row.id}
                                             selected={selected.indexOf(row.patientName) !== -1}
                                             handleClick={(event) =>
                                                 handleClick(event, row.patientName)
                                             }
+                                            onQueueUpdate={fetchQueueInfo}
                                         />
                                     ))}
 

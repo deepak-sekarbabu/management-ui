@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -15,9 +16,11 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
+const PATIENT_REACHED = '/api/queue/patientReached/';
 
 export default function QueueTableRow({
     selected,
+    id,
     patientName,
     avatarUrl,
     doctorName,
@@ -27,6 +30,7 @@ export default function QueueTableRow({
     queueNo,
     time,
     handleClick,
+    onQueueUpdate,
 }) {
     const [open, setOpen] = useState(null);
 
@@ -34,7 +38,26 @@ export default function QueueTableRow({
         setOpen(event.currentTarget);
     };
 
-    const handleCloseMenu = () => {
+    const handleCloseMenu = async () => {
+        console.log('handleCloseMenu');
+        setOpen(null);
+    };
+
+    const handlePatientReachedMenu = async (event) => {
+        try {
+            console.log(id);
+            await axios.put(PATIENT_REACHED + id);
+            setOpen(null);
+            if (onQueueUpdate) {
+                onQueueUpdate(); // Invoke the callback to reload the queue data
+            }
+        } catch (error) {
+            console.error('Failed to update patient reached status:', error);
+        }
+    };
+
+    const handleSkipPatient = async () => {
+        console.log('handleSkipPatient');
         setOpen(null);
     };
 
@@ -63,6 +86,7 @@ export default function QueueTableRow({
                     </Label>
                 </TableCell>
                 <TableCell>{time}</TableCell>
+                <TableCell sx={{ display: 'none' }}>{id}</TableCell>
                 <TableCell align="right">
                     <IconButton onClick={handleOpenMenu}>
                         <Iconify icon="eva:more-vertical-fill" />
@@ -80,14 +104,16 @@ export default function QueueTableRow({
                     sx: { width: 140 },
                 }}
             >
-                <MenuItem onClick={handleCloseMenu}>
-                    <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
-                    Edit
+                <MenuItem onClick={handlePatientReachedMenu} sx={{ color: 'orange' }}>
+                    Patient Reached
                 </MenuItem>
 
-                <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
-                    <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
-                    Delete
+                <MenuItem onClick={handleSkipPatient} sx={{ color: 'error.main' }}>
+                    Skip Patient
+                </MenuItem>
+
+                <MenuItem onClick={handlePatientReachedMenu} sx={{ color: 'green' }}>
+                    Visit Done
                 </MenuItem>
             </Popover>
         </>
@@ -105,4 +131,6 @@ QueueTableRow.propTypes = {
     queueNo: PropTypes.any,
     time: PropTypes.any,
     selected: PropTypes.any,
+    id: PropTypes.any,
+    onQueueUpdate: PropTypes.func,
 };
