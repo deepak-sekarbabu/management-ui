@@ -1,31 +1,32 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 
 import { Stack, Container, Typography } from '@mui/material';
 
 import ClinicDetails from './ClinicDetails';
 
-const clinicData = {
-    clinicId: 2,
-    clinicName: 'Midway Hospital',
-    clinicAddress: '103 Kumba street',
-    mapGeoLocation: '13.1223234 15.34567',
-    clinicPinCode: '600945',
-    clinicPhoneNumbers: [
-        {
-            phoneNumber: '+913342706479',
-        },
-        {
-            phoneNumber: '+91 9789801844',
-        },
-    ],
-    noOfDoctors: 1,
-    clinicEmail: 'drinba@kumarhospital.com',
-    clinicTimings: 'MON-SUN 09:00:00AM-10:00:00PM',
-    clinicWebsite: 'www.midwayhospital.com',
-    clinicAmenities: 'Sacn, Xray, etc etc',
-};
+const GET_CLINIC_INFO = '/api/clinic/';
 
-export default function ClinicPage() {
+const ClinicPage = () => {
+    const [clinicData, setClinicData] = useState(null);
+
+    useEffect(() => {
+        const fetchClinicData = async () => {
+            try {
+                const response = await axios.get(`${GET_CLINIC_INFO}1`);
+                setClinicData(response.data);
+            } catch (error) {
+                console.error('Error fetching clinic data:', error);
+            }
+        };
+
+        fetchClinicData();
+    }, []);
+
+    if (!clinicData) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <Container>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -35,4 +36,6 @@ export default function ClinicPage() {
             <ClinicDetails clinic={clinicData} />
         </Container>
     );
-}
+};
+
+export default ClinicPage;
