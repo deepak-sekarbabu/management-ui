@@ -10,7 +10,7 @@ const UPDATE_CLINIC_INFO = '/api/clinic/';
 
 const ClinicPage = () => {
     const [clinicData, setClinicData] = useState(null);
-    const [editMode, setEditMode] = useState(false);
+    const [isEditable, setEditMode] = useState(false);
     const [editedClinicData, setEditedClinicData] = useState({});
 
     useEffect(() => {
@@ -18,6 +18,7 @@ const ClinicPage = () => {
             try {
                 const response = await axios.get(`${GET_CLINIC_INFO}1`);
                 setClinicData(response.data);
+                setEditedClinicData(response.data);
             } catch (error) {
                 console.error('Error fetching clinic data:', error);
             }
@@ -49,13 +50,21 @@ const ClinicPage = () => {
         }
     };
 
+    const handleFormValuesChange = (updatedFormValues) => {
+        setEditedClinicData(updatedFormValues);
+    };
+
     return (
         <Container>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4">Clinic Information</Typography>
             </Stack>
 
-            <ClinicDetails clinic={clinicData} />
+            <ClinicDetails
+                clinic={editedClinicData}
+                isEditable={isEditable}
+                onFormValuesChange={handleFormValuesChange}
+            />
 
             <Box mt={2}>
                 {' '}
@@ -66,7 +75,7 @@ const ClinicPage = () => {
                     spacing={2}
                     mb={5}
                 >
-                    {editMode ? (
+                    {isEditable ? (
                         <>
                             <Button variant="contained" onClick={handleSave}>
                                 Save
