@@ -112,6 +112,10 @@ export default function QueueTableRow({
                     Skip Patient
                 </MenuItem>
 
+                <MenuItem onClick={handleSkipPatient} sx={{ color: 'error.main' }}>
+                    Cancel
+                </MenuItem>
+
                 <MenuItem onClick={handlePatientReachedMenu} sx={{ color: 'green' }}>
                     Visit Done
                 </MenuItem>
@@ -123,7 +127,6 @@ export default function QueueTableRow({
 QueueTableRow.propTypes = {
     avatarUrl: PropTypes.any,
     patientName: PropTypes.any,
-    handleClick: PropTypes.func,
     doctorName: PropTypes.any,
     shiftTime: PropTypes.any,
     patientReached: PropTypes.any,
@@ -132,5 +135,6 @@ QueueTableRow.propTypes = {
     time: PropTypes.any,
     selected: PropTypes.any,
     id: PropTypes.any,
+    handleClick: PropTypes.func,
     onQueueUpdate: PropTypes.func,
 };
