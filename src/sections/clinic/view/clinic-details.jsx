@@ -27,7 +27,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     label="Clinic Name"
                     value={formValues.clinicName}
                     onChange={handleChange}
-                    disabled={!isEditable}
+                    disabled
                     fullWidth
                     margin="normal"
                 />
@@ -71,7 +71,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     label="Clinic Email"
                     value={formValues.clinicEmail}
                     onChange={handleChange}
-                    disabled={!isEditable}
+                    disabled
                     fullWidth
                     margin="normal"
                 />
@@ -81,7 +81,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     label="Clinic Website"
                     value={formValues.clinicWebsite}
                     onChange={handleChange}
-                    disabled={!isEditable}
+                    disabled
                     fullWidth
                     margin="normal"
                 />
