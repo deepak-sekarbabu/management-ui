@@ -58,6 +58,14 @@ const DoctorCard = ({ doctor }) => {
         }));
     };
 
+    const handleAvailabilityChange = (newAvailability) => {
+        // This function is called from DoctorAvailability component
+        // It will receive the new availability data
+        setEditedDoctor((prevState) => ({
+            ...prevState,
+            doctorAvailability: newAvailability,
+        }));
+    };
     const validateDoctorData = (doctorData) => {
         const errors = {};
 
@@ -136,9 +144,7 @@ const DoctorCard = ({ doctor }) => {
                         />
                         <DoctorAvailability
                             availability={editedDoctor.doctorAvailability}
-                            onAvailabilityChange={(newAvailability) =>
-                                handleInputChange('doctorAvailability', newAvailability)
-                            }
+                            onAvailabilityChange={handleAvailabilityChange} // Pass the callback function
                             isEditing={isEditing}
                         />
                         <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
