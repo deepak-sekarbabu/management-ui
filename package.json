@@ -1,7 +1,7 @@
 {
   "name": "@minimal/material-kit-react",
   "author": "Deepak S",
-  "license": "MIT",  
+  "license": "MIT",
   "version": "1.8.0",
   "private": true,
   "scripts": {
@@ -20,12 +20,12 @@
     "vite:build": "vite build"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "@faker-js/faker": "^8.1.0",
-    "@iconify/react": "^4.1.1",    
+    "@iconify/react": "^4.1.1",
     "@mui/lab": "^5.0.0-alpha.147",
-    "@mui/material": "^5.14.12",
+    "@mui/material": "^5.15.16",
     "apexcharts": "^3.43.0",
     "axios": "^1.6.8",
     "date-fns": "^2.30.0",
