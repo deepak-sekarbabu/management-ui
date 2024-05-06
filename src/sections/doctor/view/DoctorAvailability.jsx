@@ -1,18 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { List, ListItem, ListItemText } from '@mui/material';
+import { Paper, Table, TableRow, TableBody, TableCell, TableHead, TableContainer } from '@mui/material';
 
 const DoctorAvailability = ({ availability }) => (
-    <List>
-        {availability.map((item, index) => (
-            <ListItem key={index}>
-                <ListItemText
-                    primary={`${item.availableDays} - ${item.shiftTime}`}
-                />
-            </ListItem>
-        ))}
-    </List>
+    <TableContainer component={Paper}>
+        <Table>
+            <TableHead>
+                <TableRow>
+                    <TableCell>Available Days</TableCell>
+                    <TableCell>Shift Time</TableCell>
+                    <TableCell>Shift Start Time</TableCell>
+                    <TableCell>Shift End Time</TableCell>
+                    <TableCell>Consultation Time</TableCell>
+                    <TableCell>Config Type</TableCell>
+                </TableRow>
+            </TableHead>
+            <TableBody>
+                {availability.map((item, index) => (
+                    <TableRow key={index}>
+                        <TableCell>{item.availableDays}</TableCell>
+                        <TableCell>{item.shiftTime}</TableCell>
+                        <TableCell>{item.shiftStartTime}</TableCell>
+                        <TableCell>{item.shiftEndTime}</TableCell>
+                        <TableCell>{item.consultationTime}</TableCell>
+                        <TableCell>{item.configType}</TableCell>
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
+    </TableContainer>
 );
 
 DoctorAvailability.propTypes = {
@@ -20,6 +37,10 @@ DoctorAvailability.propTypes = {
         PropTypes.shape({
             availableDays: PropTypes.string.isRequired,
             shiftTime: PropTypes.string.isRequired,
+            shiftStartTime: PropTypes.string.isRequired,
+            shiftEndTime: PropTypes.string.isRequired,
+            consultationTime: PropTypes.string.isRequired,
+            configType: PropTypes.string.isRequired,
         }),
     ).isRequired,
 };
