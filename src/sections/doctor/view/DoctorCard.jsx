@@ -13,13 +13,19 @@ const DoctorCard = ({ doctor }) => (
                 {doctor.doctorName}
             </Typography>
             <Typography variant="body1" color="textSecondary">
+                {doctor.doctorId}
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
                 {doctor.doctorSpeciality}
             </Typography>
             <Typography variant="body1" color="textSecondary">
                 Experience: {doctor.doctorExperience} years
             </Typography>
             <Typography variant="body1" color="textSecondary">
-                Consultation Fee: ₹{doctor.doctorConsultationFee}
+                Consultation Fee Appointment: ₹{doctor.doctorConsultationFee}
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
+                Consultation Fee Queue: ₹{doctor.doctorConsultationFeeOther}
             </Typography>
             <DoctorPhoneNumbers phoneNumbers={doctor.phoneNumbers} />
             <DoctorAvailability availability={doctor.doctorAvailability} />
@@ -30,9 +36,11 @@ const DoctorCard = ({ doctor }) => (
 DoctorCard.propTypes = {
     doctor: PropTypes.shape({
         doctorName: PropTypes.string.isRequired,
+        doctorId: PropTypes.string.isRequired,
         doctorSpeciality: PropTypes.string.isRequired,
         doctorExperience: PropTypes.number.isRequired,
         doctorConsultationFee: PropTypes.number.isRequired,
+        doctorConsultationFeeOther: PropTypes.number.isRequired,
         phoneNumbers: PropTypes.arrayOf(
             PropTypes.shape({
                 phoneNumber: PropTypes.string.isRequired,
