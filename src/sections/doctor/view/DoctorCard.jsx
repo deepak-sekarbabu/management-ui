@@ -9,24 +9,40 @@ import DoctorPhoneNumbers from './DoctorPhoneNumbers';
 const DoctorCard = ({ doctor }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedDoctor, setEditedDoctor] = useState({ ...doctor });
+    const [validationErrors, setValidationErrors] = useState({});
 
     const handleEdit = () => {
         setIsEditing(true);
     };
 
     const handleSave = () => {
-        // Save the edited doctor data
-        // You can add your logic here to update the doctor data
+        // Validate the edited doctor data
+        const errors = validateDoctorData(editedDoctor);
+        if (Object.keys(errors).length > 0) {
+            setValidationErrors(errors);
+            return;
+        }
         console.log(editedDoctor);
         setIsEditing(false);
+        setValidationErrors({});
     };
 
     const handleCancel = () => {
         setEditedDoctor({ ...doctor });
         setIsEditing(false);
+        setValidationErrors({});
     };
 
     const handleInputChange = (field, value) => {
+        const errors = validateDoctorData({
+            ...editedDoctor,
+            [field]: value,
+        });
+
+        // Update the validationErrors state with the new errors
+        setValidationErrors(errors);
+
+        // Update the editedDoctor state with the new value
         setEditedDoctor((prevState) => ({
             ...prevState,
             [field]: value,
@@ -42,6 +58,32 @@ const DoctorCard = ({ doctor }) => {
         }));
     };
 
+    const validateDoctorData = (doctorData) => {
+        const errors = {};
+
+        if (doctorData.doctorId.length > 50) {
+            errors.doctorId = 'Doctor ID cannot be more than 50 characters';
+        }
+
+        if (!/^[a-zA-Z\s]+$/.test(doctorData.doctorName) || doctorData.doctorName.length > 120) {
+            errors.doctorName = 'Doctor name must be alphabets and spaces, and not more than 120 characters';
+        }
+
+        if (doctorData.doctorSpeciality.length > 120) {
+            errors.doctorSpeciality = 'Doctor speciality must not be more than 120 characters';
+        }
+
+        if (doctorData.doctorConsultationFee < 0) {
+            errors.doctorConsultationFee = 'Consultation fee must be a positive number';
+        }
+
+        if (doctorData.doctorConsultationFeeOther < 0) {
+            errors.doctorConsultationFeeOther = 'Consultation fee (other) must be a positive number';
+        }
+
+        return errors;
+    };
+
     return (
         <Card>
             <CardContent>
@@ -51,16 +93,22 @@ const DoctorCard = ({ doctor }) => {
                             label="Doctor Name"
                             value={editedDoctor.doctorName}
                             onChange={(e) => handleInputChange('doctorName', e.target.value)}
+                            error={!!validationErrors.doctorName}
+                            helperText={validationErrors.doctorName}
                         />
                         <TextField
                             label="Doctor ID"
                             value={editedDoctor.doctorId}
                             onChange={(e) => handleInputChange('doctorId', e.target.value)}
+                            error={!!validationErrors.doctorId}
+                            helperText={validationErrors.doctorId}
                         />
                         <TextField
                             label="Doctor Speciality"
                             value={editedDoctor.doctorSpeciality}
                             onChange={(e) => handleInputChange('doctorSpeciality', e.target.value)}
+                            error={!!validationErrors.doctorSpeciality}
+                            helperText={validationErrors.doctorSpeciality}
                         />
                         <TextField
                             label="Doctor Experience"
@@ -71,11 +119,15 @@ const DoctorCard = ({ doctor }) => {
                             label="Consultation Fee Appointment"
                             value={editedDoctor.doctorConsultationFee}
                             onChange={(e) => handleInputChange('doctorConsultationFee', e.target.value)}
+                            error={!!validationErrors.doctorConsultationFee}
+                            helperText={validationErrors.doctorConsultationFee}
                         />
                         <TextField
                             label="Consultation Fee Queue"
                             value={editedDoctor.doctorConsultationFeeOther}
                             onChange={(e) => handleInputChange('doctorConsultationFeeOther', e.target.value)}
+                            error={!!validationErrors.doctorConsultationFeeOther}
+                            helperText={validationErrors.doctorConsultationFeeOther}
                         />
                         <DoctorPhoneNumbers
                             phoneNumbers={editedDoctor.phoneNumbers}
@@ -89,7 +141,7 @@ const DoctorCard = ({ doctor }) => {
                             }
                             isEditing={isEditing}
                         />
-                        <Box display="flex" justifyContent="flex-end" gap={2}>
+                        <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
                             <Button onClick={handleSave}>Save</Button>
                             <Button onClick={handleCancel}>Cancel</Button>
                         </Box>
@@ -116,7 +168,7 @@ const DoctorCard = ({ doctor }) => {
                         </Typography>
                         <DoctorPhoneNumbers phoneNumbers={doctor.phoneNumbers} />
                         <DoctorAvailability availability={doctor.doctorAvailability} isEditing={isEditing} />
-                        <Box display="flex" justifyContent="center" gap={2}>
+                        <Box display="flex" mt={2} justifyContent="center" gap={2}>
                             <Button onClick={handleEdit}>Edit</Button>
                         </Box>
                     </>
