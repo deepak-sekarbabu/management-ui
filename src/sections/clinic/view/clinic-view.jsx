@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Box, Stack, Button, Container, Typography } from '@mui/material';
 
+// import data from './clinic.json';
 import ClinicDetails from './clinic-details';
 
 const GET_CLINIC_INFO = '/api/clinic/';
@@ -20,6 +21,8 @@ const ClinicPage = () => {
                 const response = await axios.get(`${GET_CLINIC_INFO}1`);
                 setClinicData(response.data);
                 setEditedClinicData(response.data);
+                // setClinicData(data);
+                // setEditedClinicData(data);
             } catch (error) {
                 console.error('Error fetching clinic data:', error);
             }
