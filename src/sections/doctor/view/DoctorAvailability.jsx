@@ -5,12 +5,15 @@ import {
     Paper,
     Table,
     Button,
+    Select,
+    MenuItem,
     TableRow,
     TableBody,
     TableCell,
     TableHead,
     TextField,
     TableContainer,
+
 } from '@mui/material';
 
 const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) => {
@@ -19,7 +22,7 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
     const handleAvailabilityChange = (index, field, value) => {
         setEditedAvailability((prevState) =>
             prevState.map((item, i) =>
-                i === index ? { ...item, [field]: value } : item
+                i === index ? { ...item, [field]: value.toUpperCase() } : item
             )
         );
         onAvailabilityChange(editedAvailability);
@@ -44,6 +47,8 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
         ]);
     };
 
+    const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
     return (
         <TableContainer component={Paper}>
             <Table>
@@ -64,12 +69,18 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                             {isEditing ? (
                                 <>
                                     <TableCell align="left">
-                                        <TextField
-                                            value={item.availableDays}
+                                        <Select
+                                            value={weekDays.find((day) => day.toUpperCase() === item.availableDays)}
                                             onChange={(e) =>
                                                 handleAvailabilityChange(index, 'availableDays', e.target.value)
                                             }
-                                        />
+                                        >
+                                            {weekDays.map((day) => (
+                                                <MenuItem key={day} value={day}>
+                                                    {day}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
                                     </TableCell>
                                     <TableCell align="left">
                                         <TextField
