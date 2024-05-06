@@ -13,7 +13,6 @@ import {
     TableHead,
     TextField,
     TableContainer,
-
 } from '@mui/material';
 
 const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) => {
@@ -48,6 +47,7 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
     };
 
     const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const shiftTimes = ['Morning', 'Afternoon', 'Evening', 'Night'];
 
     return (
         <TableContainer component={Paper}>
@@ -83,12 +83,18 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                         </Select>
                                     </TableCell>
                                     <TableCell align="left">
-                                        <TextField
-                                            value={item.shiftTime}
+                                        <Select
+                                            value={shiftTimes.find((time) => time.toUpperCase() === item.shiftTime)}
                                             onChange={(e) =>
                                                 handleAvailabilityChange(index, 'shiftTime', e.target.value)
                                             }
-                                        />
+                                        >
+                                            {shiftTimes.map((time) => (
+                                                <MenuItem key={time} value={time}>
+                                                    {time}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
                                     </TableCell>
                                     <TableCell align="left">
                                         <TextField
