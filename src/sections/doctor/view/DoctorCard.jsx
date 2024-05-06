@@ -65,8 +65,8 @@ const DoctorCard = ({ doctor }) => {
             errors.doctorId = 'Doctor ID cannot be more than 50 characters';
         }
 
-        if (!/^[a-zA-Z\s]+$/.test(doctorData.doctorName) || doctorData.doctorName.length > 120) {
-            errors.doctorName = 'Doctor name must be alphabets and spaces, and not more than 120 characters';
+        if (!/^[a-zA-Z.\s]+$/.test(doctorData.doctorName) || doctorData.doctorName.length > 120) {
+            errors.doctorName = 'Doctor name must be alphabets, spaces, and dots, and not more than 120 characters';
         }
 
         if (doctorData.doctorSpeciality.length > 120) {
