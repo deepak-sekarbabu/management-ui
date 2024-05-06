@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 
 import { Box, Card, Button, TextField, Typography, CardContent } from '@mui/material';
 
-import DoctorAvailability from './DoctorAvailability';
 import DoctorPhoneNumbers from './DoctorPhoneNumbers';
+import DoctorAvailability from './DoctorAvailability';
 
 const DoctorCard = ({ doctor }) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -126,7 +126,9 @@ const DoctorCard = ({ doctor }) => {
                         <TextField
                             label="Consultation Fee Appointment"
                             value={editedDoctor.doctorConsultationFee}
-                            onChange={(e) => handleInputChange('doctorConsultationFee', e.target.value)}
+                            onChange={(e) =>
+                                handleInputChange('doctorConsultationFee', e.target.value)
+                            }
                             error={!!validationErrors.doctorConsultationFee}
                             helperText={validationErrors.doctorConsultationFee}
                         />
@@ -134,8 +136,6 @@ const DoctorCard = ({ doctor }) => {
                             label="Consultation Fee Queue"
                             value={editedDoctor.doctorConsultationFeeOther}
                             onChange={(e) => handleInputChange('doctorConsultationFeeOther', e.target.value)}
-                            error={!!validationErrors.doctorConsultationFeeOther}
-                            helperText={validationErrors.doctorConsultationFeeOther}
                         />
                         <DoctorPhoneNumbers
                             phoneNumbers={editedDoctor.phoneNumbers}
@@ -173,7 +173,10 @@ const DoctorCard = ({ doctor }) => {
                             Consultation Fee Queue: ₹{doctor.doctorConsultationFeeOther}
                         </Typography>
                         <DoctorPhoneNumbers phoneNumbers={doctor.phoneNumbers} />
-                        <DoctorAvailability availability={doctor.doctorAvailability} isEditing={isEditing} />
+                        <DoctorAvailability
+                            availability={doctor.doctorAvailability}
+                            isEditing={isEditing}
+                        />
                         <Box display="flex" mt={2} justifyContent="center" gap={2}>
                             <Button onClick={handleEdit}>Edit</Button>
                         </Box>
@@ -195,7 +198,7 @@ DoctorCard.propTypes = {
         phoneNumbers: PropTypes.arrayOf(
             PropTypes.shape({
                 phoneNumber: PropTypes.string.isRequired,
-            }),
+            })
         ).isRequired,
         doctorAvailability: PropTypes.arrayOf(
             PropTypes.shape({
@@ -205,7 +208,7 @@ DoctorCard.propTypes = {
                 shiftEndTime: PropTypes.string.isRequired,
                 consultationTime: PropTypes.number.isRequired,
                 configType: PropTypes.string.isRequired,
-            }),
+            })
         ).isRequired,
     }).isRequired,
 };

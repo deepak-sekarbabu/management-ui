@@ -19,8 +19,6 @@ import {
     TableContainer,
 } from '@mui/material';
 
-
-
 const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) => {
     const [editedAvailability, setEditedAvailability] = useState(availability);
 
@@ -29,12 +27,12 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
             prevState.map((item, i) =>
                 i === index
                     ? {
-                        ...item,
-                        [field]:
-                            field === 'shiftStartTime' || field === 'shiftEndTime'
-                                ? dayjs(value).format('HH:mm:ss')
-                                : value.toUpperCase(),
-                    }
+                          ...item,
+                          [field]:
+                              field === 'shiftStartTime' || field === 'shiftEndTime'
+                                  ? dayjs(value).format('HH:mm:ss')
+                                  : value.toUpperCase(),
+                      }
                     : item
             )
         );
@@ -86,9 +84,16 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                     <>
                                         <TableCell align="left">
                                             <Select
-                                                value={weekDays.find((day) => day.toUpperCase() === item.availableDays)}
+                                                value={weekDays.find(
+                                                    (day) =>
+                                                        day.toUpperCase() === item.availableDays
+                                                )}
                                                 onChange={(e) =>
-                                                    handleAvailabilityChange(index, 'availableDays', e.target.value)
+                                                    handleAvailabilityChange(
+                                                        index,
+                                                        'availableDays',
+                                                        e.target.value
+                                                    )
                                                 }
                                             >
                                                 {weekDays.map((day) => (
@@ -100,9 +105,15 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                         </TableCell>
                                         <TableCell align="left">
                                             <Select
-                                                value={shiftTimes.find((time) => time.toUpperCase() === item.shiftTime)}
+                                                value={shiftTimes.find(
+                                                    (time) => time.toUpperCase() === item.shiftTime
+                                                )}
                                                 onChange={(e) =>
-                                                    handleAvailabilityChange(index, 'shiftTime', e.target.value)
+                                                    handleAvailabilityChange(
+                                                        index,
+                                                        'shiftTime',
+                                                        e.target.value
+                                                    )
                                                 }
                                             >
                                                 {shiftTimes.map((time) => (
@@ -114,9 +125,16 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                         </TableCell>
                                         <TableCell align="left">
                                             <TimePicker
-                                                defaultValue={dayjs(item.shiftStartTime, 'HH:mm:ss')}
+                                                defaultValue={dayjs(
+                                                    item.shiftStartTime,
+                                                    'HH:mm:ss'
+                                                )}
                                                 onChange={(value) =>
-                                                    handleAvailabilityChange(index, 'shiftStartTime', value)
+                                                    handleAvailabilityChange(
+                                                        index,
+                                                        'shiftStartTime',
+                                                        value
+                                                    )
                                                 }
                                             />
                                         </TableCell>
@@ -124,7 +142,11 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                             <TimePicker
                                                 defaultValue={dayjs(item.shiftEndTime, 'HH:mm:ss')}
                                                 onChange={(value) =>
-                                                    handleAvailabilityChange(index, 'shiftEndTime', value)
+                                                    handleAvailabilityChange(
+                                                        index,
+                                                        'shiftEndTime',
+                                                        value
+                                                    )
                                                 }
                                             />
                                         </TableCell>
@@ -132,15 +154,25 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                             <TextField
                                                 value={item.consultationTime}
                                                 onChange={(e) =>
-                                                    handleAvailabilityChange(index, 'consultationTime', e.target.value)
+                                                    handleAvailabilityChange(
+                                                        index,
+                                                        'consultationTime',
+                                                        e.target.value
+                                                    )
                                                 }
                                             />
                                         </TableCell>
                                         <TableCell align="left">
                                             <Select
-                                                value={configTypes.find((type) => type.toUpperCase() === item.configType)}
+                                                value={configTypes.find(
+                                                    (type) => type.toUpperCase() === item.configType
+                                                )}
                                                 onChange={(e) =>
-                                                    handleAvailabilityChange(index, 'configType', e.target.value)
+                                                    handleAvailabilityChange(
+                                                        index,
+                                                        'configType',
+                                                        e.target.value
+                                                    )
                                                 }
                                             >
                                                 {configTypes.map((type) => (
@@ -151,7 +183,9 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                             </Select>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Button onClick={() => handleDeleteRow(index)}>Delete</Button>
+                                            <Button onClick={() => handleDeleteRow(index)}>
+                                                Delete
+                                            </Button>
                                         </TableCell>
                                     </>
                                 ) : (
@@ -185,9 +219,9 @@ DoctorAvailability.propTypes = {
             shiftTime: PropTypes.string.isRequired,
             shiftStartTime: PropTypes.string.isRequired,
             shiftEndTime: PropTypes.string.isRequired,
-            consultationTime: PropTypes.string.isRequired,
+            consultationTime: PropTypes.number.isRequired,
             configType: PropTypes.string.isRequired,
-        }),
+        })
     ).isRequired,
     onAvailabilityChange: PropTypes.func.isRequired,
     isEditing: PropTypes.bool.isRequired,
