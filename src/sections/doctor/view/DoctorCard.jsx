@@ -81,6 +81,13 @@ const DoctorCard = ({ doctor }) => {
                             onPhoneNumberChange={handlePhoneNumberChange}
                             isEditing={isEditing}
                         />
+                        <DoctorAvailability
+                            availability={editedDoctor.doctorAvailability}
+                            onAvailabilityChange={(newAvailability) =>
+                                handleInputChange('doctorAvailability', newAvailability)
+                            }
+                            isEditing={isEditing}
+                        />
                         <Box display="flex" justifyContent="flex-end" gap={2}>
                             <Button onClick={handleSave}>Save</Button>
                             <Button onClick={handleCancel}>Cancel</Button>
@@ -107,8 +114,10 @@ const DoctorCard = ({ doctor }) => {
                             Consultation Fee Queue: ₹{doctor.doctorConsultationFeeOther}
                         </Typography>
                         <DoctorPhoneNumbers phoneNumbers={doctor.phoneNumbers} />
-                        <DoctorAvailability availability={doctor.doctorAvailability} />
-                        <Button onClick={handleEdit}>Edit</Button>
+                        <DoctorAvailability availability={doctor.doctorAvailability} isEditing={isEditing} />
+                        <Box display="flex" justifyContent="center" gap={2}>
+                            <Button onClick={handleEdit}>Edit</Button>
+                        </Box>
                     </>
                 )}
             </CardContent>
