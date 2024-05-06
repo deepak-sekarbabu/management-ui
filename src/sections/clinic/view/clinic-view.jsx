@@ -12,6 +12,7 @@ const ClinicPage = () => {
     const [clinicData, setClinicData] = useState(null);
     const [isEditable, setEditMode] = useState(false);
     const [editedClinicData, setEditedClinicData] = useState({});
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     useEffect(() => {
         const fetchClinicData = async () => {
@@ -35,9 +36,19 @@ const ClinicPage = () => {
         setEditMode(true);
     };
 
-    const handleCancel = () => {
-        setEditMode(false);
-        setEditedClinicData(clinicData); // Reset edited data to original data
+    const handleCancel = async () => {
+        if (hasUnsavedChanges) {
+            window.location.reload(); // Reload the page if there are unsaved changes
+        } else {
+            try {
+                const response = await axios.get(`${GET_CLINIC_INFO}1`);
+                setEditedClinicData(response.data);
+                setEditMode(false);
+                setHasUnsavedChanges(false);
+            } catch (error) {
+                console.error('Error fetching clinic data:', error);
+            }
+        }
     };
 
     const handleSave = async () => {
@@ -45,6 +56,7 @@ const ClinicPage = () => {
             await axios.put(`${UPDATE_CLINIC_INFO}1`, editedClinicData);
             setClinicData(editedClinicData); // Update original data with edited data
             setEditMode(false);
+            setHasUnsavedChanges(false);
         } catch (error) {
             console.error('Error updating clinic data:', error);
         }
@@ -52,6 +64,7 @@ const ClinicPage = () => {
 
     const handleFormValuesChange = (updatedFormValues) => {
         setEditedClinicData(updatedFormValues);
+        setHasUnsavedChanges(true);
     };
 
     return (

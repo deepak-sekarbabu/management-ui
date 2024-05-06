@@ -5,19 +5,96 @@ import { Card, Stack, TextField, CardContent } from '@mui/material';
 
 function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
     const [formValues, setFormValues] = useState(clinic);
+    const [phoneNumberErrors, setPhoneNumberErrors] = useState([]);
+    const [emailError, setEmailError] = useState(false);
+    const [websiteError, setWebsiteError] = useState(false);
+    const [timingsError, setTimingsError] = useState(false);
+    const [amenitiesError, setAmenitiesError] = useState(false);
 
     const handleChangePhoneNumber = (e, index) => {
         const { value } = e.target;
         const updatedPhoneNumbers = [...formValues.clinicPhoneNumbers];
+        const isValid = validatePhoneNumber(value);
         updatedPhoneNumbers[index] = { ...updatedPhoneNumbers[index], phoneNumber: value };
         setFormValues({ ...formValues, clinicPhoneNumbers: updatedPhoneNumbers });
         onFormValuesChange({ ...formValues, clinicPhoneNumbers: updatedPhoneNumbers });
+        setPhoneNumberErrors(prevErrors => {
+            const newErrors = [...prevErrors];
+            newErrors[index] = !isValid;
+            return newErrors;
+        });
+    };
+
+    const validatePhoneNumber = (phoneNumber) => {
+        const phoneRegex = /^\+91\d{10}$/;
+        return phoneRegex.test(phoneNumber);
     };
 
     const handleChange = (e) => {
-        setFormValues({ ...formValues, [e.target.name]: e.target.value });
-        onFormValuesChange({ ...formValues, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        let updatedValue = value;
+
+        // Validate input fields
+        switch (name) {
+            case 'clinicName':
+                updatedValue = value.slice(0, 150);
+                break;
+            case 'clinicAddress':
+                updatedValue = value.slice(0, 200);
+                break;
+            case 'clinicPinCode':
+                updatedValue = value.slice(0, 10);
+                break;
+            case 'clinicEmail':
+                updatedValue = value.slice(0, 120);
+                setEmailError(updatedValue.length > 120);
+                break;
+            case 'clinicTimings':
+                updatedValue = value.slice(0, 150);
+                setTimingsError(updatedValue.length > 149);
+                break;
+            case 'clinicWebsite':
+                updatedValue = value.slice(0, 150);
+                setWebsiteError(updatedValue.length > 149);
+                break;
+            case 'clinicAmenities':
+                updatedValue = value.slice(0, 150);
+                setAmenitiesError(updatedValue.length > 149);
+                break;
+            default:
+                break;
+        }
+
+        setFormValues({ ...formValues, [name]: updatedValue });
+        onFormValuesChange({ ...formValues, [name]: updatedValue });
     };
+
+    const isValidEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    let emailHelperText = '';
+    if (!isValidEmail(formValues.clinicEmail)) {
+        emailHelperText = 'Invalid email address';
+    } else if (emailError) {
+        emailHelperText = 'Clinic Email should not exceed 120 characters';
+    }
+
+    let websiteHelperText = '';
+    if (websiteError) {
+        websiteHelperText = 'Clinic Website should not exceed 149 characters';
+    }
+
+    let timingsHelperText = '';
+    if (timingsError) {
+        timingsHelperText = 'Clinic Timings should not exceed 149 characters';
+    }
+
+    let amenitiesHelperText = '';
+    if (amenitiesError) {
+        amenitiesHelperText = 'Clinic Amenities should not exceed 149 characters';
+    }
 
     return (
         <Card>
@@ -27,9 +104,11 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     label="Clinic Name"
                     value={formValues.clinicName}
                     onChange={handleChange}
-                    disabled
+                    disabled={!isEditable}
                     fullWidth
                     margin="normal"
+                    error={formValues.clinicName.length > 149}
+                    helperText={formValues.clinicName.length > 149 ? 'Clinic Name should not exceed 149 characters' : ''}
                 />
 
                 <TextField
@@ -40,6 +119,8 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     disabled={!isEditable}
                     fullWidth
                     margin="normal"
+                    error={formValues.clinicAddress.length > 199}
+                    helperText={formValues.clinicAddress.length > 199 ? 'Clinic Address should not exceed 199 characters' : ''}
                 />
 
                 <TextField
@@ -50,6 +131,8 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     disabled={!isEditable}
                     fullWidth
                     margin="normal"
+                    error={!/^\d+$/.test(formValues.clinicPinCode)}
+                    helperText={!/^\d+$/.test(formValues.clinicPinCode) ? 'Clinic Pin Code should contain only numbers' : ''}
                 />
 
                 <Stack spacing={2}>
@@ -62,6 +145,15 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                             label={`Phone Number ${index + 1}`}
                             disabled={!isEditable}
                             variant="outlined"
+                            InputProps={{
+                                inputProps: {
+                                    maxLength: 13,
+                                    pattern: "^\\+91\\d{10}$",
+                                    title: "Phone number should start with +91 and have 10 digits",
+                                },
+                            }}
+                            error={phoneNumberErrors[index]}
+                            helperText={phoneNumberErrors[index] ? 'Phone number should start with +91 and have 10 digits' : ''}
                         />
                     ))}
                 </Stack>
@@ -71,9 +163,11 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     label="Clinic Email"
                     value={formValues.clinicEmail}
                     onChange={handleChange}
-                    disabled
+                    disabled={!isEditable}
                     fullWidth
                     margin="normal"
+                    error={!isValidEmail(formValues.clinicEmail) || emailError}
+                    helperText={emailHelperText}
                 />
 
                 <TextField
@@ -81,9 +175,11 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     label="Clinic Website"
                     value={formValues.clinicWebsite}
                     onChange={handleChange}
-                    disabled
+                    disabled={!isEditable}
                     fullWidth
                     margin="normal"
+                    error={websiteError}
+                    helperText={websiteHelperText}
                 />
 
                 <TextField
@@ -94,6 +190,8 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     disabled={!isEditable}
                     fullWidth
                     margin="normal"
+                    error={timingsError}
+                    helperText={timingsHelperText}
                 />
 
                 <TextField
@@ -104,6 +202,8 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     disabled={!isEditable}
                     fullWidth
                     margin="normal"
+                    error={amenitiesError}
+                    helperText={amenitiesHelperText}
                 />
             </CardContent>
         </Card>

@@ -17,6 +17,7 @@ const DoctorCard = ({ doctor }) => {
     const handleSave = () => {
         // Save the edited doctor data
         // You can add your logic here to update the doctor data
+        console.log(editedDoctor);
         setIsEditing(false);
     };
 
