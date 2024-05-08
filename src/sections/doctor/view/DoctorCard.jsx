@@ -7,11 +7,11 @@ import { Box, Card, Button, TextField, Typography, CardContent } from '@mui/mate
 import DoctorPhoneNumbers from './DoctorPhoneNumbers';
 import DoctorAvailability from './DoctorAvailability';
 
-const DoctorCard = ({ doctor }) => {
-    const [isEditing, setIsEditing] = useState(false);
+const DoctorCard = ({ doctor, isNewDoctor = false, onSave }) => {
+    const [isEditing, setIsEditing] = useState(isNewDoctor);
     const [editedDoctor, setEditedDoctor] = useState({ ...doctor });
     const [validationErrors, setValidationErrors] = useState({});
-    const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
+    const [isDetailsExpanded, setIsDetailsExpanded] = useState(isNewDoctor);
 
     const handleExpandDetails = () => {
         console.log("Expand:", isDetailsExpanded);
@@ -34,6 +34,11 @@ const DoctorCard = ({ doctor }) => {
         console.log(editedDoctor);
         setIsEditing(false);
         setValidationErrors({});
+
+        // Call the onSave function passed from the parent component
+        if (onSave && isNewDoctor) {
+            onSave(editedDoctor);
+        }
     };
 
     const handleCancel = () => {
@@ -234,6 +239,8 @@ DoctorCard.propTypes = {
             })
         ).isRequired,
     }).isRequired,
+    isNewDoctor: PropTypes.bool,
+    onSave: PropTypes.func,
 };
 
 export default DoctorCard;
