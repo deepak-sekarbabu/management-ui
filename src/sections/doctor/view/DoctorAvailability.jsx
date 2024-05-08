@@ -27,12 +27,12 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
             prevState.map((item, i) =>
                 i === index
                     ? {
-                          ...item,
-                          [field]:
-                              field === 'shiftStartTime' || field === 'shiftEndTime'
-                                  ? dayjs(value).format('HH:mm:ss')
-                                  : value.toUpperCase(),
-                      }
+                        ...item,
+                        [field]:
+                            field === 'shiftStartTime' || field === 'shiftEndTime'
+                                ? dayjs(value).format('HH:mm:ss')
+                                : value.toUpperCase(),
+                    }
                     : item
             )
         );
@@ -203,7 +203,7 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                     </TableBody>
                 </Table>
                 {isEditing && (
-                    <Button onClick={handleAddRow} style={{ marginTop: '16px' }}>
+                    <Button variant="outlined" onClick={handleAddRow} style={{ marginTop: '16px', marginLeft: '12px' }}>
                         Add Row
                     </Button>
                 )}
