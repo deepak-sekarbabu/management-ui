@@ -135,7 +135,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     helperText={!/^\d+$/.test(formValues.clinicPinCode) ? 'Clinic Pin Code should contain only numbers' : ''}
                 />
 
-                <Stack spacing={2}>
+                <Stack mt={2} spacing={2}>
                     {formValues.clinicPhoneNumbers.map((phone, index) => (
                         <TextField
                             key={index}

@@ -38,7 +38,7 @@ const DoctorAbsencePage = () => {
 
     return (
         <div>
-            <h1>Doctor Information</h1>
+            <h1>Doctor Absence Information</h1>
             {doctors.map((doctor, index) => (
                 <DoctorCard key={index} doctor={doctor} onRemove={() => handleRemove(doctor.id)} />
             ))}

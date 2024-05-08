@@ -1,16 +1,16 @@
 import { Helmet } from 'react-helmet-async';
 
-import { DoctorView } from 'src/sections/doctor/view';
+import { DoctorAbsencePage } from 'src/sections/doctorabsence';
 
 // ----------------------------------------------------------------------
 
-export default function DoctorPage() {
+export default function DoctorsAbsencePage() {
   return (
     <>
       <Helmet>
         <title> Doctor Absence Information </title>
       </Helmet>
-      <DoctorView />
+      <DoctorAbsencePage />
     </>
   );
 }
