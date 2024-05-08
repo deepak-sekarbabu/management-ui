@@ -8,5 +8,15 @@
         "absenceStartTime": "19:00:00",
         "absenceEndTime": "20:00:00",
         "optionalMessage": "Personal Emergency"
+    },
+    {
+        "id": 4,
+        "doctorId": "AB00001",
+        "clinicId": 1,
+        "doctorName": "Dr. Deepak Sekarbabu",
+        "absenceDate": "09-05-2024",
+        "absenceStartTime": "19:00:00",
+        "absenceEndTime": "20:00:00",
+        "optionalMessage": "Personal Emergency"
     }
 ]
