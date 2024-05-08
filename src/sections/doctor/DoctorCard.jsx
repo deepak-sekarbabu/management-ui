@@ -134,7 +134,7 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
                     onClick={handleExpandDetails}
                 >
                     <Avatar
-                        alt={doctor.id}
+                        alt={doctor.doctorName}
                         src={`/assets/images/avatars/avatar_${doctor.id}.jpg`}
                     />
                     <Typography variant="h5" component="h2" onClick={handleExpandDetails} style={{ marginLeft: '10px' }}>
