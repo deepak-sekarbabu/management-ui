@@ -141,12 +141,12 @@ const DoctorCard = ({ doctor }) => {
                                     helperText={validationErrors.doctorSpeciality}
                                 />
                                 <TextField
-                                    label="Doctor Experience"
+                                    label="Doctor Experience in years"
                                     value={editedDoctor.doctorExperience}
                                     onChange={(e) => handleInputChange('doctorExperience', e.target.value)}
                                 />
                                 <TextField
-                                    label="Consultation Fee Appointment"
+                                    label="Consultation Fee Appointment in Rupees"
                                     value={editedDoctor.doctorConsultationFee}
                                     onChange={(e) =>
                                         handleInputChange('doctorConsultationFee', e.target.value)
@@ -155,7 +155,7 @@ const DoctorCard = ({ doctor }) => {
                                     helperText={validationErrors.doctorConsultationFee}
                                 />
                                 <TextField
-                                    label="Consultation Fee Queue"
+                                    label="Consultation Fee Queue in Rupees"
                                     value={editedDoctor.doctorConsultationFeeOther}
                                     onChange={(e) => handleInputChange('doctorConsultationFeeOther', e.target.value)}
                                 />
@@ -170,8 +170,8 @@ const DoctorCard = ({ doctor }) => {
                                     isEditing={isEditing}
                                 />
                                 <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
-                                    <Button onClick={handleSave}>Save</Button>
-                                    <Button onClick={handleCancel}>Cancel</Button>
+                                    <Button variant="outlined" onClick={handleSave}>Save</Button>
+                                    <Button variant="outlined" onClick={handleCancel}>Cancel</Button>
                                 </Box>
                             </>
                         ) : (
@@ -196,8 +196,9 @@ const DoctorCard = ({ doctor }) => {
                                     availability={doctor.doctorAvailability}
                                     isEditing={isEditing}
                                 />
-                                <Box display="flex" mt={2} justifyContent="center" gap={2}>
-                                    <Button onClick={handleEdit}>Edit</Button>
+
+                                <Box mt={2} justifyContent="right" alignItems="right" gap={2}>
+                                    <Button variant="outlined" justifyContent="right" onClick={handleEdit}>Edit</Button>
                                 </Box>
                             </>
                         )}
