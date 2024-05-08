@@ -129,7 +129,10 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
     return (
         <Card style={{ marginTop: '20px' }}>
             <CardContent style={{ marginTop: '20px' }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Card
+                    style={{ display: 'flex', alignItems: 'center' }}
+                    onClick={handleExpandDetails}
+                >
                     <Avatar
                         alt={doctor.id}
                         src={`/assets/images/avatars/avatar_${doctor.id}.jpg`}
@@ -137,7 +140,7 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
                     <Typography variant="h5" component="h2" onClick={handleExpandDetails} style={{ marginLeft: '10px' }}>
                         {doctor.doctorName}
                     </Typography>
-                </div>
+                </Card>
                 {isDetailsExpanded && (
                     <Box display="flex" flexDirection="column" gap={2}>
                         {isEditing ? (
