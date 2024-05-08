@@ -1,1 +1,1 @@
-export { default as DoctorListPage } from './doctors';
+export { default as DoctorView } from './doctor-view';
