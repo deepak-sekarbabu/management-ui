@@ -26,6 +26,10 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
 
     const handleRemove = () => {
         console.log("Removing doctor with ID:", doctor.id);
+        // Call the onRemove function passed from the parent component
+        if (onRemove) {
+            onRemove(doctor.id);
+        }
     };
 
     const handleSave = () => {
@@ -114,7 +118,7 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
 
 
     return (
-        <Card>
+        <Card style={{ marginTop: '20px' }}>
             <CardContent style={{ marginTop: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Avatar
