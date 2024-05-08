@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
-import { Box, Stack, Button, Container, Typography } from '@mui/material';
+import { Box, Stack, Button, Container, Typography, CircularProgress } from '@mui/material';
 
 // import data from './clinic.json';
 import ClinicDetails from './clinic-details';
@@ -14,6 +14,7 @@ const ClinicPage = () => {
     const [isEditable, setEditMode] = useState(false);
     const [editedClinicData, setEditedClinicData] = useState({});
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchClinicData = async () => {
@@ -21,6 +22,7 @@ const ClinicPage = () => {
                 const response = await axios.get(`${GET_CLINIC_INFO}1`);
                 setClinicData(response.data);
                 setEditedClinicData(response.data);
+                setLoading(false);
                 // setClinicData(data);
                 // setEditedClinicData(data);
             } catch (error) {
@@ -30,6 +32,23 @@ const ClinicPage = () => {
 
         fetchClinicData();
     }, []);
+
+    if (isLoading) {
+        // Render a loading indicator while waiting for data
+        return (
+            <Container alignItems='left' >
+                <Stack direction="row" alignItems="left" justifyContent="space-between" mb={5} >
+                    <Typography variant="h2">Clinic Information</Typography>
+                </Stack>
+                <CircularProgress style={{
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                }} />
+            </Container>
+        );
+    }
 
     if (!clinicData) {
         return <div>Loading...</div>;
