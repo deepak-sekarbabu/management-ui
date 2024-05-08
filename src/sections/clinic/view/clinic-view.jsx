@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 
 import { Box, Stack, Button, Container, Typography, CircularProgress } from '@mui/material';
 
-// import data from './clinic.json';
 import ClinicDetails from './clinic-details';
 
 const GET_CLINIC_INFO = '/api/clinic/';
@@ -23,8 +22,6 @@ const ClinicPage = () => {
                 setClinicData(response.data);
                 setEditedClinicData(response.data);
                 setLoading(false);
-                // setClinicData(data);
-                // setEditedClinicData(data);
             } catch (error) {
                 console.error('Error fetching clinic data:', error);
             }
@@ -51,7 +48,7 @@ const ClinicPage = () => {
     }
 
     if (!clinicData) {
-        return <div>Loading...</div>;
+        console.error("No clinic Data");
     }
 
     const handleEdit = () => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Button } from '@mui/material';
+import { Box, Card, Button, Typography } from '@mui/material';
 
 import data from './data.json';
 import DoctorCard from './DoctorCard';
@@ -37,14 +37,20 @@ const DoctorPage = () => {
 
 
     return (
-        <div>
-            <h1>Doctor Information</h1>
-            {doctors.map((doctor, index) => (
-                <DoctorCard key={index} doctor={doctor} onRemove={() => handleRemove(doctor.id)} />
-            ))}
-            {newDoctor && <DoctorCard key={doctors.length} doctor={newDoctor} isNewDoctor onSave={saveNewDoctor} onRemove={handleRemove} />}
-            <Button variant="outlined" style={{ marginTop: '20px' }} onClick={addNewDoctor}>Add Doctor</Button>
-        </div>
+        <Card>
+            <Box p={2}>
+                <Typography variant="h2">Doctor Information</Typography>
+                {doctors.map((doctor) => (
+                    <DoctorCard key={doctor.id} doctor={doctor} onRemove={() => handleRemove(doctor.id)} />
+                ))}
+                {newDoctor && (
+                    <DoctorCard key={`new-${doctors.length}`} doctor={newDoctor} isNewDoctor onSave={saveNewDoctor} onRemove={handleRemove} />
+                )}
+                <Box mt={2} display="flex" justifyContent="flex-end">
+                    <Button variant="outlined" onClick={addNewDoctor}>Add Doctor</Button>
+                </Box>
+            </Box>
+        </Card>
     );
 };
 

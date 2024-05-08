@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Box, Paper, Table, Button, TableRow, TableBody, TextField, TableCell, TableHead, Typography, TableContainer, } from '@mui/material';
+import { Box, Card, Paper, Table, Button, TableRow, TableBody, TextField, TableCell, TableHead, Typography, TableContainer, } from '@mui/material';
 
 import data from './data.json';
 
@@ -37,66 +37,68 @@ const DoctorAbsencePage = () => {
     };
 
     return (
-        <Box>
-            <Typography style={{ marginBottom: '20px' }} variant="h1">Doctor Absence Information</Typography>
-            <TableContainer component={Paper}>
-                <Table aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Doctor ID</TableCell>
-                            <TableCell>Doctor Name</TableCell>
-                            <TableCell>Absence Date</TableCell>
-                            <TableCell>Absence Start Time</TableCell>
-                            <TableCell>Absence End Time</TableCell>
-                            <TableCell>Optional Message</TableCell>
-                            <TableCell>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {doctorAbsence.map((absence, index) => (
-                            <TableRow key={index}>
-                                <TableCell>{absence.doctorId}</TableCell>
-                                <TableCell>{absence.doctorName}</TableCell>
-                                <TableCell>{absence.absenceDate}</TableCell>
-                                <TableCell>{absence.absenceStartTime}</TableCell>
-                                <TableCell>{absence.absenceEndTime}</TableCell>
-                                <TableCell>{absence.optionalMessage}</TableCell>
-                                <TableCell>
-                                    <Button variant="outlined" color="error" onClick={() => handleRemove(absence.id)}>Remove</Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                        {isAdding && (
+        <Card>
+            <Box p={2}>
+                <Typography style={{ marginBottom: '20px' }} variant="h2">Doctor Absence Information</Typography>
+                <TableContainer component={Paper}>
+                    <Table aria-label="simple table">
+                        <TableHead>
                             <TableRow>
-                                <TableCell>
-                                    <TextField value={newRow.doctorId} onChange={e => setNewRow({ ...newRow, doctorId: e.target.value })} />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField value={newRow.doctorName} onChange={e => setNewRow({ ...newRow, doctorName: e.target.value })} />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField value={newRow.absenceDate} onChange={e => setNewRow({ ...newRow, absenceDate: e.target.value })} />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField value={newRow.absenceStartTime} onChange={e => setNewRow({ ...newRow, absenceStartTime: e.target.value })} />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField value={newRow.absenceEndTime} onChange={e => setNewRow({ ...newRow, absenceEndTime: e.target.value })} />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField value={newRow.optionalMessage} onChange={e => setNewRow({ ...newRow, optionalMessage: e.target.value })} />
-                                </TableCell>
-                                <TableCell>
-                                    <Button variant="outlined" color="success" onClick={handleSave}>Save</Button>
-                                    <Button style={{ marginLeft: '10px' }} variant="outlined" color="error" onClick={handleCancel}>Cancel</Button>
-                                </TableCell>
+                                <TableCell>Doctor ID</TableCell>
+                                <TableCell>Doctor Name</TableCell>
+                                <TableCell>Absence Date</TableCell>
+                                <TableCell>Absence Start Time</TableCell>
+                                <TableCell>Absence End Time</TableCell>
+                                <TableCell>Optional Message</TableCell>
+                                <TableCell>Actions</TableCell>
                             </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <Button style={{ marginTop: '20px' }} variant="contained" color="primary" onClick={handleAdd}>Add</Button>
-        </Box>
+                        </TableHead>
+                        <TableBody>
+                            {doctorAbsence.map((absence, index) => (
+                                <TableRow key={index}>
+                                    <TableCell>{absence.doctorId}</TableCell>
+                                    <TableCell>{absence.doctorName}</TableCell>
+                                    <TableCell>{absence.absenceDate}</TableCell>
+                                    <TableCell>{absence.absenceStartTime}</TableCell>
+                                    <TableCell>{absence.absenceEndTime}</TableCell>
+                                    <TableCell>{absence.optionalMessage}</TableCell>
+                                    <TableCell>
+                                        <Button variant="outlined" color="error" onClick={() => handleRemove(absence.id)}>Remove</Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                            {isAdding && (
+                                <TableRow>
+                                    <TableCell>
+                                        <TextField value={newRow.doctorId} onChange={e => setNewRow({ ...newRow, doctorId: e.target.value })} />
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextField value={newRow.doctorName} onChange={e => setNewRow({ ...newRow, doctorName: e.target.value })} />
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextField value={newRow.absenceDate} onChange={e => setNewRow({ ...newRow, absenceDate: e.target.value })} />
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextField value={newRow.absenceStartTime} onChange={e => setNewRow({ ...newRow, absenceStartTime: e.target.value })} />
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextField value={newRow.absenceEndTime} onChange={e => setNewRow({ ...newRow, absenceEndTime: e.target.value })} />
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextField value={newRow.optionalMessage} onChange={e => setNewRow({ ...newRow, optionalMessage: e.target.value })} />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Button variant="outlined" color="success" onClick={handleSave}>Save</Button>
+                                        <Button style={{ marginLeft: '10px' }} variant="outlined" color="error" onClick={handleCancel}>Cancel</Button>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Button style={{ marginTop: '20px' }} variant="contained" color="primary" onClick={handleAdd}>Add</Button>
+            </Box>
+        </Card>
     );
 };
 
