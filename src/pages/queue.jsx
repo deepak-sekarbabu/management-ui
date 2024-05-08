@@ -8,7 +8,7 @@ export default function QueuePage() {
     return (
         <>
             <Helmet>
-                <title>Queue Status</title>
+                <title> Queue Status </title>
             </Helmet>
             <QueueView />
         </>

@@ -8,7 +8,7 @@ export default function ClinicPage() {
   return (
     <>
       <Helmet>
-        <title>Clinic Information</title>
+        <title> Clinic Information </title>
       </Helmet>
 
       <ClinicView />

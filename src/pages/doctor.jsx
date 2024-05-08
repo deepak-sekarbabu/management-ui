@@ -8,7 +8,7 @@ export default function DoctorPage() {
   return (
     <>
       <Helmet>
-        <title>Doctor Information</title>
+        <title> Doctor Information </title>
       </Helmet>
       <DoctorView />
     </>

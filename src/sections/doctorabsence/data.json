@@ -1,0 +1,244 @@
+[
+    {
+        "id": 1,
+        "doctorId": "AB00001",
+        "clinicId": 1,
+        "doctorName": "Dr. Deepak Sekarbabu",
+        "doctorSpeciality": "Dental Specialist",
+        "doctorExperience": 12,
+        "doctorConsultationFee": 500,
+        "phoneNumbers": [
+            {
+                "phoneNumber": "+91 8932154652"
+            }
+        ],
+        "doctorAvailability": [
+            {
+                "availableDays": "MONDAY",
+                "shiftTime": "MORNING",
+                "shiftStartTime": "09:00:00",
+                "shiftEndTime": "10:30:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "MONDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "TUESDAY",
+                "shiftTime": "MORNING",
+                "shiftStartTime": "09:00:00",
+                "shiftEndTime": "10:30:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "TUESDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "WEDNESDAY",
+                "shiftTime": "MORNING",
+                "shiftStartTime": "09:00:00",
+                "shiftEndTime": "10:30:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "WEDNESDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "THURSDAY",
+                "shiftTime": "MORNING",
+                "shiftStartTime": "09:00:00",
+                "shiftEndTime": "10:30:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "THURSDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "FRIDAY",
+                "shiftTime": "MORNING",
+                "shiftStartTime": "09:00:00",
+                "shiftEndTime": "10:30:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "FRIDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "SATURDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "SUNDAY",
+                "shiftTime": "MORNING",
+                "shiftStartTime": "10:30:00",
+                "shiftEndTime": "12:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "SUNDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            }
+        ],
+        "doctorConsultationFeeOther": 300
+    },
+    {
+        "id": 2,
+        "doctorId": "AB00002",
+        "clinicId": 1,
+        "doctorName": "Dr. Dilip",
+        "doctorSpeciality": "Dental Specialist",
+        "doctorExperience": 11,
+        "doctorConsultationFee": 300,
+        "phoneNumbers": [
+            {
+                "phoneNumber": "+91 8932154652"
+            }
+        ],
+        "doctorAvailability": [
+            {
+                "availableDays": "MONDAY",
+                "shiftTime": "MORNING",
+                "shiftStartTime": "09:00:00",
+                "shiftEndTime": "10:30:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "MONDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "TUESDAY",
+                "shiftTime": "MORNING",
+                "shiftStartTime": "09:00:00",
+                "shiftEndTime": "10:30:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "TUESDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "WEDNESDAY",
+                "shiftTime": "MORNING",
+                "shiftStartTime": "09:00:00",
+                "shiftEndTime": "10:30:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "WEDNESDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "THURSDAY",
+                "shiftTime": "MORNING",
+                "shiftStartTime": "09:00:00",
+                "shiftEndTime": "10:30:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "THURSDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "FRIDAY",
+                "shiftTime": "MORNING",
+                "shiftStartTime": "09:00:00",
+                "shiftEndTime": "10:30:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "FRIDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "SATURDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "SUNDAY",
+                "shiftTime": "MORNING",
+                "shiftStartTime": "10:30:00",
+                "shiftEndTime": "12:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            },
+            {
+                "availableDays": "SUNDAY",
+                "shiftTime": "EVENING",
+                "shiftStartTime": "18:00:00",
+                "shiftEndTime": "20:00:00",
+                "consultationTime": 10,
+                "configType": "APPOINTMENT"
+            }
+        ],
+        "doctorConsultationFeeOther": 300
+    }
+]

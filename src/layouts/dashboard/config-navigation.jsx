@@ -28,6 +28,11 @@ const navConfig = [
         icon: icon('ic_user'),
     },
     {
+        title: 'doctorabsence',
+        path: '/doctorabsence',
+        icon: icon('ic_user'),
+    },
+    {
         title: 'queue',
         path: '/queue',
         icon: icon('ic_user'),
