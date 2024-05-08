@@ -1,137 +1,103 @@
-import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
-import { Box, Card, Button, TextField, Typography, CardContent, } from '@mui/material';
+import { Box, Paper, Table, Button, TableRow, TableBody, TextField, TableCell, TableHead, Typography, TableContainer, } from '@mui/material';
 
-// Assuming data.json is imported in the same file or merged into the component's state
 import data from './data.json';
 
 const DoctorAbsencePage = () => {
     const [doctorAbsence, setDoctorAbsence] = useState([...data]);
+    const [newRow, setNewRow] = useState({ doctorId: '', doctorName: '', absenceDate: '', absenceStartTime: '', absenceEndTime: '', optionalMessage: '' });
+    const [isAdding, setIsAdding] = useState(false);
 
     const handleRemove = (id) => {
+        console.log("Removing row with ID:", id)
         setDoctorAbsence(prevDoctorAbsence => prevDoctorAbsence.filter(absence => absence.id !== id));
     };
 
-    return (
-        <Card>
-            <Typography variant="h1">Doctor Absence Information</Typography>
-            {doctorAbsence.map((absence, index) => (
-                <DoctorAbsenceCard key={index} absence={absence} onRemove={() => handleRemove(absence.id)} />
-            ))}
-        </Card>
-    );
-};
-
-const DoctorAbsenceCard = ({ absence, onRemove }) => {
-    const [isEditing, setIsEditing] = useState(false);
-    const [editedDoctor, setEditedDoctor] = useState({ ...absence });
-
-    const handleEdit = () => {
-        setIsEditing(true);
+    const handleAdd = () => {
+        console.log();
+        setIsAdding(true);
     };
 
     const handleSave = () => {
-        // Implement save logic
-        setIsEditing(false);
+        const newAbsence = {
+            id: Math.random().toString(36).substr(2, 9), // Generate a random ID for demonstration
+            ...newRow
+        };
+        console.log("Adding new row:", newAbsence);
+        setDoctorAbsence([...doctorAbsence, newAbsence]);
+        setNewRow({ doctorId: '', doctorName: '', absenceDate: '', absenceStartTime: '', absenceEndTime: '', optionalMessage: '' });
+        setIsAdding(false);
     };
 
     const handleCancel = () => {
-        // Implement cancel logic
-        setIsEditing(false);
-        setEditedDoctor({ ...absence });
-    };
-
-    const handleInputChange = (field, value) => {
-        setEditedDoctor(prevState => ({
-            ...prevState,
-            [field]: value
-        }));
+        console.log("Canceling addition of new row:", newRow);
+        setNewRow({ doctorId: '', doctorName: '', absenceDate: '', absenceStartTime: '', absenceEndTime: '', optionalMessage: '' });
+        setIsAdding(false);
     };
 
     return (
-        <Card>
-            <CardContent>
-                {isEditing ? (
-                    <Box display="flex" flexDirection="column" gap={2}>
-                        <TextField
-                            label="Doctor ID"
-                            value={editedDoctor.doctorId}
-                            onChange={(e) => handleInputChange('doctorId', e.target.value)}
-                        />
-                        <TextField
-                            label="Doctor Name"
-                            value={editedDoctor.doctorName}
-                            onChange={(e) => handleInputChange('doctorName', e.target.value)}
-                        />
-                        <TextField
-                            label="Absence Date"
-                            value={editedDoctor.absenceDate}
-                            onChange={(e) => handleInputChange('absenceDate', e.target.value)}
-                        />
-                        <TextField
-                            label="Absence Start Time"
-                            value={editedDoctor.absenceStartTime}
-                            onChange={(e) => handleInputChange('absenceStartTime', e.target.value)}
-                        />
-                        <TextField
-                            label="Absence End Time"
-                            value={editedDoctor.absenceEndTime}
-                            onChange={(e) => handleInputChange('absenceEndTime', e.target.value)}
-                        />
-                        <TextField
-                            label="Optional Message"
-                            value={editedDoctor.optionalMessage}
-                            onChange={(e) => handleInputChange('optionalMessage', e.target.value)}
-                        />
-                        <Box mt={2} display="flex" justifyContent="flex-end" alignitems="center" gap={2}>
-                            <Button variant="outlined" onClick={handleSave}>Save</Button>
-                            <Button variant="outlined" onClick={handleCancel}>Cancel</Button>
-                        </Box>
-                    </Box>
-                ) : (
-                    <Box display="flex" flexDirection="column" gap={2}>
-                        <Typography variant="body1" color="textSecondary">
-                            Doctor ID: {absence.doctorId}
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary">
-                            Doctor Name: {absence.doctorName}
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary">
-                            Absence Date: {absence.absenceDate}
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary">
-                            Absence Start Time: {absence.absenceStartTime}
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary">
-                            Absence End Time: {absence.absenceEndTime}
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary">
-                            Optional Message: {absence.optionalMessage}
-                        </Typography>
-                        <Box mt={2} display="flex" justifyContent="flex-end" alignitems="center" gap={2}>
-                            <Button variant="outlined" onClick={handleEdit}>Edit</Button>
-                            <Button variant="outlined" color="error" onClick={onRemove}>Remove</Button>
-                        </Box>
-                    </Box>
-                )}
-            </CardContent>
-        </Card>
+        <Box>
+            <Typography style={{ marginBottom: '20px' }} variant="h1">Doctor Absence Information</Typography>
+            <TableContainer component={Paper}>
+                <Table aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Doctor ID</TableCell>
+                            <TableCell>Doctor Name</TableCell>
+                            <TableCell>Absence Date</TableCell>
+                            <TableCell>Absence Start Time</TableCell>
+                            <TableCell>Absence End Time</TableCell>
+                            <TableCell>Optional Message</TableCell>
+                            <TableCell>Actions</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {doctorAbsence.map((absence, index) => (
+                            <TableRow key={index}>
+                                <TableCell>{absence.doctorId}</TableCell>
+                                <TableCell>{absence.doctorName}</TableCell>
+                                <TableCell>{absence.absenceDate}</TableCell>
+                                <TableCell>{absence.absenceStartTime}</TableCell>
+                                <TableCell>{absence.absenceEndTime}</TableCell>
+                                <TableCell>{absence.optionalMessage}</TableCell>
+                                <TableCell>
+                                    <Button variant="outlined" color="error" onClick={() => handleRemove(absence.id)}>Remove</Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                        {isAdding && (
+                            <TableRow>
+                                <TableCell>
+                                    <TextField value={newRow.doctorId} onChange={e => setNewRow({ ...newRow, doctorId: e.target.value })} />
+                                </TableCell>
+                                <TableCell>
+                                    <TextField value={newRow.doctorName} onChange={e => setNewRow({ ...newRow, doctorName: e.target.value })} />
+                                </TableCell>
+                                <TableCell>
+                                    <TextField value={newRow.absenceDate} onChange={e => setNewRow({ ...newRow, absenceDate: e.target.value })} />
+                                </TableCell>
+                                <TableCell>
+                                    <TextField value={newRow.absenceStartTime} onChange={e => setNewRow({ ...newRow, absenceStartTime: e.target.value })} />
+                                </TableCell>
+                                <TableCell>
+                                    <TextField value={newRow.absenceEndTime} onChange={e => setNewRow({ ...newRow, absenceEndTime: e.target.value })} />
+                                </TableCell>
+                                <TableCell>
+                                    <TextField value={newRow.optionalMessage} onChange={e => setNewRow({ ...newRow, optionalMessage: e.target.value })} />
+                                </TableCell>
+                                <TableCell>
+                                    <Button variant="outlined" color="success" onClick={handleSave}>Save</Button>
+                                    <Button style={{ marginLeft: '10px' }} variant="outlined" color="error" onClick={handleCancel}>Cancel</Button>
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <Button style={{ marginTop: '20px' }} variant="contained" color="primary" onClick={handleAdd}>Add</Button>
+        </Box>
     );
-};
-
-DoctorAbsenceCard.propTypes = {
-    absence: PropTypes.shape({
-        id: PropTypes.any.isRequired,
-        doctorId: PropTypes.string.isRequired,
-        clinicId: PropTypes.number.isRequired,
-        doctorName: PropTypes.string.isRequired,
-        absenceDate: PropTypes.string.isRequired,
-        absenceStartTime: PropTypes.string.isRequired,
-        absenceEndTime: PropTypes.string.isRequired,
-        optionalMessage: PropTypes.string.isRequired,
-    }).isRequired,
-    onRemove: PropTypes.func.isRequired,
 };
 
 export default DoctorAbsencePage;
