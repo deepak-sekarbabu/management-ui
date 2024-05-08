@@ -98,9 +98,40 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
             doctorAvailability: newAvailability,
         }));
     };
+
     const validateDoctorData = (doctorData) => {
         const errors = {};
 
+        // Check if doctorName is empty
+        if (!doctorData.doctorName || doctorData.doctorName.trim().length === 0) {
+            errors.doctorName = 'Doctor name cannot be empty';
+        }
+
+        // Check if doctorId is empty
+        if (!doctorData.doctorId || doctorData.doctorId.trim().length === 0) {
+            errors.doctorId = 'Doctor ID cannot be empty';
+        }
+
+        // Check if doctorSpeciality is empty
+        if (!doctorData.doctorSpeciality || doctorData.doctorSpeciality.trim().length === 0) {
+            errors.doctorSpeciality = 'Doctor specialty cannot be empty';
+        }
+
+        // Check if doctorExperience is empty or not a number
+        if (!doctorData.doctorExperience || Number.isNaN(doctorData.doctorExperience)) {
+            errors.doctorExperience = 'Doctor experience must be a number';
+        }
+
+        if (doctorData.doctorExperience > 70) {
+            errors.doctorExperience = 'Doctor experience cannot be more than 70';
+        }
+
+        // Check if doctorConsultationFee is empty or not a number
+        if (!doctorData.doctorConsultationFee || Number.isNaN(doctorData.doctorConsultationFee)) {
+            errors.doctorConsultationFee = 'Consultation fee must be a number';
+        }
+
+        // Existing validation checks
         if (doctorData.doctorId.length > 50) {
             errors.doctorId = 'Doctor ID cannot be more than 50 characters';
         }
@@ -123,8 +154,6 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
 
         return errors;
     };
-
-
 
     return (
         <Card style={{ marginTop: '20px' }}>
@@ -171,20 +200,33 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
                                     label="Doctor Experience in years"
                                     value={editedDoctor.doctorExperience}
                                     onChange={(e) => handleInputChange('doctorExperience', e.target.value)}
+                                    error={!!validationErrors.doctorExperience}
+                                    helperText={validationErrors.doctorExperience}
+                                    inputProps={{
+                                        type: "number", // This ensures that only numbers can be entered
+                                        min: 1, // Optionally, you can set a minimum value
+                                        max: 70,
+                                    }}
                                 />
                                 <TextField
                                     label="Consultation Fee Appointment in Rupees"
                                     value={editedDoctor.doctorConsultationFee}
-                                    onChange={(e) =>
-                                        handleInputChange('doctorConsultationFee', e.target.value)
-                                    }
+                                    onChange={(e) => handleInputChange('doctorConsultationFee', e.target.value)}
                                     error={!!validationErrors.doctorConsultationFee}
                                     helperText={validationErrors.doctorConsultationFee}
+                                    inputProps={{
+                                        type: "number", // This ensures that only numbers can be entered
+                                    }}
                                 />
                                 <TextField
                                     label="Consultation Fee Queue in Rupees"
                                     value={editedDoctor.doctorConsultationFeeOther}
                                     onChange={(e) => handleInputChange('doctorConsultationFeeOther', e.target.value)}
+                                    error={!!validationErrors.doctorConsultationFeeOther}
+                                    helperText={validationErrors.doctorConsultationFeeOther}
+                                    inputProps={{
+                                        type: "number", // This ensures that only numbers can be entered
+                                    }}
                                 />
                                 <DoctorPhoneNumbers
                                     phoneNumbers={editedDoctor.phoneNumbers}

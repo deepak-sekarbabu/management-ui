@@ -160,6 +160,9 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                                         e.target.value
                                                     )
                                                 }
+                                                inputProps={{
+                                                    type: "number", // This ensures that only numbers can be entered
+                                                }}
                                             />
                                         </TableCell>
                                         <TableCell align="left">

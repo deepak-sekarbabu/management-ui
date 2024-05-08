@@ -13,7 +13,7 @@ const DoctorPage = () => {
     const addNewDoctor = () => {
         const newDoctorEntry = {
             id: doctors.length + 1, // Assuming ID is based on the current length of the doctors array
-            doctorName: 'New Doctor',
+            doctorName: '',
             doctorId: '',
             doctorSpeciality: '',
             doctorExperience: 0,
