@@ -50,10 +50,19 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
     };
 
     const handleCancel = () => {
-        setEditedDoctor({ ...doctor });
-        setIsEditing(false);
-        setValidationErrors({});
-        setIsDetailsExpanded(false);
+        // If isNewDoctor is true, it means it's a new doctor being edited
+        if (isNewDoctor) {
+            // Call the onRemove function passed from the parent component to remove the new doctor
+            if (onRemove) {
+                onRemove();
+            }
+        } else {
+            // If it's an existing doctor being edited, reset the state and close the edit mode
+            setEditedDoctor({ ...doctor });
+            setIsEditing(false);
+            setValidationErrors({});
+            setIsDetailsExpanded(false);
+        }
     };
 
     const handleInputChange = (field, value) => {

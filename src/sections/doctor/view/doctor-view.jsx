@@ -25,16 +25,16 @@ const DoctorPage = () => {
         setNewDoctor(newDoctorEntry);
     };
 
+    const handleRemove = (doctorId) => {
+        setNewDoctor(null);
+        setDoctors(doctors.filter(doctor => doctor.id !== doctorId));
+    };
+
     const saveNewDoctor = (newDoctorData) => {
         setDoctors([...doctors, newDoctorData]);
         setNewDoctor(null);
     };
 
-    const handleRemove = (doctorId) => {
-        console.log("Removing doctor with ID:", doctorId);
-        setDoctors(doctors.filter(doctor => doctor.id !== doctorId));
-
-    };
 
     return (
         <div>
