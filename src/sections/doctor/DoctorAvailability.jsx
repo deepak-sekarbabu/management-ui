@@ -162,6 +162,8 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                                 }
                                                 inputProps={{
                                                     type: "number", // This ensures that only numbers can be entered
+                                                    min: 2,
+                                                    max: 60
                                                 }}
                                             />
                                         </TableCell>
