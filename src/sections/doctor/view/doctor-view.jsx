@@ -30,12 +30,17 @@ const DoctorPage = () => {
         setNewDoctor(null);
     };
 
+    const handleRemove = (doctorId) => {
+        console.log("Removing doctor with ID:", doctorId);
+
+    };
+
     return (
         <div>
             {doctors.map((doctor, index) => (
                 <DoctorCard key={index} doctor={doctor} />
             ))}
-            {newDoctor && <DoctorCard key={doctors.length} doctor={newDoctor} isNewDoctor onSave={saveNewDoctor} />}
+            {newDoctor && <DoctorCard key={doctors.length} doctor={newDoctor} isNewDoctor onSave={saveNewDoctor} onRemove={handleRemove} />}
             <Button variant="outlined" style={{ marginTop: '20px' }} onClick={addNewDoctor}>Add Doctor</Button>
         </div>
     );

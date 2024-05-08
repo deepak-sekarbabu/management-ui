@@ -7,7 +7,7 @@ import { Box, Card, Button, TextField, Typography, CardContent } from '@mui/mate
 import DoctorPhoneNumbers from './DoctorPhoneNumbers';
 import DoctorAvailability from './DoctorAvailability';
 
-const DoctorCard = ({ doctor, isNewDoctor = false, onSave }) => {
+const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
     const [isEditing, setIsEditing] = useState(isNewDoctor);
     const [editedDoctor, setEditedDoctor] = useState({ ...doctor });
     const [validationErrors, setValidationErrors] = useState({});
@@ -22,6 +22,10 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave }) => {
         console.log("isEditing", isEditing);
         // Removed the line that toggles isDetailsExpanded
         setIsEditing(true);
+    };
+
+    const handleRemove = () => {
+        console.log("Removing doctor with ID:", doctor.id);
     };
 
     const handleSave = () => {
@@ -107,6 +111,8 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave }) => {
         return errors;
     };
 
+
+
     return (
         <Card>
             <CardContent style={{ marginTop: '20px' }}>
@@ -176,7 +182,7 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave }) => {
                                 />
                                 <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
                                     <Button variant="outlined" onClick={handleSave}>Save</Button>
-                                    <Button variant="outlined" onClick={handleCancel}>Cancel</Button>
+                                    <Button variant="outlined" color="error" onClick={handleCancel}>Cancel</Button>
                                 </Box>
                             </>
                         ) : (
@@ -202,8 +208,9 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave }) => {
                                     isEditing={isEditing}
                                 />
 
-                                <Box mt={2} justifyContent="right" alignItems="right" gap={2}>
-                                    <Button variant="outlined" justifyContent="right" onClick={handleEdit}>Edit</Button>
+                                <Box mt={2} display="flex" justifyContent="flex-end" alignItems="center" gap={2}>
+                                    <Button variant="outlined" onClick={handleEdit}>Edit</Button>
+                                    <Button variant="outlined" color="error" onClick={handleRemove}>Remove</Button>
                                 </Box>
                             </>
                         )}
@@ -241,6 +248,7 @@ DoctorCard.propTypes = {
     }).isRequired,
     isNewDoctor: PropTypes.bool,
     onSave: PropTypes.func,
+    onRemove: PropTypes.func
 };
 
 export default DoctorCard;
