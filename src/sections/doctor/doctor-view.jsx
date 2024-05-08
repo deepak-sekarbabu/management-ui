@@ -19,7 +19,9 @@ const DoctorPage = () => {
             doctorExperience: 0,
             doctorConsultationFee: 0,
             doctorConsultationFeeOther: 0,
-            phoneNumbers: [],
+            phoneNumbers: [{
+                "phoneNumber": ""
+            }],
             doctorAvailability: [],
         };
         setNewDoctor(newDoctorEntry);

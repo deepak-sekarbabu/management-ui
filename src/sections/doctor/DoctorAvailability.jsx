@@ -21,6 +21,7 @@ import {
 
 const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) => {
     const [editedAvailability, setEditedAvailability] = useState(availability);
+    const [errors, setErrors] = useState({});
 
     const handleAvailabilityChange = (index, field, value) => {
         setEditedAvailability((prevState) =>
@@ -36,8 +37,34 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                     : item
             )
         );
+
+        if (field === 'shiftEndTime') {
+            const updatedItem = { ...editedAvailability[index], shiftEndTime: dayjs(value, 'HH:mm:ss') };
+            const shiftStartTime = dayjs(updatedItem.shiftStartTime, 'HH:mm:ss');
+            const shiftEndTime = dayjs(value, 'HH:mm:ss');
+            if (shiftEndTime.isBefore(shiftStartTime)) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    [index]: {
+                        ...prevErrors[index],
+                        shiftEndTime: 'Shift end time must be greater than shift start time.',
+                    },
+                }));
+            } else {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    [index]: {
+                        ...prevErrors[index],
+                        shiftEndTime: null,
+                    },
+                }));
+            }
+        }
+
         onAvailabilityChange(editedAvailability);
     };
+
+
 
     const handleDeleteRow = (index) => {
         setEditedAvailability((prevState) => prevState.filter((_, i) => i !== index));
@@ -63,26 +90,26 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
     const configTypes = ['APPOINTMENT', 'QUEUE'];
 
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="left">Available Days</TableCell>
-                            <TableCell align="left">Shift Time</TableCell>
-                            <TableCell align="left">Shift Start Time</TableCell>
-                            <TableCell align="left">Shift End Time</TableCell>
-                            <TableCell align="left">Consultation Time</TableCell>
-                            <TableCell align="left">Config Type</TableCell>
-                            {isEditing && <TableCell align="center">Actions</TableCell>}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {editedAvailability.map((item, index) => (
-                            <TableRow key={index}>
-                                {isEditing ? (
-                                    <>
-                                        <TableCell align="left">
+        <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell align="left">Available Days</TableCell>
+                        <TableCell align="left">Shift Time</TableCell>
+                        <TableCell align="left">Shift Start Time</TableCell>
+                        <TableCell align="left">Shift End Time</TableCell>
+                        <TableCell align="left">Consultation Time</TableCell>
+                        <TableCell align="left">Config Type</TableCell>
+                        {isEditing && <TableCell align="center">Actions</TableCell>}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {editedAvailability.map((item, index) => (
+                        <TableRow key={index}>
+                            {isEditing ? (
+                                <>
+                                    <TableCell align="left">
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
                                             <Select
                                                 value={weekDays.find(
                                                     (day) =>
@@ -102,33 +129,32 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                                     </MenuItem>
                                                 ))}
                                             </Select>
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <Select
-                                                value={shiftTimes.find(
-                                                    (time) => time.toUpperCase() === item.shiftTime
-                                                )}
-                                                onChange={(e) =>
-                                                    handleAvailabilityChange(
-                                                        index,
-                                                        'shiftTime',
-                                                        e.target.value
-                                                    )
-                                                }
-                                            >
-                                                {shiftTimes.map((time) => (
-                                                    <MenuItem key={time} value={time}>
-                                                        {time}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </TableCell>
-                                        <TableCell align="left">
+                                        </LocalizationProvider>
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        <Select
+                                            value={shiftTimes.find(
+                                                (time) => time.toUpperCase() === item.shiftTime
+                                            )}
+                                            onChange={(e) =>
+                                                handleAvailabilityChange(
+                                                    index,
+                                                    'shiftTime',
+                                                    e.target.value
+                                                )
+                                            }
+                                        >
+                                            {shiftTimes.map((time) => (
+                                                <MenuItem key={time} value={time}>
+                                                    {time}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </TableCell>
+                                    <TableCell align="left" style={{ minWidth: '175px' }}>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
                                             <TimePicker
-                                                defaultValue={dayjs(
-                                                    item.shiftStartTime,
-                                                    'HH:mm:ss'
-                                                )}
+                                                defaultValue={dayjs(item.shiftStartTime, 'HH:mm:ss')}
                                                 onChange={(value) =>
                                                     handleAvailabilityChange(
                                                         index,
@@ -137,83 +163,83 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                                     )
                                                 }
                                             />
-                                        </TableCell>
-                                        <TableCell align="left">
+                                        </LocalizationProvider>
+                                    </TableCell>
+                                    <TableCell align="left" style={{ minWidth: '175px' }}>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
                                             <TimePicker
                                                 defaultValue={dayjs(item.shiftEndTime, 'HH:mm:ss')}
                                                 onChange={(value) =>
-                                                    handleAvailabilityChange(
-                                                        index,
-                                                        'shiftEndTime',
-                                                        value
-                                                    )
+                                                    handleAvailabilityChange(index, 'shiftEndTime', value)
                                                 }
+                                                error={!!errors[index]?.shiftEndTime}
+                                                helperText={errors[index]?.shiftEndTime}
                                             />
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <TextField
-                                                value={item.consultationTime}
-                                                onChange={(e) =>
-                                                    handleAvailabilityChange(
-                                                        index,
-                                                        'consultationTime',
-                                                        e.target.value
-                                                    )
-                                                }
-                                                inputProps={{
-                                                    type: "number", // This ensures that only numbers can be entered
-                                                    min: 2,
-                                                    max: 60
-                                                }}
-                                            />
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <Select
-                                                value={configTypes.find(
-                                                    (type) => type.toUpperCase() === item.configType
-                                                )}
-                                                onChange={(e) =>
-                                                    handleAvailabilityChange(
-                                                        index,
-                                                        'configType',
-                                                        e.target.value
-                                                    )
-                                                }
-                                            >
-                                                {configTypes.map((type) => (
-                                                    <MenuItem key={type} value={type}>
-                                                        {type}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <Button onClick={() => handleDeleteRow(index)}>
-                                                Delete
-                                            </Button>
-                                        </TableCell>
-                                    </>
-                                ) : (
-                                    <>
-                                        <TableCell align="left">{item.availableDays}</TableCell>
-                                        <TableCell align="left">{item.shiftTime}</TableCell>
-                                        <TableCell align="left">{item.shiftStartTime}</TableCell>
-                                        <TableCell align="left">{item.shiftEndTime}</TableCell>
-                                        <TableCell align="left">{item.consultationTime}</TableCell>
-                                        <TableCell align="left">{item.configType}</TableCell>
-                                    </>
-                                )}
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-                {isEditing && (
-                    <Button variant="outlined" onClick={handleAddRow} style={{ marginTop: '16px', marginLeft: '12px' }}>
-                        Add Row
-                    </Button>
-                )}
-            </TableContainer>
-        </LocalizationProvider>
+                                        </LocalizationProvider>
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        <TextField
+                                            value={item.consultationTime}
+                                            onChange={(e) =>
+                                                handleAvailabilityChange(
+                                                    index,
+                                                    'consultationTime',
+                                                    e.target.value
+                                                )
+                                            }
+                                            inputProps={{
+                                                type: "number", // This ensures that only numbers can be entered
+                                                min: 2,
+                                                max: 60
+                                            }}
+                                        />
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        <Select
+                                            value={configTypes.find(
+                                                (type) => type.toUpperCase() === item.configType
+                                            )}
+                                            onChange={(e) =>
+                                                handleAvailabilityChange(
+                                                    index,
+                                                    'configType',
+                                                    e.target.value
+                                                )
+                                            }
+                                        >
+                                            {configTypes.map((type) => (
+                                                <MenuItem key={type} value={type}>
+                                                    {type}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Button onClick={() => handleDeleteRow(index)}>
+                                            Delete
+                                        </Button>
+                                    </TableCell>
+                                </>
+                            ) : (
+                                <>
+                                    <TableCell align="left">{item.availableDays}</TableCell>
+                                    <TableCell align="left">{item.shiftTime}</TableCell>
+                                    <TableCell align="left">{item.shiftStartTime}</TableCell>
+                                    <TableCell align="left">{item.shiftEndTime}</TableCell>
+                                    <TableCell align="left">{item.consultationTime}</TableCell>
+                                    <TableCell align="left">{item.configType}</TableCell>
+                                </>
+                            )}
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+            {isEditing && (
+                <Button variant="outlined" onClick={handleAddRow} style={{ marginTop: '16px', marginLeft: '12px' }}>
+                    Add Row
+                </Button>
+            )}
+        </TableContainer>
     );
 };
 
