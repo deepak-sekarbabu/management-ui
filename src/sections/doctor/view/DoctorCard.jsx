@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
+import Avatar from '@mui/material/Avatar';
 import { Box, Card, Button, TextField, Typography, CardContent } from '@mui/material';
 
 import DoctorPhoneNumbers from './DoctorPhoneNumbers';
@@ -19,7 +20,7 @@ const DoctorCard = ({ doctor }) => {
 
     const handleEdit = () => {
         console.log("isEditing", isEditing);
-        setIsDetailsExpanded(!isDetailsExpanded);
+        // Removed the line that toggles isDetailsExpanded
         setIsEditing(true);
     };
 
@@ -103,10 +104,16 @@ const DoctorCard = ({ doctor }) => {
 
     return (
         <Card>
-            <CardContent>
-                <Typography variant="h5" component="h2" onClick={handleExpandDetails}>
-                    {doctor.doctorName}
-                </Typography>
+            <CardContent style={{ marginTop: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Avatar
+                        alt={doctor.id}
+                        src={`/assets/images/avatars/avatar_${doctor.id}.jpg`}
+                    />
+                    <Typography variant="h5" component="h2" onClick={handleExpandDetails} style={{ marginLeft: '10px' }}>
+                        {doctor.doctorName}
+                    </Typography>
+                </div>
                 {isDetailsExpanded && (
                     <Box display="flex" flexDirection="column" gap={2}>
                         {isEditing ? (
@@ -117,6 +124,7 @@ const DoctorCard = ({ doctor }) => {
                                     onChange={(e) => handleInputChange('doctorName', e.target.value)}
                                     error={!!validationErrors.doctorName}
                                     helperText={validationErrors.doctorName}
+                                    style={{ marginTop: '20px' }}
                                 />
                                 <TextField
                                     label="Doctor ID"
@@ -168,7 +176,7 @@ const DoctorCard = ({ doctor }) => {
                             </>
                         ) : (
                             <>
-                                <Typography variant="body1" color="textSecondary">
+                                <Typography style={{ marginTop: '20px' }} variant="body1" color="textSecondary">
                                     {doctor.doctorId}
                                 </Typography>
                                 <Typography variant="body1" color="textSecondary">
@@ -202,6 +210,7 @@ const DoctorCard = ({ doctor }) => {
 
 DoctorCard.propTypes = {
     doctor: PropTypes.shape({
+        id: PropTypes.any.isRequired,
         doctorName: PropTypes.string.isRequired,
         doctorId: PropTypes.string.isRequired,
         doctorSpeciality: PropTypes.string.isRequired,
