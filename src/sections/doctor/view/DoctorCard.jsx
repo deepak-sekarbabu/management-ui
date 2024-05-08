@@ -10,8 +10,16 @@ const DoctorCard = ({ doctor }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedDoctor, setEditedDoctor] = useState({ ...doctor });
     const [validationErrors, setValidationErrors] = useState({});
+    const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
+
+    const handleExpandDetails = () => {
+        console.log("Expand:", isDetailsExpanded);
+        setIsDetailsExpanded(!isDetailsExpanded);
+    };
 
     const handleEdit = () => {
+        console.log("isEditing", isEditing);
+        setIsDetailsExpanded(!isDetailsExpanded);
         setIsEditing(true);
     };
 
@@ -31,6 +39,7 @@ const DoctorCard = ({ doctor }) => {
         setEditedDoctor({ ...doctor });
         setIsEditing(false);
         setValidationErrors({});
+        setIsDetailsExpanded(false);
     };
 
     const handleInputChange = (field, value) => {
@@ -78,7 +87,7 @@ const DoctorCard = ({ doctor }) => {
         }
 
         if (doctorData.doctorSpeciality.length > 120) {
-            errors.doctorSpeciality = 'Doctor speciality must not be more than 120 characters';
+            errors.doctorSpeciality = 'Doctor specialty must not be more than 120 characters';
         }
 
         if (doctorData.doctorConsultationFee < 0) {
@@ -95,92 +104,96 @@ const DoctorCard = ({ doctor }) => {
     return (
         <Card>
             <CardContent>
-                {isEditing ? (
+                <Typography variant="h5" component="h2" onClick={handleExpandDetails}>
+                    {doctor.doctorName}
+                </Typography>
+                {isDetailsExpanded && (
                     <Box display="flex" flexDirection="column" gap={2}>
-                        <TextField
-                            label="Doctor Name"
-                            value={editedDoctor.doctorName}
-                            onChange={(e) => handleInputChange('doctorName', e.target.value)}
-                            error={!!validationErrors.doctorName}
-                            helperText={validationErrors.doctorName}
-                        />
-                        <TextField
-                            label="Doctor ID"
-                            value={editedDoctor.doctorId}
-                            onChange={(e) => handleInputChange('doctorId', e.target.value)}
-                            error={!!validationErrors.doctorId}
-                            helperText={validationErrors.doctorId}
-                        />
-                        <TextField
-                            label="Doctor Speciality"
-                            value={editedDoctor.doctorSpeciality}
-                            onChange={(e) => handleInputChange('doctorSpeciality', e.target.value)}
-                            error={!!validationErrors.doctorSpeciality}
-                            helperText={validationErrors.doctorSpeciality}
-                        />
-                        <TextField
-                            label="Doctor Experience"
-                            value={editedDoctor.doctorExperience}
-                            onChange={(e) => handleInputChange('doctorExperience', e.target.value)}
-                        />
-                        <TextField
-                            label="Consultation Fee Appointment"
-                            value={editedDoctor.doctorConsultationFee}
-                            onChange={(e) =>
-                                handleInputChange('doctorConsultationFee', e.target.value)
-                            }
-                            error={!!validationErrors.doctorConsultationFee}
-                            helperText={validationErrors.doctorConsultationFee}
-                        />
-                        <TextField
-                            label="Consultation Fee Queue"
-                            value={editedDoctor.doctorConsultationFeeOther}
-                            onChange={(e) => handleInputChange('doctorConsultationFeeOther', e.target.value)}
-                        />
-                        <DoctorPhoneNumbers
-                            phoneNumbers={editedDoctor.phoneNumbers}
-                            onPhoneNumberChange={handlePhoneNumberChange}
-                            isEditing={isEditing}
-                        />
-                        <DoctorAvailability
-                            availability={editedDoctor.doctorAvailability}
-                            onAvailabilityChange={handleAvailabilityChange} // Pass the callback function
-                            isEditing={isEditing}
-                        />
-                        <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
-                            <Button onClick={handleSave}>Save</Button>
-                            <Button onClick={handleCancel}>Cancel</Button>
-                        </Box>
+                        {isEditing ? (
+                            <>
+                                <TextField
+                                    label="Doctor Name"
+                                    value={editedDoctor.doctorName}
+                                    onChange={(e) => handleInputChange('doctorName', e.target.value)}
+                                    error={!!validationErrors.doctorName}
+                                    helperText={validationErrors.doctorName}
+                                />
+                                <TextField
+                                    label="Doctor ID"
+                                    value={editedDoctor.doctorId}
+                                    onChange={(e) => handleInputChange('doctorId', e.target.value)}
+                                    error={!!validationErrors.doctorId}
+                                    helperText={validationErrors.doctorId}
+                                />
+                                <TextField
+                                    label="Doctor Specialty"
+                                    value={editedDoctor.doctorSpeciality}
+                                    onChange={(e) => handleInputChange('doctorSpeciality', e.target.value)}
+                                    error={!!validationErrors.doctorSpeciality}
+                                    helperText={validationErrors.doctorSpeciality}
+                                />
+                                <TextField
+                                    label="Doctor Experience"
+                                    value={editedDoctor.doctorExperience}
+                                    onChange={(e) => handleInputChange('doctorExperience', e.target.value)}
+                                />
+                                <TextField
+                                    label="Consultation Fee Appointment"
+                                    value={editedDoctor.doctorConsultationFee}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorConsultationFee', e.target.value)
+                                    }
+                                    error={!!validationErrors.doctorConsultationFee}
+                                    helperText={validationErrors.doctorConsultationFee}
+                                />
+                                <TextField
+                                    label="Consultation Fee Queue"
+                                    value={editedDoctor.doctorConsultationFeeOther}
+                                    onChange={(e) => handleInputChange('doctorConsultationFeeOther', e.target.value)}
+                                />
+                                <DoctorPhoneNumbers
+                                    phoneNumbers={editedDoctor.phoneNumbers}
+                                    onPhoneNumberChange={handlePhoneNumberChange}
+                                    isEditing={isEditing}
+                                />
+                                <DoctorAvailability
+                                    availability={editedDoctor.doctorAvailability}
+                                    onAvailabilityChange={handleAvailabilityChange}
+                                    isEditing={isEditing}
+                                />
+                                <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
+                                    <Button onClick={handleSave}>Save</Button>
+                                    <Button onClick={handleCancel}>Cancel</Button>
+                                </Box>
+                            </>
+                        ) : (
+                            <>
+                                <Typography variant="body1" color="textSecondary">
+                                    {doctor.doctorId}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary">
+                                    {doctor.doctorSpeciality}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary">
+                                    Experience: {doctor.doctorExperience} years
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary">
+                                    Consultation Fee Appointment: ₹{doctor.doctorConsultationFee}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary">
+                                    Consultation Fee Queue: ₹{doctor.doctorConsultationFeeOther}
+                                </Typography>
+                                <DoctorPhoneNumbers phoneNumbers={doctor.phoneNumbers} />
+                                <DoctorAvailability
+                                    availability={doctor.doctorAvailability}
+                                    isEditing={isEditing}
+                                />
+                                <Box display="flex" mt={2} justifyContent="center" gap={2}>
+                                    <Button onClick={handleEdit}>Edit</Button>
+                                </Box>
+                            </>
+                        )}
                     </Box>
-                ) : (
-                    <>
-                        <Typography variant="h5" component="h2">
-                            {doctor.doctorName}
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary">
-                            {doctor.doctorId}
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary">
-                            {doctor.doctorSpeciality}
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary">
-                            Experience: {doctor.doctorExperience} years
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary">
-                            Consultation Fee Appointment: ₹{doctor.doctorConsultationFee}
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary">
-                            Consultation Fee Queue: ₹{doctor.doctorConsultationFeeOther}
-                        </Typography>
-                        <DoctorPhoneNumbers phoneNumbers={doctor.phoneNumbers} />
-                        <DoctorAvailability
-                            availability={doctor.doctorAvailability}
-                            isEditing={isEditing}
-                        />
-                        <Box display="flex" mt={2} justifyContent="center" gap={2}>
-                            <Button onClick={handleEdit}>Edit</Button>
-                        </Box>
-                    </>
                 )}
             </CardContent>
         </Card>
