@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
-import { Box, Stack, Button, Container, Typography, CircularProgress } from '@mui/material';
+import { Box, Card, Stack, Button, Container, Typography, CircularProgress } from '@mui/material';
 
 import ClinicDetails from './clinic-details';
 
@@ -87,10 +87,9 @@ const ClinicPage = () => {
     };
 
     return (
-        <Container>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                <Typography variant="h4">Clinic Information</Typography>
-            </Stack>
+        <Card>
+
+            <Typography p={2} variant="h2">Clinic Information</Typography>
 
             <ClinicDetails
                 clinic={editedClinicData}
@@ -123,7 +122,7 @@ const ClinicPage = () => {
                     )}
                 </Stack>
             </Box>
-        </Container>
+        </Card>
     );
 };
 
