@@ -23,23 +23,28 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
     const [editedAvailability, setEditedAvailability] = useState(availability);
     const [errors, setErrors] = useState({});
 
+    // Update the handleAvailabilityChange function in DoctorAvailability.jsx to include validation for shiftEndTime
     const handleAvailabilityChange = (index, field, value) => {
+        console.log(`Row ${index} changed: Field ${field} set to ${value}`);
         setEditedAvailability((prevState) =>
             prevState.map((item, i) =>
                 i === index
                     ? {
-                        ...item,
-                        [field]:
-                            field === 'shiftStartTime' || field === 'shiftEndTime'
-                                ? dayjs(value).format('HH:mm:ss')
-                                : value.toUpperCase(),
-                    }
+                          ...item,
+                          [field]:
+                              field === 'shiftStartTime' || field === 'shiftEndTime'
+                                  ? dayjs(value).format('HH:mm:ss')
+                                  : value.toUpperCase(),
+                      }
                     : item
             )
         );
 
         if (field === 'shiftEndTime') {
-            const updatedItem = { ...editedAvailability[index], shiftEndTime: dayjs(value, 'HH:mm:ss') };
+            const updatedItem = {
+                ...editedAvailability[index],
+                shiftEndTime: dayjs(value, 'HH:mm:ss'),
+            };
             const shiftStartTime = dayjs(updatedItem.shiftStartTime, 'HH:mm:ss');
             const shiftEndTime = dayjs(value, 'HH:mm:ss');
             if (shiftEndTime.isBefore(shiftStartTime)) {
@@ -63,8 +68,6 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
 
         onAvailabilityChange(editedAvailability);
     };
-
-
 
     const handleDeleteRow = (index) => {
         setEditedAvailability((prevState) => prevState.filter((_, i) => i !== index));
@@ -154,7 +157,10 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                     <TableCell align="left" style={{ minWidth: '175px' }}>
                                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                                             <TimePicker
-                                                defaultValue={dayjs(item.shiftStartTime, 'HH:mm:ss')}
+                                                defaultValue={dayjs(
+                                                    item.shiftStartTime,
+                                                    'HH:mm:ss'
+                                                )}
                                                 onChange={(value) =>
                                                     handleAvailabilityChange(
                                                         index,
@@ -170,7 +176,11 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                             <TimePicker
                                                 defaultValue={dayjs(item.shiftEndTime, 'HH:mm:ss')}
                                                 onChange={(value) =>
-                                                    handleAvailabilityChange(index, 'shiftEndTime', value)
+                                                    handleAvailabilityChange(
+                                                        index,
+                                                        'shiftEndTime',
+                                                        value
+                                                    )
                                                 }
                                                 error={!!errors[index]?.shiftEndTime}
                                                 helperText={errors[index]?.shiftEndTime}
@@ -188,9 +198,9 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                                 )
                                             }
                                             inputProps={{
-                                                type: "number", // This ensures that only numbers can be entered
+                                                type: 'number', // This ensures that only numbers can be entered
                                                 min: 2,
-                                                max: 60
+                                                max: 60,
                                             }}
                                         />
                                     </TableCell>
@@ -235,7 +245,11 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                 </TableBody>
             </Table>
             {isEditing && (
-                <Button variant="outlined" onClick={handleAddRow} style={{ marginTop: '16px', marginLeft: '12px' }}>
+                <Button
+                    variant="outlined"
+                    onClick={handleAddRow}
+                    style={{ marginTop: '16px', marginLeft: '12px' }}
+                >
                     Add Row
                 </Button>
             )}

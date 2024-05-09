@@ -14,18 +14,18 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
     const [isDetailsExpanded, setIsDetailsExpanded] = useState(isNewDoctor);
 
     const handleExpandDetails = () => {
-        console.log("Expand:", isDetailsExpanded);
+        console.log('Expand:', isDetailsExpanded);
         setIsDetailsExpanded(!isDetailsExpanded);
     };
 
     const handleEdit = () => {
-        console.log("isEditing", isEditing);
+        console.log('isEditing', isEditing);
         // Removed the line that toggles isDetailsExpanded
         setIsEditing(true);
     };
 
     const handleRemove = () => {
-        console.log("Removing doctor with ID:", doctor.id);
+        console.log('Removing doctor with ID:', doctor.id);
         // Call the onRemove function passed from the parent component
         if (onRemove) {
             onRemove(doctor.id);
@@ -131,13 +131,22 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
             errors.doctorConsultationFee = 'Consultation fee must be a number';
         }
 
+        // Check if doctorConsultationFee is empty or not a number
+        if (
+            !doctorData.doctorConsultationFeeOther ||
+            Number.isNaN(doctorData.doctorConsultationFeeOther)
+        ) {
+            errors.doctorConsultationFeeOther = 'Consultation fee Queue must be a number';
+        }
+
         // Existing validation checks
         if (doctorData.doctorId.length > 50) {
             errors.doctorId = 'Doctor ID cannot be more than 50 characters';
         }
 
         if (!/^[a-zA-Z.\s]+$/.test(doctorData.doctorName) || doctorData.doctorName.length > 120) {
-            errors.doctorName = 'Doctor name must be alphabets, spaces, and dots, and not more than 120 characters';
+            errors.doctorName =
+                'Doctor name must be alphabets, spaces, and dots, and not more than 120 characters';
         }
 
         if (doctorData.doctorSpeciality.length > 120) {
@@ -149,7 +158,8 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
         }
 
         if (doctorData.doctorConsultationFeeOther < 0) {
-            errors.doctorConsultationFeeOther = 'Consultation fee (other) must be a positive number';
+            errors.doctorConsultationFeeOther =
+                'Consultation fee (other) must be a positive number';
         }
 
         return errors;
@@ -166,7 +176,12 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
                         alt={doctor.doctorName}
                         src={`/assets/images/avatars/avatar_${doctor.id}.jpg`}
                     />
-                    <Typography variant="h5" component="h2" onClick={handleExpandDetails} style={{ marginLeft: '10px' }}>
+                    <Typography
+                        variant="h5"
+                        component="h2"
+                        onClick={handleExpandDetails}
+                        style={{ marginLeft: '10px' }}
+                    >
                         {doctor.doctorName}
                     </Typography>
                 </Card>
@@ -177,7 +192,9 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
                                 <TextField
                                     label="Doctor Name"
                                     value={editedDoctor.doctorName}
-                                    onChange={(e) => handleInputChange('doctorName', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorName', e.target.value)
+                                    }
                                     error={!!validationErrors.doctorName}
                                     helperText={validationErrors.doctorName}
                                     style={{ marginTop: '20px' }}
@@ -192,18 +209,22 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
                                 <TextField
                                     label="Doctor Specialty"
                                     value={editedDoctor.doctorSpeciality}
-                                    onChange={(e) => handleInputChange('doctorSpeciality', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorSpeciality', e.target.value)
+                                    }
                                     error={!!validationErrors.doctorSpeciality}
                                     helperText={validationErrors.doctorSpeciality}
                                 />
                                 <TextField
                                     label="Doctor Experience in years"
                                     value={editedDoctor.doctorExperience}
-                                    onChange={(e) => handleInputChange('doctorExperience', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorExperience', e.target.value)
+                                    }
                                     error={!!validationErrors.doctorExperience}
                                     helperText={validationErrors.doctorExperience}
                                     inputProps={{
-                                        type: "number", // This ensures that only numbers can be entered
+                                        type: 'number', // This ensures that only numbers can be entered
                                         min: 1, // Optionally, you can set a minimum value
                                         max: 70,
                                     }}
@@ -211,21 +232,28 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
                                 <TextField
                                     label="Consultation Fee Appointment in Rupees"
                                     value={editedDoctor.doctorConsultationFee}
-                                    onChange={(e) => handleInputChange('doctorConsultationFee', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorConsultationFee', e.target.value)
+                                    }
                                     error={!!validationErrors.doctorConsultationFee}
                                     helperText={validationErrors.doctorConsultationFee}
                                     inputProps={{
-                                        type: "number", // This ensures that only numbers can be entered
+                                        type: 'number', // This ensures that only numbers can be entered
                                     }}
                                 />
                                 <TextField
                                     label="Consultation Fee Queue in Rupees"
                                     value={editedDoctor.doctorConsultationFeeOther}
-                                    onChange={(e) => handleInputChange('doctorConsultationFeeOther', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            'doctorConsultationFeeOther',
+                                            e.target.value
+                                        )
+                                    }
                                     error={!!validationErrors.doctorConsultationFeeOther}
                                     helperText={validationErrors.doctorConsultationFeeOther}
                                     inputProps={{
-                                        type: "number", // This ensures that only numbers can be entered
+                                        type: 'number', // This ensures that only numbers can be entered
                                     }}
                                 />
                                 <DoctorPhoneNumbers
@@ -239,13 +267,21 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
                                     isEditing={isEditing}
                                 />
                                 <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
-                                    <Button variant="outlined" onClick={handleSave}>Save</Button>
-                                    <Button variant="outlined" color="error" onClick={handleCancel}>Cancel</Button>
+                                    <Button variant="outlined" onClick={handleSave}>
+                                        Save
+                                    </Button>
+                                    <Button variant="outlined" color="error" onClick={handleCancel}>
+                                        Cancel
+                                    </Button>
                                 </Box>
                             </>
                         ) : (
                             <>
-                                <Typography style={{ marginTop: '20px' }} variant="body1" color="textSecondary">
+                                <Typography
+                                    style={{ marginTop: '20px' }}
+                                    variant="body1"
+                                    color="textSecondary"
+                                >
                                     {doctor.doctorId}
                                 </Typography>
                                 <Typography variant="body1" color="textSecondary">
@@ -266,9 +302,19 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
                                     isEditing={isEditing}
                                 />
 
-                                <Box mt={2} display="flex" justifyContent="flex-end" alignItems="center" gap={2}>
-                                    <Button variant="outlined" onClick={handleEdit}>Edit</Button>
-                                    <Button variant="outlined" color="error" onClick={handleRemove}>Remove</Button>
+                                <Box
+                                    mt={2}
+                                    display="flex"
+                                    justifyContent="flex-end"
+                                    alignItems="center"
+                                    gap={2}
+                                >
+                                    <Button variant="outlined" onClick={handleEdit}>
+                                        Edit
+                                    </Button>
+                                    <Button variant="outlined" color="error" onClick={handleRemove}>
+                                        Remove
+                                    </Button>
                                 </Box>
                             </>
                         )}
@@ -306,7 +352,7 @@ DoctorCard.propTypes = {
     }).isRequired,
     isNewDoctor: PropTypes.bool,
     onSave: PropTypes.func,
-    onRemove: PropTypes.func
+    onRemove: PropTypes.func,
 };
 
 export default DoctorCard;
