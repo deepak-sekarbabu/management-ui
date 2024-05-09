@@ -17,7 +17,6 @@ import {
     TableCell,
     TableHead,
     Typography,
-    FormHelperText,
     TableContainer,
 } from '@mui/material';
 
@@ -186,11 +185,6 @@ const DoctorAbsencePage = () => {
                             {isAdding && (
                                 <TableRow>
                                     <TableCell>
-                                        {newRow.doctorId === '' && (
-                                            <FormHelperText error>
-                                                Doctor ID is required
-                                            </FormHelperText>
-                                        )}
                                         <Select
                                             value={newRow.doctorId}
                                             onChange={(e) => handleDoctorIdChange(e)}
