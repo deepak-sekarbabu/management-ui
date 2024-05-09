@@ -3,23 +3,28 @@ import React, { useState } from 'react';
 import Alert from '@mui/material/Alert';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker, TimePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { Box, Card, Paper, Table, Button, TableRow, TableBody, TextField, TableCell, TableHead, Typography, TableContainer } from '@mui/material';
+import { Box, Card, Paper, Table, Button, MenuItem, TableRow, TableBody, TextField, TableCell, TableHead, Typography, TableContainer } from '@mui/material';
 
 import data from './data.json';
+
+const doctorData = [
+    {
+        "id": 1,
+        "doctorId": "AB00001",
+        "doctorName": "Dr. Deepak Sekarbabu"
+    },
+    {
+        "id": 2,
+        "doctorId": "AB00002",
+        "doctorName": "Dr. Dilip Sekarbabu"
+    }
+];
 
 const DoctorAbsencePage = () => {
     const [doctorAbsence, setDoctorAbsence] = useState([...data]);
     const [newRow, setNewRow] = useState({ doctorId: '', doctorName: '', absenceDate: '', absenceStartTime: '', absenceEndTime: '', optionalMessage: '' });
     const [isAdding, setIsAdding] = useState(false);
     const [showErrorAlert, setShowErrorAlert] = useState(false);
-
-    const isFormValid = () => {
-        // Extract doctorName and doctorId from newRow
-        const { doctorName, doctorId } = newRow;
-        // Check if both doctorName and doctorId are strings and not empty
-        return typeof doctorName === 'string' && doctorName.trim() !== '' &&
-            typeof doctorId === 'string' && doctorId.trim() !== '';
-    };
 
     const handleRemove = (id) => {
         console.log("Removing row with ID:", id)
@@ -32,19 +37,19 @@ const DoctorAbsencePage = () => {
     };
 
     const handleSave = () => {
-        if (!isFormValid()) {
+        const isFormValid = newRow.doctorId !== '' && newRow.doctorName !== '';
+
+        if (!isFormValid) {
             setShowErrorAlert(true);
             return;
         }
 
-        // Convert absenceDate to "dd-MM-yyyy" format
         const formattedAbsenceDate = newRow.absenceDate.toLocaleDateString('en-GB', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
         }).replace(/\//g, '-');
 
-        // Convert absenceStartTime and absenceEndTime to "HH:MM:SS" format
         const formattedAbsenceStartTime = newRow.absenceStartTime.toLocaleTimeString('en-US', {
             hour: '2-digit',
             minute: '2-digit',
@@ -59,9 +64,8 @@ const DoctorAbsencePage = () => {
             hour12: false,
         });
 
-        // Declare newAbsence here, after the validation check and formatting
         const newAbsence = {
-            id: Math.random().toString(36).substr(2, 9), // Generate a random ID for demonstration
+            id: Math.random().toString(36).substr(2, 9),
             doctorId: newRow.doctorId,
             doctorName: newRow.doctorName,
             absenceDate: formattedAbsenceDate,
@@ -77,12 +81,16 @@ const DoctorAbsencePage = () => {
         setIsAdding(false);
     };
 
-
-
     const handleCancel = () => {
         console.log("Canceling addition of new row:", newRow);
         setNewRow({ doctorId: '', doctorName: '', absenceDate: '', absenceStartTime: '', absenceEndTime: '', optionalMessage: '' });
         setIsAdding(false);
+    };
+
+    const handleDoctorIdChange = (event) => {
+        const selectedDoctorId = event.target.value;
+        const selectedDoctor = doctorData.find(doctor => doctor.doctorId === selectedDoctorId);
+        setNewRow({ ...newRow, doctorId: selectedDoctorId, doctorName: selectedDoctor ? selectedDoctor.doctorName : '' });
     };
 
     return (
@@ -121,30 +129,22 @@ const DoctorAbsencePage = () => {
                                 <TableRow>
                                     <TableCell>
                                         <TextField
+                                            select
                                             value={newRow.doctorId}
-                                            onChange={(e) => {
-                                                const { value } = e.target;
-                                                setNewRow((prevRow) => ({
-                                                    ...prevRow,
-                                                    doctorId: value,
-                                                }));
-                                            }}
-                                            error={newRow.doctorId.trim() === ''}
-                                            helperText={newRow.doctorId.trim() === '' ? 'Doctor ID is required' : ''}
-                                        />
+                                            onChange={handleDoctorIdChange}
+                                            error={newRow.doctorId === ''}
+                                            helperText={newRow.doctorId === '' ? 'Doctor ID is required' : ''}
+                                        >
+                                            <MenuItem value="">Select Doctor ID</MenuItem>
+                                            {doctorData.map((doctor) => (
+                                                <MenuItem key={doctor.doctorId} value={doctor.doctorId}>{doctor.doctorId}</MenuItem>
+                                            ))}
+                                        </TextField>
                                     </TableCell>
                                     <TableCell>
                                         <TextField
                                             value={newRow.doctorName}
-                                            onChange={(e) => {
-                                                const { value } = e.target;
-                                                setNewRow((prevRow) => ({
-                                                    ...prevRow,
-                                                    doctorName: value,
-                                                }));
-                                            }}
-                                            error={newRow.doctorName.trim() === ''}
-                                            helperText={newRow.doctorName.trim() === '' ? 'Doctor Name is required' : ''}
+                                            disabled
                                         />
                                     </TableCell>
                                     <TableCell>
@@ -165,9 +165,7 @@ const DoctorAbsencePage = () => {
                                             <TimePicker
                                                 label="Absence Start Time"
                                                 value={newRow.absenceStartTime}
-                                                onChange={(newValue) =>
-                                                    setNewRow({ ...newRow, absenceStartTime: newValue })
-                                                }
+                                                onChange={(newValue) => setNewRow({ ...newRow, absenceStartTime: newValue })}
                                             />
                                         </LocalizationProvider>
                                     </TableCell>
@@ -176,25 +174,24 @@ const DoctorAbsencePage = () => {
                                             <TimePicker
                                                 label="Absence End Time"
                                                 value={newRow.absenceEndTime}
-                                                onChange={(newValue) =>
-                                                    setNewRow({ ...newRow, absenceEndTime: newValue })
-                                                }
+                                                onChange={(newValue) => setNewRow({ ...newRow, absenceEndTime: newValue })}
                                                 shouldDisableTime={(timeValue, clockType) => {
                                                     if (clockType === 'minutes') {
                                                         return false;
                                                     }
-
                                                     if (newRow.absenceStartTime && newRow.absenceStartTime > timeValue) {
                                                         return true;
                                                     }
-
                                                     return false;
                                                 }}
                                             />
                                         </LocalizationProvider>
                                     </TableCell>
                                     <TableCell>
-                                        <TextField value={newRow.optionalMessage} onChange={e => setNewRow({ ...newRow, optionalMessage: e.target.value })} />
+                                        <TextField
+                                            value={newRow.optionalMessage}
+                                            onChange={e => setNewRow({ ...newRow, optionalMessage: e.target.value })}
+                                        />
                                     </TableCell>
                                     <TableCell>
                                         <Button style={{ marginLeft: '10px', marginBottom: '10px' }} variant="outlined" color="success" onClick={handleSave}>Save</Button>
