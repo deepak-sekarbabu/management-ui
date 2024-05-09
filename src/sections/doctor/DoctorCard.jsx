@@ -14,19 +14,18 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
     const [isDetailsExpanded, setIsDetailsExpanded] = useState(isNewDoctor);
 
     const handleExpandDetails = () => {
-        console.log('Expand:', isDetailsExpanded);
+        console.log(`Expanding details for doctor: ${doctor.doctorName}`);
         setIsDetailsExpanded(!isDetailsExpanded);
     };
 
     const handleEdit = () => {
-        console.log('isEditing', isEditing);
-        // Removed the line that toggles isDetailsExpanded
+        console.log(`Editing doctor: ${doctor.doctorName}`);
         setIsEditing(true);
     };
 
     const handleRemove = () => {
         console.log('Removing doctor with ID:', doctor.id);
-        // Call the onRemove function passed from the parent component
+        console.log(`Removing doctor: ${doctor.doctorName}`);
         if (onRemove) {
             onRemove(doctor.id);
         }
@@ -39,7 +38,7 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
             setValidationErrors(errors);
             return;
         }
-        console.log(editedDoctor);
+        console.log('Saving doctor:', editedDoctor);
         setIsEditing(false);
         setValidationErrors({});
 
@@ -50,8 +49,9 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
     };
 
     const handleCancel = () => {
-        // If isNewDoctor is true, it means it's a new doctor being edited
+        console.log(`Cancelling edit for doctor: ${doctor.doctorName}`);
         if (isNewDoctor) {
+            console.log(`Removing new doctor: ${doctor.doctorName}`);
             // Call the onRemove function passed from the parent component to remove the new doctor
             if (onRemove) {
                 onRemove();
@@ -79,6 +79,7 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
             ...prevState,
             [field]: value,
         }));
+        console.log(`Updated ${field} for doctor: ${doctor.doctorName}`);
     };
 
     const handlePhoneNumberChange = (index, value) => {
@@ -88,15 +89,16 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
                 i === index ? { ...item, phoneNumber: value } : item
             ),
         }));
+        console.log(`Updated phone number for doctor: ${doctor.doctorName}`);
     };
 
     const handleAvailabilityChange = (newAvailability) => {
-        // This function is called from DoctorAvailability component
-        // It will receive the new availability data
+        console.log('Availability updated:', newAvailability);
         setEditedDoctor((prevState) => ({
             ...prevState,
             doctorAvailability: newAvailability,
         }));
+        console.log(`Updated availability for doctor: ${doctor.doctorName}`);
     };
 
     const validateDoctorData = (doctorData) => {
@@ -337,6 +339,8 @@ DoctorCard.propTypes = {
         phoneNumbers: PropTypes.arrayOf(
             PropTypes.shape({
                 phoneNumber: PropTypes.string.isRequired,
+                onPhoneNumberChange: PropTypes.func.isRequired,
+                isEditing: PropTypes.bool.isRequired,
             })
         ).isRequired,
         doctorAvailability: PropTypes.arrayOf(
