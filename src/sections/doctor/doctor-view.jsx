@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import React, { useState } from 'react';
 
 import { Box, Card, Button, Typography } from '@mui/material';
@@ -11,7 +12,7 @@ const DoctorPage = () => {
 
     const addNewDoctor = () => {
         const newDoctorEntry = {
-            id: doctors.length + 1,
+            id: uuidv4(),
             doctorName: '',
             doctorId: '',
             doctorSpeciality: '',
@@ -19,17 +20,26 @@ const DoctorPage = () => {
             doctorConsultationFee: 0,
             doctorConsultationFeeOther: 0,
             phoneNumbers: [{ phoneNumber: '' }],
-            doctorAvailability: [],
+            doctorAvailability: [{
+                "availableDays": '',
+                "shiftTime": '',
+                "shiftStartTime": '',
+                "shiftEndTime": '',
+                "consultationTime": 0,
+                "configType": ''
+            }],
         };
         setNewDoctor(newDoctorEntry);
     };
 
     const handleRemove = (doctorId) => {
+        console.log("Removing doctor Data:", doctorId);
         setNewDoctor(null);
         setDoctors(doctors.filter((doctor) => doctor.id !== doctorId));
     };
 
     const saveNewDoctor = (newDoctorData) => {
+        console.log("newDoctorData:", newDoctorData);
         setDoctors([...doctors, newDoctorData]);
         setNewDoctor(null);
     };
