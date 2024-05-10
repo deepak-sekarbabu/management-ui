@@ -160,8 +160,7 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
         }
 
         if (doctorData.doctorConsultationFeeOther < 0) {
-            errors.doctorConsultationFeeOther =
-                'Consultation fee (other) must be a positive number';
+            errors.doctorConsultationFeeOther = 'Consultation fee (other) must be a positive number';
         }
 
         return errors;
@@ -194,9 +193,7 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
                                 <TextField
                                     label="Doctor Name"
                                     value={editedDoctor.doctorName}
-                                    onChange={(e) =>
-                                        handleInputChange('doctorName', e.target.value)
-                                    }
+                                    onChange={(e) => handleInputChange('doctorName', e.target.value)}
                                     error={!!validationErrors.doctorName}
                                     helperText={validationErrors.doctorName}
                                     style={{ marginTop: '20px' }}
@@ -211,32 +208,42 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
                                 <TextField
                                     label="Doctor Specialty"
                                     value={editedDoctor.doctorSpeciality}
-                                    onChange={(e) =>
-                                        handleInputChange('doctorSpeciality', e.target.value)
-                                    }
+                                    onChange={(e) => handleInputChange('doctorSpeciality', e.target.value)}
                                     error={!!validationErrors.doctorSpeciality}
                                     helperText={validationErrors.doctorSpeciality}
                                 />
                                 <TextField
                                     label="Doctor Experience in years"
                                     value={editedDoctor.doctorExperience}
-                                    onChange={(e) =>
-                                        handleInputChange('doctorExperience', e.target.value)
-                                    }
+                                    onChange={(e) => handleInputChange('doctorExperience', e.target.value)}
                                     error={!!validationErrors.doctorExperience}
                                     helperText={validationErrors.doctorExperience}
                                     inputProps={{
                                         type: 'number', // This ensures that only numbers can be entered
                                         min: 1, // Optionally, you can set a minimum value
-                                        max: 70,
+                                        max: 70, // Restricts the maximum value to 70
+                                        maxLength: 2, // Restricts the maximum number of digits to 2
+                                    }}
+                                    onBlur={(e) => {
+                                        const value = e.target.value.replace(/^0+/, ''); // Remove leading zeros
+                                        if (value.length > 2) {
+                                            // Perform validation and set an error message if the length exceeds 2 digits
+                                            setValidationErrors((prevErrors) => ({
+                                                ...prevErrors,
+                                                doctorExperience: 'Experience cannot exceed 2 digits',
+                                            }));
+                                        } else {
+                                            setValidationErrors((prevErrors) => ({
+                                                ...prevErrors,
+                                                doctorExperience: '',
+                                            }));
+                                        }
                                     }}
                                 />
                                 <TextField
                                     label="Consultation Fee Appointment in Rupees"
                                     value={editedDoctor.doctorConsultationFee}
-                                    onChange={(e) =>
-                                        handleInputChange('doctorConsultationFee', e.target.value)
-                                    }
+                                    onChange={(e) => handleInputChange('doctorConsultationFee', e.target.value)}
                                     error={!!validationErrors.doctorConsultationFee}
                                     helperText={validationErrors.doctorConsultationFee}
                                     inputProps={{
@@ -247,10 +254,7 @@ const DoctorCard = ({ doctor, isNewDoctor = false, onSave, onRemove }) => {
                                     label="Consultation Fee Queue in Rupees"
                                     value={editedDoctor.doctorConsultationFeeOther}
                                     onChange={(e) =>
-                                        handleInputChange(
-                                            'doctorConsultationFeeOther',
-                                            e.target.value
-                                        )
+                                        handleInputChange('doctorConsultationFeeOther', e.target.value)
                                     }
                                     error={!!validationErrors.doctorConsultationFeeOther}
                                     helperText={validationErrors.doctorConsultationFeeOther}
@@ -339,8 +343,6 @@ DoctorCard.propTypes = {
         phoneNumbers: PropTypes.arrayOf(
             PropTypes.shape({
                 phoneNumber: PropTypes.string.isRequired,
-                onPhoneNumberChange: PropTypes.func.isRequired,
-                isEditing: PropTypes.bool.isRequired,
             })
         ).isRequired,
         doctorAvailability: PropTypes.arrayOf(

@@ -90,7 +90,7 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
 
     const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const shiftTimes = ['Morning', 'Afternoon', 'Evening', 'Night'];
-    const configTypes = ['APPOINTMENT', 'QUEUE'];
+    const configTypes = ['Appointment', 'Queue'];
 
     return (
         <TableContainer component={Paper}>
