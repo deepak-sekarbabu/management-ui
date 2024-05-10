@@ -67,6 +67,7 @@ const DoctorAbsencePage = () => {
             setShowErrorAlert(true);
             return;
         }
+        setShowErrorAlert(false);
 
         const formattedAbsenceDate = newRow.absenceDate
             .toLocaleDateString('en-GB', {
@@ -251,13 +252,8 @@ const DoctorAbsencePage = () => {
                                                     if (clockType === 'minutes') {
                                                         return false;
                                                     }
-                                                    if (
-                                                        newRow.absenceStartTime &&
-                                                        newRow.absenceStartTime > timeValue
-                                                    ) {
-                                                        return true;
-                                                    }
-                                                    return false;
+                                                    return !!(newRow.absenceStartTime &&
+                                                        newRow.absenceStartTime > timeValue);
                                                 }}
                                             />
                                         </LocalizationProvider>
