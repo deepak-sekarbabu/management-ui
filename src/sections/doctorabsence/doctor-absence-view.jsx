@@ -20,21 +20,6 @@ import {
     TableContainer,
 } from '@mui/material';
 
-// import data from './data.json';
-
-const doctorData = [
-    {
-        id: 1,
-        doctorId: 'AB00001',
-        doctorName: 'Dr. Deepak Sekarbabu',
-    },
-    {
-        id: 2,
-        doctorId: 'AB00002',
-        doctorName: 'Dr. Dilip Sekarbabu',
-    },
-];
-
 const DoctorAbsencePage = () => {
     const [doctorAbsence, setDoctorAbsence] = useState([]);
     const [newRow, setNewRow] = useState({
@@ -47,6 +32,25 @@ const DoctorAbsencePage = () => {
     });
     const [isAdding, setIsAdding] = useState(false);
     const [showErrorAlert, setShowErrorAlert] = useState(false);
+    const [showErrorAlertSaving, setShowErrorAlertSaving] = useState(false);
+    const [doctorData, setDoctorData] = useState([]); // State to hold doctor data
+
+    useEffect(() => {
+        const fetchDoctorData = async () => {
+            try {
+                const response = await fetch('api/doctor-clinic/1');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch doctor data');
+                }
+                const data = await response.json();
+                setDoctorData(data);
+            } catch (error) {
+                console.error('Error fetching doctor data:', error);
+            }
+        };
+
+        fetchDoctorData();
+    }, []);
 
     useEffect(() => {
         const fetchDoctorAbsence = async () => {
@@ -92,7 +96,7 @@ const DoctorAbsencePage = () => {
         setIsAdding(true);
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         const isFormValid = newRow.doctorId !== '' && newRow.doctorName !== '';
 
         if (!isFormValid) {
@@ -124,27 +128,44 @@ const DoctorAbsencePage = () => {
         });
 
         const newAbsence = {
-            id: Math.random().toString(36).substr(2, 9),
             doctorId: newRow.doctorId,
             doctorName: newRow.doctorName,
+            clinicId: 1,
             absenceDate: formattedAbsenceDate,
             absenceStartTime: formattedAbsenceStartTime,
             absenceEndTime: formattedAbsenceEndTime,
             optionalMessage: newRow.optionalMessage,
         };
 
-        console.log('New Row:', newAbsence);
-        console.log('Adding new row:', newAbsence);
-        setDoctorAbsence([...doctorAbsence, newAbsence]);
-        setNewRow({
-            doctorId: '',
-            doctorName: '',
-            absenceDate: '',
-            absenceStartTime: '',
-            absenceEndTime: '',
-            optionalMessage: '',
-        });
-        setIsAdding(false);
+        try {
+            const response = await fetch('api/doctor-absence', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newAbsence),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save the record');
+            }
+
+            // Assuming the server returns the saved record with an ID
+            const savedAbsence = await response.json();
+            setDoctorAbsence([...doctorAbsence, savedAbsence]);
+            setNewRow({
+                doctorId: '',
+                doctorName: '',
+                absenceDate: '',
+                absenceStartTime: '',
+                absenceEndTime: '',
+                optionalMessage: '',
+            });
+            setIsAdding(false);
+        } catch (error) {
+            console.error('Error saving the record:', error);
+            setShowErrorAlertSaving(true);
+        }
     };
 
     const handleCancel = () => {
@@ -177,6 +198,9 @@ const DoctorAbsencePage = () => {
                 <Alert severity="error">
                     Please fix the validation errors in the page before saving
                 </Alert>
+            )}
+            {showErrorAlertSaving && (
+                <Alert severity="error">Error when saving Doctor Absence Information</Alert>
             )}
             <Box p={2}>
                 <Typography style={{ marginBottom: '20px' }} variant="h2">
