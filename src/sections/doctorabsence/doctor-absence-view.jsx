@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Alert from '@mui/material/Alert';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -20,7 +20,7 @@ import {
     TableContainer,
 } from '@mui/material';
 
-import data from './data.json';
+// import data from './data.json';
 
 const doctorData = [
     {
@@ -36,7 +36,7 @@ const doctorData = [
 ];
 
 const DoctorAbsencePage = () => {
-    const [doctorAbsence, setDoctorAbsence] = useState([...data]);
+    const [doctorAbsence, setDoctorAbsence] = useState([]);
     const [newRow, setNewRow] = useState({
         doctorId: '',
         doctorName: '',
@@ -48,11 +48,43 @@ const DoctorAbsencePage = () => {
     const [isAdding, setIsAdding] = useState(false);
     const [showErrorAlert, setShowErrorAlert] = useState(false);
 
-    const handleRemove = (id) => {
+    useEffect(() => {
+        const fetchDoctorAbsence = async () => {
+            try {
+                const response = await fetch(
+                    'api/doctor-absence/after-date/clinic/1?afterDate=01-01-2024'
+                );
+                if (!response.ok) {
+                    throw new Error('Something went wrong!');
+                }
+                const data = await response.json();
+                setDoctorAbsence(data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchDoctorAbsence();
+    }, []);
+
+    const handleRemove = async (id) => {
         console.log('Removing row with ID:', id);
-        setDoctorAbsence((prevDoctorAbsence) =>
-            prevDoctorAbsence.filter((absence) => absence.id !== id)
-        );
+        try {
+            const response = await fetch(`api/doctor-absence/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete the record');
+            }
+
+            // If the deletion is successful, update the state to reflect the change
+            setDoctorAbsence((prevDoctorAbsence) =>
+                prevDoctorAbsence.filter((absence) => absence.id !== id)
+            );
+        } catch (error) {
+            console.error('Error deleting the record:', error);
+        }
     };
 
     const handleAdd = () => {
@@ -252,8 +284,10 @@ const DoctorAbsencePage = () => {
                                                     if (clockType === 'minutes') {
                                                         return false;
                                                     }
-                                                    return !!(newRow.absenceStartTime &&
-                                                        newRow.absenceStartTime > timeValue);
+                                                    return !!(
+                                                        newRow.absenceStartTime &&
+                                                        newRow.absenceStartTime > timeValue
+                                                    );
                                                 }}
                                             />
                                         </LocalizationProvider>

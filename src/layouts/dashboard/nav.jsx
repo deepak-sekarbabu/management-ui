@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
-// import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import { alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
@@ -27,17 +26,15 @@ import navConfig from './config-navigation';
 
 export default function Nav({ openNav, onCloseNav }) {
     const pathname = usePathname();
-
     const upLg = useResponsive('up', 'lg');
 
     useEffect(() => {
         if (openNav) {
             onCloseNav();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pathname]);
+    }, [pathname, openNav, onCloseNav]);
 
-    const renderAccount = (
+    const renderAccount = () => (
         <Box
             sx={{
                 my: 3,
@@ -51,10 +48,8 @@ export default function Nav({ openNav, onCloseNav }) {
             }}
         >
             <Avatar src={account.photoURL} alt="photoURL" />
-
             <Box sx={{ ml: 2 }}>
                 <Typography variant="subtitle2">{account.displayName}</Typography>
-
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                     {account.role}
                 </Typography>
@@ -62,7 +57,7 @@ export default function Nav({ openNav, onCloseNav }) {
         </Box>
     );
 
-    const renderMenu = (
+    const renderMenu = () => (
         <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
             {navConfig.map((item) => (
                 <NavItem key={item.title} item={item} />
@@ -70,11 +65,11 @@ export default function Nav({ openNav, onCloseNav }) {
         </Stack>
     );
 
-    const renderContent = (
+    const renderContent = () => (
         <Scrollbar
             sx={{
                 height: 1,
-                '& .simplebar-content': {
+                '&.simplebar-content': {
                     height: 1,
                     display: 'flex',
                     flexDirection: 'column',
@@ -85,11 +80,8 @@ export default function Nav({ openNav, onCloseNav }) {
             <Box sx={{ textAlign: 'justify', px: 2 }}>
                 <h4>Clinic Management System</h4>
             </Box>
-
-            {renderAccount}
-
-            {renderMenu}
-
+            {renderAccount()}
+            {renderMenu()}
             <Box sx={{ flexGrow: 1 }} />
         </Scrollbar>
     );
@@ -110,7 +102,7 @@ export default function Nav({ openNav, onCloseNav }) {
                         borderRight: (theme) => `dashed 1px ${theme.palette.divider}`,
                     }}
                 >
-                    {renderContent}
+                    {renderContent()}
                 </Box>
             ) : (
                 <Drawer
@@ -122,7 +114,7 @@ export default function Nav({ openNav, onCloseNav }) {
                         },
                     }}
                 >
-                    {renderContent}
+                    {renderContent()}
                 </Drawer>
             )}
         </Box>
@@ -134,11 +126,8 @@ Nav.propTypes = {
     onCloseNav: PropTypes.func,
 };
 
-// ----------------------------------------------------------------------
-
 function NavItem({ item }) {
     const pathname = usePathname();
-
     const active = item.path === pathname;
 
     return (
@@ -165,8 +154,7 @@ function NavItem({ item }) {
             <Box component="span" sx={{ width: 24, height: 24, mr: 2 }}>
                 {item.icon}
             </Box>
-
-            <Box component="span">{item.title} </Box>
+            <Box component="span">{item.title}</Box>
         </ListItemButton>
     );
 }
