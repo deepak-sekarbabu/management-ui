@@ -1,14 +1,26 @@
 import { v4 as uuidv4 } from 'uuid';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Box, Card, Button, Typography } from '@mui/material';
 
-import data from './data.json';
+//  import data from './data.json';
 import DoctorCard from './DoctorCard';
+// Fetch data from the specified URL
+const fetchData = async () => {
+    const response = await fetch('api/clinic/doctorinformation/1');
+    if (!response.ok) {
+        throw new Error(`HTTP error status: ${response.status}`);
+    }
+    return response.json();
+};
 
 const DoctorPage = () => {
-    const [doctors, setDoctors] = useState([...data]);
+    const [doctors, setDoctors] = useState([]); // Initialize as an empty array
     const [newDoctor, setNewDoctor] = useState(null);
+
+    useEffect(() => {
+        fetchData().then((data) => setDoctors(data)); // Fetch data and update state
+    }, []); // Empty dependency array means this effect runs once on mount
 
     const addNewDoctor = () => {
         const newDoctorEntry = {
