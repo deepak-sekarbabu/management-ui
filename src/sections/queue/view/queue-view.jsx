@@ -6,13 +6,11 @@ import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import InputLabel from '@mui/material/InputLabel';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-// import { queueInfo } from 'src/_mock/queue';
 
 import Scrollbar from 'src/components/scrollbar';
 
@@ -165,9 +163,9 @@ export default function QueuePage() {
     const notFound = !dataFiltered.length && !!filterName;
 
     return (
-        <Container>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
-                <Typography variant="h3" justifyContent="flex">
+        <Card>
+            <Stack p={2} direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+                <Typography variant="h2" justifyContent="flex">
                     Queue Information
                 </Typography>
                 <Stack direction="row" alignItems="center" justifyContent="flex-end">
@@ -263,6 +261,6 @@ export default function QueuePage() {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
-        </Container>
+        </Card>
     );
 }

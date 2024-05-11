@@ -31,33 +31,27 @@ const ClinicPage = () => {
     }, []);
 
     if (isLoading) {
-        // Render a loading indicator while waiting for data
         return (
-            <Container alignItems='left' >
-                <Stack direction="row" alignItems="left" justifyContent="space-between" mb={5} >
+            <Container>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h2">Clinic Information</Typography>
                 </Stack>
-                <CircularProgress style={{
-                    position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                }} />
+                <CircularProgress
+                    style={{
+                        position: 'fixed',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                    }}
+                />
             </Container>
         );
     }
 
-    if (!clinicData) {
-        console.error("No clinic Data");
-    }
-
-    const handleEdit = () => {
-        setEditMode(true);
-    };
-
+    const handleEdit = () => setEditMode(true);
     const handleCancel = async () => {
         if (hasUnsavedChanges) {
-            window.location.reload(); // Reload the page if there are unsaved changes
+            window.location.reload();
         } else {
             try {
                 const response = await axios.get(`${GET_CLINIC_INFO}1`);
@@ -71,9 +65,10 @@ const ClinicPage = () => {
     };
 
     const handleSave = async () => {
+        console.log(editedClinicData);
         try {
             await axios.put(`${UPDATE_CLINIC_INFO}1`, editedClinicData);
-            setClinicData(editedClinicData); // Update original data with edited data
+            setClinicData(editedClinicData);
             setEditMode(false);
             setHasUnsavedChanges(false);
         } catch (error) {
@@ -88,17 +83,15 @@ const ClinicPage = () => {
 
     return (
         <Card>
-
-            <Typography p={2} variant="h2">Clinic Information</Typography>
-
+            <Typography p={2} variant="h2">
+                Clinic Information
+            </Typography>
             <ClinicDetails
-                clinic={editedClinicData}
+                clinic={clinicData}
                 isEditable={isEditable}
                 onFormValuesChange={handleFormValuesChange}
             />
-
             <Box mt={2}>
-                {' '}
                 <Stack
                     direction="row"
                     alignItems="center"
