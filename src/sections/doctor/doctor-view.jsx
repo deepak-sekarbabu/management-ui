@@ -20,28 +20,53 @@ const DoctorPage = () => {
             doctorConsultationFee: 0,
             doctorConsultationFeeOther: 0,
             phoneNumbers: [{ phoneNumber: '' }],
-            doctorAvailability: [{
-                "availableDays": '',
-                "shiftTime": '',
-                "shiftStartTime": '',
-                "shiftEndTime": '',
-                "consultationTime": 0,
-                "configType": ''
-            }],
+            doctorAvailability: [
+                {
+                    availableDays: '',
+                    shiftTime: '',
+                    shiftStartTime: '',
+                    shiftEndTime: '',
+                    consultationTime: 0,
+                    configType: '',
+                },
+            ],
         };
         setNewDoctor(newDoctorEntry);
     };
 
     const handleRemove = (doctorId) => {
-        console.log("Removing doctor Data:", doctorId);
+        console.log('Removing doctor Data:', doctorId);
         setNewDoctor(null);
         setDoctors(doctors.filter((doctor) => doctor.id !== doctorId));
     };
 
-    const saveNewDoctor = (newDoctorData) => {
-        console.log("newDoctorData:", newDoctorData);
-        setDoctors([...doctors, newDoctorData]);
-        setNewDoctor(null);
+    const saveNewDoctor = async (newDoctorData) => {
+        console.log('newDoctorData:', newDoctorData);
+        try {
+            // Explicitly set the 'clinicId' field to 1
+            newDoctorData.clinicId = 1;
+            // Exclude the 'id' property from newDoctorData
+            const dataWithoutId = Object.keys(newDoctorData).reduce((acc, key) => {
+                if (key !== 'id') {
+                    acc[key] = newDoctorData[key];
+                }
+                return acc;
+            }, {});
+            const response = await fetch('api/doctor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataWithoutId), // Use the modified object without 'id'
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error status: ${response.status}`);
+            }
+            setDoctors([...doctors, newDoctorData]);
+            setNewDoctor(null);
+        } catch (error) {
+            console.error('Error saving doctor:', error);
+        }
     };
 
     return (
@@ -49,7 +74,11 @@ const DoctorPage = () => {
             <Box p={2}>
                 <Typography variant="h2">Doctor Information</Typography>
                 {doctors.map((doctor) => (
-                    <DoctorCard key={doctor.id} doctor={doctor} onRemove={() => handleRemove(doctor.id)} />
+                    <DoctorCard
+                        key={doctor.id}
+                        doctor={doctor}
+                        onRemove={() => handleRemove(doctor.id)}
+                    />
                 ))}
                 {newDoctor && (
                     <DoctorCard
