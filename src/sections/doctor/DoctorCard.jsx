@@ -95,10 +95,10 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
         setIsEditing(false);
 
         // Call the onSave function passed from the parent component
-        if (onSave && isNewDoctor) {
+        if (onSave) {
             onSave(formState);
         }
-    }, [formState, onSave, isNewDoctor, validateDoctorData]);
+    }, [formState, onSave, validateDoctorData]);
 
     const handleCancel = useCallback(() => {
         console.log(`Cancelling edit for doctor: ${doctor.doctorName}`);
