@@ -59,7 +59,9 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
 
         // Check if doctorConsultationFeeOther is empty or not a number
         if (
-            !doctorData.doctorConsultationFeeOther || Number.isNaN(doctorData.doctorConsultationFeeOther)) {
+            !doctorData.doctorConsultationFeeOther ||
+            Number.isNaN(doctorData.doctorConsultationFeeOther)
+        ) {
             errors.doctorConsultationFeeOther = 'Consultation fee Queue must be a number';
         }
 
@@ -88,7 +90,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
         // Validate the edited doctor data
         const errors = validateDoctorData(formState);
         if (Object.keys(errors).length > 0) {
-            setFormState(prevState => ({ ...prevState, validationErrors: errors }));
+            setFormState((prevState) => ({ ...prevState, validationErrors: errors }));
             return;
         }
         console.log('Saving doctor:', formState);
@@ -106,8 +108,10 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
             console.log(`Removing new doctor: ${doctor.doctorName}`);
             // Call the onRemove function passed from the parent component to remove the new doctor
             if (onRemove) {
-                onRemove();
+                onRemove(doctor.id); // Ensure this is the correct parameter expected by onRemove
             }
+            // Reset form state to initial
+            setFormState({ validationErrors: {} });
         } else {
             setFormState({ ...doctor, validationErrors: {} });
             setIsEditing(false);
@@ -115,36 +119,58 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
         }
     }, [isNewDoctor, onRemove, doctor]);
 
-    const handleInputChange = useCallback((field, value) => {
-        const errors = validateDoctorData({ ...formState, [field]: value });
-        setFormState(prevState => ({ ...prevState, [field]: value, validationErrors: errors }));
-        console.log(`Updated ${field} for doctor: ${doctor.doctorName}`);
-    }, [formState, doctor.doctorName, validateDoctorData]);
+    const handleInputChange = useCallback(
+        (field, value) => {
+            const errors = validateDoctorData({ ...formState, [field]: value });
+            setFormState((prevState) => ({
+                ...prevState,
+                [field]: value,
+                validationErrors: errors,
+            }));
+            console.log(`Updated ${field} for doctor: ${doctor.doctorName}`);
+        },
+        [formState, doctor.doctorName, validateDoctorData]
+    );
 
-    const handlePhoneNumberChange = useCallback((index, value) => {
-        setFormState((prevState) => ({
-            ...prevState,
-            phoneNumbers: prevState.phoneNumbers.map((item, i) =>
-                i === index ? { ...item, phoneNumber: value } : item
-            ),
-        }));
-        console.log(`Updated phone number for doctor: ${doctor.doctorName}`);
-    }, [doctor.doctorName]); // Include doctor.doctorName in the dependency array
+    const handlePhoneNumberChange = useCallback(
+        (index, value) => {
+            setFormState((prevState) => ({
+                ...prevState,
+                phoneNumbers: prevState.phoneNumbers.map((item, i) =>
+                    i === index ? { ...item, phoneNumber: value } : item
+                ),
+            }));
+            console.log(`Updated phone number for doctor: ${doctor.doctorName}`);
+        },
+        [doctor.doctorName]
+    ); // Include doctor.doctorName in the dependency array
 
-    const handleAvailabilityChange = useCallback((newAvailability) => {
-        console.log('Availability updated:', newAvailability);
-        setFormState(prevState => ({ ...prevState, doctorAvailability: newAvailability }));
-        console.log(`Updated availability for doctor: ${doctor.doctorName}`);
-    }, [doctor.doctorName]);
-
-
+    const handleAvailabilityChange = useCallback(
+        (newAvailability) => {
+            console.log('Availability updated:', newAvailability);
+            setFormState((prevState) => ({ ...prevState, doctorAvailability: newAvailability }));
+            console.log(`Updated availability for doctor: ${doctor.doctorName}`);
+        },
+        [doctor.doctorName]
+    );
 
     return (
         <Card sx={{ mt: 2 }}>
             <CardContent>
-                <Card sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={handleExpandDetails}>
-                    <Avatar alt={doctor.doctorName} src={`/assets/images/avatars/avatar_${Math.floor(Math.random() * 25) + 1}.jpg`} />
-                    <Typography variant="h5" component="h2" sx={{ ml: 2 }} onClick={handleExpandDetails}>
+                <Card
+                    sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                    onClick={handleExpandDetails}
+                >
+                    <Avatar
+                        alt={doctor.doctorName}
+                        src={`/assets/images/avatars/avatar_${Math.floor(Math.random() * 25) + 1}.jpg`}
+                    />
+                    <Typography
+                        variant="h5"
+                        component="h2"
+                        sx={{ ml: 2 }}
+                        onClick={handleExpandDetails}
+                    >
                         {doctor.doctorName}
                     </Typography>
                 </Card>
@@ -155,7 +181,9 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
                                 <TextField
                                     label="Doctor Name"
                                     value={formState.doctorName}
-                                    onChange={(e) => handleInputChange('doctorName', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorName', e.target.value)
+                                    }
                                     error={!!formState.validationErrors.doctorName}
                                     helperText={formState.validationErrors.doctorName}
                                     style={{ marginTop: '20px' }}
@@ -170,14 +198,18 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
                                 <TextField
                                     label="Doctor Specialty"
                                     value={formState.doctorSpeciality}
-                                    onChange={(e) => handleInputChange('doctorSpeciality', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorSpeciality', e.target.value)
+                                    }
                                     error={!!formState.validationErrors.doctorSpeciality}
                                     helperText={formState.validationErrors.doctorSpeciality}
                                 />
                                 <TextField
                                     label="Doctor Experience in years"
                                     value={formState.doctorExperience}
-                                    onChange={(e) => handleInputChange('doctorExperience', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorExperience', e.target.value)
+                                    }
                                     error={!!formState.validationErrors.doctorExperience}
                                     helperText={formState.validationErrors.doctorExperience}
                                     inputProps={{
@@ -190,7 +222,9 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
                                 <TextField
                                     label="Consultation Fee Appointment in Rupees"
                                     value={formState.doctorConsultationFee}
-                                    onChange={(e) => handleInputChange('doctorConsultationFee', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorConsultationFee', e.target.value)
+                                    }
                                     error={!!formState.validationErrors.doctorConsultationFee}
                                     helperText={formState.validationErrors.doctorConsultationFee}
                                     inputProps={{
@@ -200,9 +234,16 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
                                 <TextField
                                     label="Consultation Fee Queue in Rupees"
                                     value={formState.doctorConsultationFeeOther}
-                                    onChange={(e) => handleInputChange('doctorConsultationFeeOther', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            'doctorConsultationFeeOther',
+                                            e.target.value
+                                        )
+                                    }
                                     error={!!formState.validationErrors.doctorConsultationFeeOther}
-                                    helperText={formState.validationErrors.doctorConsultationFeeOther}
+                                    helperText={
+                                        formState.validationErrors.doctorConsultationFeeOther
+                                    }
                                     inputProps={{
                                         type: 'number', // This ensures that only numbers can be entered
                                     }}

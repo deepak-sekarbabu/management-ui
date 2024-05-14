@@ -36,14 +36,24 @@ const DoctorPage = () => {
     if (isLoading) {
         return (
             <Card>
-                <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" height="100vh">
-                    <Typography variant="h2" gutterBottom>Doctor Information</Typography>
-                    <CircularProgress style={{
-                        position: 'fixed',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                    }} />
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    height="100vh"
+                >
+                    <Typography variant="h2" gutterBottom>
+                        Doctor Information
+                    </Typography>
+                    <CircularProgress
+                        style={{
+                            position: 'fixed',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                        }}
+                    />
                 </Box>
             </Card>
         );
@@ -77,6 +87,10 @@ const DoctorPage = () => {
     const handleRemove = async (doctorId) => {
         console.log('Removing doctor Data:', doctorId);
         try {
+            if (typeof doctorId === 'string' && doctorId.includes('-')) {
+                setNewDoctor(null);
+                setDoctors(doctors.filter((doctor) => doctor.id !== doctorId));
+            }
             const response = await fetch(`api/doctor/${doctorId}`, {
                 method: 'DELETE',
             });
@@ -103,7 +117,7 @@ const DoctorPage = () => {
                     }
                     return acc;
                 }, {});
-                console.log("Adding new Doctor", dataWithoutId)
+                console.log('Adding new Doctor', dataWithoutId);
                 response = await fetch('api/doctor', {
                     method: 'POST',
                     headers: {
@@ -113,7 +127,7 @@ const DoctorPage = () => {
                 });
             } else {
                 // Existing doctor
-                console.log("Updating existing  Doctor : id", newDoctorData, newDoctorData.id);
+                console.log('Updating existing  Doctor : id', newDoctorData, newDoctorData.id);
                 response = await fetch(`api/doctor/${newDoctorData.id}`, {
                     method: 'PUT',
                     headers: {
@@ -155,11 +169,7 @@ const DoctorPage = () => {
                     />
                 )}
                 <Box mt={2} display="flex" justifyContent="flex-end">
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={addNewDoctor}
-                    >
+                    <Button variant="contained" color="primary" onClick={addNewDoctor}>
                         Add Doctor
                     </Button>
                 </Box>
