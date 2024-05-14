@@ -359,14 +359,16 @@ const DoctorAbsencePage = () => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <Button
-                        style={{ marginTop: '20px' }}
-                        variant="contained"
-                        color="primary"
-                        onClick={handleAdd}
-                    >
-                        Add
-                    </Button>
+                    <Box mt={2} display="flex" justifyContent="flex-end">
+                        <Button
+                            style={{ marginTop: '20px' }}
+                            variant="contained"
+                            color="primary"
+                            onClick={handleAdd}
+                        >
+                            Add
+                        </Button>
+                    </Box>
                 </Box>
             )}
         </Card>
