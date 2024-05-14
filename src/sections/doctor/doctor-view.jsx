@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import React, { useState, useEffect } from 'react';
 
-import { Box, Card, Button, Typography, CircularProgress } from '@mui/material';
+import { Box, Card, Stack, Button, Container, Typography, CircularProgress } from '@mui/material';
 
 import DoctorCard from './DoctorCard';
 
@@ -35,8 +35,8 @@ const DoctorPage = () => {
 
     if (isLoading) {
         return (
-            <Card>
-                <Box
+            <Container>
+                <Stack
                     display="flex"
                     flexDirection="column"
                     alignItems="center"
@@ -46,16 +46,16 @@ const DoctorPage = () => {
                     <Typography variant="h2" gutterBottom>
                         Doctor Information
                     </Typography>
-                    <CircularProgress
-                        style={{
-                            position: 'fixed',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                        }}
-                    />
-                </Box>
-            </Card>
+                </Stack>
+                <CircularProgress
+                    style={{
+                        position: 'fixed',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                    }}
+                />
+            </Container>
         );
     }
 

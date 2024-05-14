@@ -6,6 +6,7 @@ import { DatePicker, TimePicker, LocalizationProvider } from '@mui/x-date-picker
 import {
     Box,
     Card,
+    Stack,
     Table,
     Paper,
     Select,
@@ -16,6 +17,7 @@ import {
     TextField,
     TableCell,
     TableHead,
+    Container,
     Typography,
     TableContainer,
     CircularProgress,
@@ -46,6 +48,7 @@ const DoctorAbsencePage = () => {
                 }
                 const data = await response.json();
                 setDoctorData(data);
+                setLoading(false);
             } catch (error) {
                 console.error('Error fetching doctor data:', error);
             }
@@ -207,9 +210,25 @@ const DoctorAbsencePage = () => {
                 <Alert severity="error">Error when saving Doctor Absence Information</Alert>
             )}
             {isLoading ? (
-                <Box p={2} display="flex" justifyContent="center" alignItems="center">
-                    <CircularProgress />
-                </Box>
+                <Container>
+                    {' '}
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        mb={5}
+                    >
+                        <Typography variant="h2">Doctor Absence Information</Typography>
+                    </Stack>
+                    <CircularProgress
+                        style={{
+                            position: 'fixed',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                        }}
+                    />
+                </Container>
             ) : (
                 <Box p={2}>
                     <Typography style={{ marginBottom: '20px' }} variant="h2">
