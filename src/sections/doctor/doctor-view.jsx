@@ -74,10 +74,22 @@ const DoctorPage = () => {
         setNewDoctor(newDoctorEntry);
     };
 
-    const handleRemove = (doctorId) => {
+    const handleRemove = async (doctorId) => {
         console.log('Removing doctor Data:', doctorId);
-        setNewDoctor(null);
-        setDoctors(doctors.filter((doctor) => doctor.id !== doctorId));
+        try {
+            const response = await fetch(`api/doctor/${doctorId}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error status: ${response.status}`);
+            }
+            console.log('Doctor removed successfully');
+            setNewDoctor(null);
+            setDoctors(doctors.filter((doctor) => doctor.id !== doctorId));
+        } catch (error) {
+            console.error('Error removing doctor:', error);
+        }
     };
 
     const saveNewDoctor = async (newDoctorData) => {
