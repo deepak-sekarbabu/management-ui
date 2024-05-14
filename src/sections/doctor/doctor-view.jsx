@@ -15,38 +15,36 @@ const fetchData = async () => {
 };
 
 const DoctorPage = () => {
-    const [doctors, setDoctors] = useState([]); // Initialize as an empty array
+    const [doctors, setDoctors] = useState([]);
     const [newDoctor, setNewDoctor] = useState(null);
     const [isLoading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const loadData = async () => {
-            try {
-                const data = await fetchData();
-                setDoctors(data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-            setLoading(false);
-        };
+    const loadData = async () => {
+        try {
+            const data = await fetchData();
+            setDoctors(data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+        setLoading(false);
+    };
 
+    useEffect(() => {
         loadData();
-    }, []); // Empty dependency array means this effect runs once on mount
+    }, []);
 
     if (isLoading) {
         return (
             <Card>
-                <Box direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                    <Typography variant="h2">Doctor Information</Typography>
-                </Box>
-                <CircularProgress
-                    style={{
+                <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" height="100vh">
+                    <Typography variant="h2" gutterBottom>Doctor Information</Typography>
+                    <CircularProgress style={{
                         position: 'fixed',
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                    }}
-                />
+                    }} />
+                </Box>
             </Card>
         );
     }
@@ -56,6 +54,7 @@ const DoctorPage = () => {
             id: uuidv4(),
             doctorName: '',
             doctorId: '',
+            clinicId: 1,
             doctorSpeciality: '',
             doctorExperience: 0,
             doctorConsultationFee: 0,
@@ -82,55 +81,44 @@ const DoctorPage = () => {
     };
 
     const saveNewDoctor = async (newDoctorData) => {
-        console.log('saving doctor:', newDoctorData);
         try {
-            // Check if the doctor is new or not
-            if (Number.isInteger(newDoctorData.id)) {
-                console.log("Existing Doctor Flow");
-                // If the doctor is not new, make a PUT call
-                const response = await fetch(`api/doctor/${newDoctorData.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(newDoctorData),
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error status: ${response.status}`);
-                }
-                console.log('Doctor updated successfully');
-            } else {
-                console.log("New Doctor Flow");
-                // If the doctor is new, proceed with the POST call
-                // Ensure the ID field is not included in the request body
+            let response;
+            if (typeof newDoctorData.id === 'string' && newDoctorData.id.includes('-')) {
+                // New doctor (UUID)
                 const dataWithoutId = Object.keys(newDoctorData).reduce((acc, key) => {
                     if (key !== 'id') {
                         acc[key] = newDoctorData[key];
                     }
                     return acc;
                 }, {});
-
-                const response = await fetch('api/doctor', {
+                console.log("Adding new Doctor", dataWithoutId)
+                response = await fetch('api/doctor', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(dataWithoutId),
                 });
-                if (!response.ok) {
-                    throw new Error(`HTTP error status: ${response.status}`);
-                }
-                // After successfully saving or updating, reload the data
-                const data = await fetchData();
-                setDoctors(data);
-                setNewDoctor(null);
+            } else {
+                // Existing doctor
+                console.log("Updating existing  Doctor : id", newDoctorData, newDoctorData.id);
+                response = await fetch(`api/doctor/${newDoctorData.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newDoctorData),
+                });
             }
+            if (!response.ok) {
+                throw new Error(`HTTP error status: ${response.status}`);
+            }
+            console.log('Doctor saved successfully');
+            await loadData();
+            setNewDoctor(null);
         } catch (error) {
             console.error('Error saving doctor:', error);
         }
-        // After successfully saving or updating, reload the data
-        const data = await fetchData();
-        setDoctors(data);
     };
 
     return (
@@ -158,7 +146,8 @@ const DoctorPage = () => {
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={addNewDoctor}>
+                        onClick={addNewDoctor}
+                    >
                         Add Doctor
                     </Button>
                 </Box>
