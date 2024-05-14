@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import React, { useState, useEffect } from 'react';
 
-import { Box, Card, Button, Typography } from '@mui/material';
+import { Box, Card, Button, Typography, CircularProgress } from '@mui/material';
 
-//  import data from './data.json';
 import DoctorCard from './DoctorCard';
+
 // Fetch data from the specified URL
 const fetchData = async () => {
     const response = await fetch('api/clinic/doctorinformation/1');
@@ -17,10 +17,39 @@ const fetchData = async () => {
 const DoctorPage = () => {
     const [doctors, setDoctors] = useState([]); // Initialize as an empty array
     const [newDoctor, setNewDoctor] = useState(null);
+    const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchData().then((data) => setDoctors(data)); // Fetch data and update state
+        const loadData = async () => {
+            try {
+                const data = await fetchData();
+                setDoctors(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+            setLoading(false);
+        };
+
+        loadData();
     }, []); // Empty dependency array means this effect runs once on mount
+
+    if (isLoading) {
+        return (
+            <Card>
+                <Box direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                    <Typography variant="h2">Doctor Information</Typography>
+                </Box>
+                <CircularProgress
+                    style={{
+                        position: 'fixed',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                    }}
+                />
+            </Card>
+        );
+    }
 
     const addNewDoctor = () => {
         const newDoctorEntry = {
@@ -56,8 +85,6 @@ const DoctorPage = () => {
         console.log('saving doctor:', newDoctorData);
         try {
             // Check if the doctor is new or not
-            console.log(newDoctorData.id);
-            console.log(Number.isInteger(newDoctorData.id));
             if (Number.isInteger(newDoctorData.id)) {
                 console.log("Existing Doctor Flow");
                 // If the doctor is not new, make a PUT call
@@ -94,15 +121,16 @@ const DoctorPage = () => {
                     throw new Error(`HTTP error status: ${response.status}`);
                 }
                 // After successfully saving or updating, reload the data
-                fetchData().then((data) => setDoctors(data));
-                setDoctors([...doctors, newDoctorData]);
+                const data = await fetchData();
+                setDoctors(data);
                 setNewDoctor(null);
             }
         } catch (error) {
             console.error('Error saving doctor:', error);
         }
         // After successfully saving or updating, reload the data
-        fetchData().then((data) => setDoctors(data));
+        const data = await fetchData();
+        setDoctors(data);
     };
 
     return (
@@ -127,7 +155,10 @@ const DoctorPage = () => {
                     />
                 )}
                 <Box mt={2} display="flex" justifyContent="flex-end">
-                    <Button variant="outlined" onClick={addNewDoctor}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={addNewDoctor}>
                         Add Doctor
                     </Button>
                 </Box>
