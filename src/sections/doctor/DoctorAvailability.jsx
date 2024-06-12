@@ -42,6 +42,25 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                     },
                 }));
             }
+            // Revalidate shiftEndTime
+            const RevalidateShiftEndTime = dayjs(editedAvailability[index].shiftEndTime, 'HH:mm:ss');
+            if (RevalidateShiftEndTime.isBefore(shiftStartTime)) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    [index]: {
+                        ...prevErrors[index],
+                        shiftEndTime: 'Shift end time must be greater than shift start time.',
+                    },
+                }));
+            } else {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    [index]: {
+                        ...prevErrors[index],
+                        shiftEndTime: null,
+                    },
+                }));
+            }
         }
 
         if (field === 'shiftEndTime') {
@@ -63,6 +82,25 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                     [index]: {
                         ...prevErrors[index],
                         shiftEndTime: null,
+                    },
+                }));
+            }
+            // Revalidate shiftStartTime
+            const RevalidateShiftStartTime = dayjs(editedAvailability[index].shiftStartTime, 'HH:mm:ss');
+            if (RevalidateShiftStartTime.isAfter(shiftEndTime)) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    [index]: {
+                        ...prevErrors[index],
+                        shiftStartTime: 'Shift start time must be less than shift end time.',
+                    },
+                }));
+            } else {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    [index]: {
+                        ...prevErrors[index],
+                        shiftStartTime: null,
                     },
                 }));
             }
@@ -175,8 +213,7 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                             <TimePicker
                                                 value={item.shiftStartTime ? dayjs(item.shiftStartTime, 'HH:mm:ss') : null}
                                                 onChange={(value) => handleAvailabilityChange(index, 'shiftStartTime', value ? value.format('HH:mm:ss') : '')}
-
-                                                error={!!errors[index]?.shiftStartTime}
+                                                onError={!!errors[index]?.shiftStartTime}
                                                 slotProps={{
                                                     textField: {
                                                         helperText: errors[index]?.shiftStartTime || '',
@@ -191,7 +228,6 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                                 value={item.shiftEndTime ? dayjs(item.shiftEndTime, 'HH:mm:ss') : null}
                                                 onChange={(value) => handleAvailabilityChange(index, 'shiftEndTime', value ? value.format('HH:mm:ss') : '')}
                                                 onError={!!errors[index]?.shiftEndTime}
-                                                error={!!errors[index]?.shiftEndTime}
                                                 slotProps={{
                                                     textField: {
                                                         helperText: errors[index]?.shiftEndTime || '',
