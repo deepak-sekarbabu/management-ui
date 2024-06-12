@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Box, Card, Avatar, Button, TextField, Typography, CardContent } from '@mui/material';
 
@@ -10,6 +10,12 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
     const [isEditing, setIsEditing] = useState(isNewDoctor);
     const [formState, setFormState] = useState({ ...doctor, validationErrors: {} });
     const [isDetailsExpanded, setIsDetailsExpanded] = useState(isNewDoctor);
+    const [avatar, setAvatar] = useState(`/assets/images/avatars/avatar_${Math.floor(Math.random() * 25) + 1}.jpg`);
+
+    useEffect(() => {
+        setAvatar(`/assets/images/avatars/avatar_${Math.floor(Math.random() * 25) + 1}.jpg`);
+    }, [doctor.id]);
+
 
     const validateDoctorData = useCallback((doctorData) => {
         const errors = {};
@@ -163,7 +169,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
                 >
                     <Avatar
                         alt={doctor.doctorName}
-                        src={`/assets/images/avatars/avatar_${Math.floor(Math.random() * 25) + 1}.jpg`}
+                        src={avatar}
                     />
                     <Typography
                         variant="h5"

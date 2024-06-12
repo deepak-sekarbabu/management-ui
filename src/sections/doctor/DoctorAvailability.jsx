@@ -21,10 +21,35 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
             value = Number(value);
         }
 
+        if (field === 'shiftStartTime') {
+            const shiftEndTime = dayjs(editedAvailability[index].shiftEndTime, 'HH:mm:ss');
+            const shiftStartTime = dayjs(value, 'HH:mm:ss');
+            if (shiftStartTime.isAfter(shiftEndTime)) {
+                console.log('Shift start time must be less than shift end time.');
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    [index]: {
+                        ...prevErrors[index],
+                        shiftStartTime: 'Shift start time must be less than shift end time.',
+                    },
+                }));
+            } else {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    [index]: {
+                        ...prevErrors[index],
+                        shiftStartTime: null,
+                    },
+                }));
+            }
+        }
+
         if (field === 'shiftEndTime') {
             const shiftStartTime = dayjs(editedAvailability[index].shiftStartTime, 'HH:mm:ss');
             const shiftEndTime = dayjs(value, 'HH:mm:ss');
+            console.log(shiftStartTime, shiftEndTime);
             if (shiftEndTime.isBefore(shiftStartTime)) {
+                console.log('Shift end time must be greater than shift start time.');
                 setErrors((prevErrors) => ({
                     ...prevErrors,
                     [index]: {
@@ -41,6 +66,24 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                     },
                 }));
             }
+        }
+
+        if (field === 'availableDays' && !value) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                [index]: {
+                    ...prevErrors[index],
+                    availableDays: 'Available days cannot be empty',
+                },
+            }));
+        } else {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                [index]: {
+                    ...prevErrors[index],
+                    availableDays: null,
+                },
+            }));
         }
 
         const updatedAvailability = editedAvailability.map((item, i) => i === index ? { ...item, [field]: value } : item);
@@ -99,6 +142,8 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                             displayEmpty
                                             renderValue={(value) => value === '' ? 'Select Day' : value}
                                             onChange={(e) => handleAvailabilityChange(index, 'availableDays', e.target.value)}
+                                            error={!!errors[index]?.availableDays}
+                                            helperText={errors[index]?.availableDays}
                                         >
                                             {weekDays.map((day) => (
                                                 <MenuItem key={day} value={day}>
@@ -115,6 +160,8 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                             displayEmpty
                                             renderValue={(value) => value === '' ? 'Select Time' : value}
                                             onChange={(e) => handleAvailabilityChange(index, 'shiftTime', e.target.value)}
+                                            error={!!errors[index]?.shiftTime}
+                                            helperText={errors[index]?.shiftTime}
                                         >
                                             {shiftTimes.map((time) => (
                                                 <MenuItem key={time} value={time}>
@@ -128,6 +175,13 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                             <TimePicker
                                                 value={item.shiftStartTime ? dayjs(item.shiftStartTime, 'HH:mm:ss') : null}
                                                 onChange={(value) => handleAvailabilityChange(index, 'shiftStartTime', value ? value.format('HH:mm:ss') : '')}
+
+                                                error={!!errors[index]?.shiftStartTime}
+                                                slotProps={{
+                                                    textField: {
+                                                        helperText: errors[index]?.shiftStartTime || '',
+                                                    },
+                                                }}
                                             />
                                         </LocalizationProvider>
                                     </TableCell>
@@ -136,8 +190,13 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                             <TimePicker
                                                 value={item.shiftEndTime ? dayjs(item.shiftEndTime, 'HH:mm:ss') : null}
                                                 onChange={(value) => handleAvailabilityChange(index, 'shiftEndTime', value ? value.format('HH:mm:ss') : '')}
+                                                onError={!!errors[index]?.shiftEndTime}
                                                 error={!!errors[index]?.shiftEndTime}
-                                                helperText={errors[index]?.shiftEndTime}
+                                                slotProps={{
+                                                    textField: {
+                                                        helperText: errors[index]?.shiftEndTime || '',
+                                                    },
+                                                }}
                                             />
                                         </LocalizationProvider>
                                     </TableCell>
@@ -154,6 +213,8 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                                 min: 2,
                                                 max: 60,
                                             }}
+                                            error={!!errors[index]?.consultationTime}
+                                            helperText={errors[index]?.consultationTime}
                                         />
                                     </TableCell>
                                     <TableCell align="left">
@@ -164,6 +225,8 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
                                             displayEmpty
                                             renderValue={(value) => value === '' ? 'Select Config' : value}
                                             onChange={(e) => handleAvailabilityChange(index, 'configType', e.target.value)}
+                                            error={!!errors[index]?.configType}
+                                            helperText={errors[index]?.configType}
                                         >
                                             {configTypes.map((type) => (
                                                 <MenuItem key={type} value={type}>
