@@ -17,6 +17,8 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 const PATIENT_REACHED = '/api/queue/patientReached/';
+const PATIENT_CANCELLED = '/api/queue/patientCancelled/';
+const PATIENT_VISIT_DONE = '/api/queue/patientVisited/';
 
 export default function QueueTableRow({
     selected,
@@ -53,6 +55,32 @@ export default function QueueTableRow({
             }
         } catch (error) {
             console.error('Failed to update patient reached status:', error);
+        }
+    };
+
+    const handleCancelPatient = async (event) => {
+        try {
+            console.log(id);
+            await axios.put(PATIENT_CANCELLED + id);
+            setOpen(null);
+            if (onQueueUpdate) {
+                onQueueUpdate(); // Invoke the callback to reload the queue data
+            }
+        } catch (error) {
+            console.error('Failed to update patient cancelled status:', error);
+        }
+    };
+
+    const handlePatientVisitDone = async (event) => {
+        try {
+            console.log(id);
+            await axios.put(PATIENT_VISIT_DONE + id);
+            setOpen(null);
+            if (onQueueUpdate) {
+                onQueueUpdate(); // Invoke the callback to reload the queue data
+            }
+        } catch (error) {
+            console.error('Failed to update patient visited status:', error);
         }
     };
 
@@ -112,11 +140,11 @@ export default function QueueTableRow({
                     Skip Patient
                 </MenuItem>
 
-                <MenuItem onClick={handleSkipPatient} sx={{ color: 'error.main' }}>
+                <MenuItem onClick={handleCancelPatient} sx={{ color: 'error.main' }}>
                     Cancel
                 </MenuItem>
 
-                <MenuItem onClick={handlePatientReachedMenu} sx={{ color: 'green' }}>
+                <MenuItem onClick={handlePatientVisitDone} sx={{ color: 'green' }}>
                     Visit Done
                 </MenuItem>
             </Popover>
