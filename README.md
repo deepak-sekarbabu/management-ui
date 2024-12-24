@@ -1,46 +1,220 @@
-## Minimal (https://minimal-kit-react.vercel.app/)
+# Management UI
 
-![license](https://img.shields.io/badge/license-MIT-blue.svg)
+A comprehensive React-based management interface built with Material-UI, designed to provide a modern and responsive dashboard experience.
 
-> Free React Admin Dashboard made with Material-UI components and React.
+## Features
 
-![preview](public/assets/preview.jpg)
+- 🎨 Modern and responsive Material Design interface
+- 📊 Interactive data visualization with ApexCharts
+- 🔐 Authentication and authorization system
+- 🌙 Light/Dark theme support
+- 📱 Mobile-first responsive design
+- 🔄 Real-time data updates
+- 📋 Data table management
+- 🎯 Role-based access control
 
-## Demo
+## Tech Stack
 
-- [Dashboard Page](https://minimal-kit-react.vercel.app/)
-- [Users Page](https://minimal-kit-react.vercel.app/user)
-- [Products Page](https://minimal-kit-react.vercel.app/products)
-- [Blog Page](https://minimal-kit-react.vercel.app/blog)
-- [Login Page](https://minimal-kit-react.vercel.app/login)
-- [Not Found Page](https://minimal-kit-react.vercel.app/404)
+### Core
+- React 18 - Frontend library
+- Material-UI (MUI) v5 - UI component library
+- Vite - Build tool and development server
+- Emotion - CSS-in-JS styling solution
 
-## Quick start
+### Data Visualization & Management
+- ApexCharts - Interactive charts and graphs
+- Axios - HTTP client for API requests
+- date-fns & dayjs - Date manipulation utilities
 
-- [Download from Github](https://github.com/minimal-ui-kit/material-kit-react/archive/refs/heads/main.zip) or clone the repo : `git clone https://github.com/minimal-ui-kit/material-kit-react.git`
-- Recommended `Node.js v18.x`.
-- **Install:** `yarn install`
-- **Start:** `yarn dev`
-- **Build:** `yarn build`
+### State Management & Routing
+- Redux Toolkit - State management
+- React Router v6 - Navigation and routing
 
-## Upgrade to PRO Version
+### Development Tools
+- TypeScript - Type checking and code quality
+- ESLint - Code linting
+- Prettier - Code formatting
+- Husky - Git hooks
+- Jest - Unit testing
+- React Testing Library - Component testing
 
-| Minimal Free     | [Minimal Pro](https://material-ui.com/store/items/minimal-dashboard/) |
-| :--------------- | :-------------------------------------------------------------------- |
-| **6** Demo Pages | **70+** Demo Pages                                                    |
-| -                | Authentication with **Amplify**, **Auth0**, **JWT** and **Firebase**  |
-| -                | [+More components](https://minimals.cc/components)                    |
-| -                | Dark & light mode                                                     |
-| -                | Next.js version                                                       |
-| -                | TypeScript version (Standard Plus and Extended license)               |
-| -                | Design Figma File (Standard Plus and Extended license)                |
-| -                | Complete Users Flows                                                  |
-| -                | Learn more: [Package & License](https://docs.minimals.cc/package)     |
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v16 or higher)
+- npm (v7 or higher) or yarn (v1.22 or higher)
+- Git
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone https://github.com/your-username/management-ui.git
+cd management-ui
+
+
+Install dependencies
+
+yarn install
+# or
+npm install
+
+
+bash
+Set up environment variables
+
+cp .env.example .env
+
+
+```
+
+bash
+Edit the .env file with your configuration
+
+Available Scripts
+```
+# Development
+yarn dev          # Start development server
+yarn dev:host     # Start development server with host access
+
+# Building
+yarn build        # Build for production
+yarn preview      # Preview production build
+
+# Code Quality
+yarn lint         # Run ESLint
+yarn lint:fix     # Fix ESLint errors
+yarn prettier     # Format code
+yarn type-check   # Run TypeScript type checking
+
+# Testing
+yarn test         # Run tests
+yarn test:watch   # Run tests in watch mode
+yarn test:coverage # Run tests with coverage report
+```
+
+
+```
+bash
+Project Structure
+src/
+├── assets/        # Static assets (images, fonts, etc.)
+├── components/    # Reusable UI components
+├── config/        # Configuration files
+├── hooks/         # Custom React hooks
+├── layouts/       # Page layouts
+├── pages/         # Page components
+├── services/      # API services
+├── store/         # Redux store configuration
+├── theme/         # MUI theme customization
+├── types/         # TypeScript type definitions
+└── utils/         # Utility functions
+```
+```
+text
+Environment Variables
+VITE_API_BASE_URL=your_api_base_url
+VITE_AUTH_TOKEN_KEY=your_auth_token_key
+VITE_ENV=development
+```
+
+
+```
+env
+Browser Support
+Chrome (latest)
+
+Firefox (latest)
+
+Safari (latest)
+
+Edge (latest)
+```
+Deployment
+Build for Production
+yarn build
+
+```
+bash
+The build artifacts will be stored in the dist/ directory.
+
+Deploy to Production
+Configure your deployment platform (e.g., AWS, Vercel, Netlify)
+
+Set up environment variables
+
+Deploy the contents of the dist/ directory
+
+Contributing
+Fork the repository
+
+Create your feature branch ( git checkout -b feature/amazing-feature)
+
+Commit your changes ( git commit -m 'Add some amazing feature')
+
+Push to the branch ( git push origin feature/amazing-feature)
+
+Open a Pull Request
+```
+## Coding Standards
+Follow the ESLint configuration
+
+Write meaningful commit messages
+
+Update documentation for significant changes
+
+Add tests for new features
+
+Testing
+# Run all tests
+yarn test
+
+# Run tests with coverage
+yarn test:coverage
+
+# Run tests in watch mode
+yarn test:watch
+
+
+bash
+Performance Optimization
+Use React.memo() for expensive computations
+
+Implement code splitting with React.lazy()
+
+Optimize images and assets
+
+Use windowing for long lists
+
+Troubleshooting
+Common issues and their solutions:
+
+Build fails
+
+Clear node_modules and package-lock.json
+
+Run yarn install again
+
+Check for Node.js version compatibility
+
+Development server issues
+
+Clear browser cache
+
+Check for port conflicts
+
+Verify environment variables
 
 ## License
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-Distributed under the MIT License. See [LICENSE](https://github.com/minimal-ui-kit/minimal.free/blob/main/LICENSE.md) for more information.
+## Acknowledgments
+Material-UI team for the excellent component library
 
-## Contact us
+React team for the amazing framework
 
-Email: support@minimals.cc
+All contributors who have helped with the project
+
+## Support
+For support, email support@yourproject.com or create an issue in the repository.
