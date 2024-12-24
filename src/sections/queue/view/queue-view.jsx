@@ -52,6 +52,8 @@ export const getQueue = async () => {
 // ----------------------------------------------------------------------
 
 export default function QueuePage() {
+    const [selectedIds, setSelectedIds] = useState([]);
+
     const [doctorOptions, setDoctorOptions] = useState([]);
     const [queueInfo, setQueueInfo] = useState([]);
     const [page, setPage] = useState(0);
@@ -127,27 +129,34 @@ export default function QueuePage() {
         setSelected([]);
     };
 
-    const handleClick = (event, patientName) => {
+    // Modify handleClick to track IDs along with names
+    const handleClick = (event, patientName, rowId) => {
         const selectedIndex = selected.indexOf(patientName);
-        console.log(`Selected index for ${patientName}:`, selectedIndex); // Log the initial selected index
-
         let newSelected = [];
+        let newSelectedIds = [];
 
         if (selectedIndex === -1) {
             newSelected = [...selected, patientName];
+            newSelectedIds = [...selectedIds, rowId];
         } else if (selectedIndex === 0) {
             newSelected = selected.slice(1);
+            newSelectedIds = selectedIds.slice(1);
         } else if (selectedIndex === selected.length - 1) {
             newSelected = selected.slice(0, -1);
+            newSelectedIds = selectedIds.slice(0, -1);
         } else if (selectedIndex > 0) {
             newSelected = [
                 ...selected.slice(0, selectedIndex),
                 ...selected.slice(selectedIndex + 1),
             ];
+            newSelectedIds = [
+                ...selectedIds.slice(0, selectedIndex),
+                ...selectedIds.slice(selectedIndex + 1),
+            ];
         }
 
-        console.log(`New selected array:`, newSelected); // Log the new selected array
         setSelected(newSelected);
+        setSelectedIds(newSelectedIds);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -197,6 +206,7 @@ export default function QueuePage() {
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
+                    selectedIds={selectedIds} // Pass selected IDs to toolbar
                 />
 
                 <Scrollbar>
@@ -245,7 +255,7 @@ export default function QueuePage() {
                                             id={row.id}
                                             selected={selected.indexOf(row.patientName) !== -1}
                                             handleClick={(event) =>
-                                                handleClick(event, row.patientName)
+                                                handleClick(event, row.patientName, row.id)
                                             }
                                             onQueueUpdate={fetchQueueInfo}
                                         />
