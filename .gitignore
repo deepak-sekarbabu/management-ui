@@ -49,3 +49,4 @@ yarn.lock
 *.lock
 yarn.lock
 yarn.lock
+.idea/aws.xml
