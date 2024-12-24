@@ -75,10 +75,16 @@ export default function QueuePage() {
         const selectedDoctorId = event.target.value;
         setDoctor(selectedDoctorId);
         try {
-            const response = await axios.get(`${QUEUE_INFO}/2/${selectedDoctorId}`);
-            setQueueInfo(response.data);
+            // Update the API call to use the correct endpoint 1 is clinic id
+            const response = await axios.get(`${QUEUE_INFO}/1/${selectedDoctorId}`);
+            if (response.data) {
+                setQueueInfo(response.data);
+            } else {
+                setQueueInfo([]); // Set empty array if no data
+            }
         } catch (error) {
             console.error('Error fetching queue information for the selected doctor:', error);
+            setQueueInfo([]); // Set empty array on error
         }
     };
 
@@ -89,14 +95,18 @@ export default function QueuePage() {
     useEffect(() => {
         const fetchDoctorData = async () => {
             try {
-                const data = await fetchDoctorInfo(); // Call the fetchDoctorInfo function
-                setDoctorOptions(data); // Update doctorOptions state with the fetched data
-                setDoctor(data[0].id); // Set the default selected doctor to the first in the list
+                const data = await fetchDoctorInfo();
+                setDoctorOptions(data);
+                if (data.length > 0) {
+                    setDoctor(data[0].id);
+                    // Fetch initial queue data for the first doctor
+                    const response = await axios.get(`${QUEUE_INFO}/${data[0].id}`);
+                    setQueueInfo(response.data);
+                }
             } catch (error) {
                 console.error('Error fetching doctor information:', error);
             }
         };
-
         fetchDoctorData();
     }, []);
 

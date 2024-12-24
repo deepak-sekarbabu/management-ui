@@ -18,5 +18,25 @@
         "absenceStartTime": "19:00:00",
         "absenceEndTime": "20:00:00",
         "optionalMessage": "Personal Emergency"
+    },
+    {
+        "id": 5,
+        "doctorId": "AB00002",
+        "clinicId": 1,
+        "doctorName": "Dr. Sarah Johnson",
+        "absenceDate": "10-05-2024", 
+        "absenceStartTime": "14:00:00",
+        "absenceEndTime": "17:00:00",
+        "optionalMessage": "Conference Attendance"
+    },
+    {
+        "id": 6,
+        "doctorId": "AB00003",
+        "clinicId": 1,
+        "doctorName": "Dr. Michael Chen",
+        "absenceDate": "11-05-2024",
+        "absenceStartTime": "09:00:00",
+        "absenceEndTime": "12:00:00",
+        "optionalMessage": "Medical Training"
     }
 ]
