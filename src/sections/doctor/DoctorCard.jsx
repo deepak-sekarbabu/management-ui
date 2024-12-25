@@ -1,7 +1,18 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect, useCallback } from 'react';
 
-import { Box, Card, Avatar, Button, TextField, Typography, CardContent } from '@mui/material';
+import {
+    Box,
+    Card,
+    Radio,
+    Avatar,
+    Button,
+    TextField,
+    RadioGroup,
+    Typography,
+    CardContent,
+    FormControlLabel,
+} from '@mui/material';
 
 import DoctorPhoneNumbers from './DoctorPhoneNumbers';
 import DoctorAvailability from './DoctorAvailability';
@@ -199,6 +210,31 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
                                     error={!!formState.validationErrors.doctorId}
                                     helperText={formState.validationErrors.doctorId}
                                 />
+                                <RadioGroup
+                                    row
+                                    value={formState.gender}
+                                    onChange={(e) => handleInputChange('gender', e.target.value)}
+                                >
+                                    <FormControlLabel
+                                        value="Male"
+                                        control={<Radio />}
+                                        label="Male"
+                                    />
+                                    <FormControlLabel
+                                        value="Female"
+                                        control={<Radio />}
+                                        label="Female"
+                                    />
+                                </RadioGroup>
+                                <TextField
+                                    label="Email"
+                                    value={formState.doctorEmail}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorEmail', e.target.value)
+                                    }
+                                    error={!!formState.validationErrors.doctorEmail}
+                                    helperText={formState.validationErrors.doctorEmail}
+                                />
                                 <TextField
                                     label="Doctor Specialty"
                                     value={formState.doctorSpeciality}
@@ -281,6 +317,12 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
                                     {doctor.doctorId}
                                 </Typography>
                                 <Typography variant="body1" color="textSecondary">
+                                    Gender: {doctor.gender}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary">
+                                    Email: {doctor.doctorEmail}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary">
                                     {doctor.doctorSpeciality}
                                 </Typography>
                                 <Typography variant="body1" color="textSecondary">
@@ -335,6 +377,8 @@ DoctorCard.propTypes = {
         doctorExperience: PropTypes.number.isRequired,
         doctorConsultationFee: PropTypes.number.isRequired,
         doctorConsultationFeeOther: PropTypes.number.isRequired,
+        gender: PropTypes.string.isRequired,
+        doctorEmail: PropTypes.string.isRequired,
         phoneNumbers: PropTypes.arrayOf(
             PropTypes.shape({
                 phoneNumber: PropTypes.string.isRequired,
