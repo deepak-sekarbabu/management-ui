@@ -10,12 +10,13 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
     const [isEditing, setIsEditing] = useState(isNewDoctor);
     const [formState, setFormState] = useState({ ...doctor, validationErrors: {} });
     const [isDetailsExpanded, setIsDetailsExpanded] = useState(isNewDoctor);
-    const [avatar, setAvatar] = useState(`/assets/images/avatars/avatar_${Math.floor(Math.random() * 25) + 1}.jpg`);
+    const [avatar, setAvatar] = useState(
+        `/assets/images/avatars/avatar_${Math.floor(Math.random() * 25) + 1}.jpg`
+    );
 
     useEffect(() => {
         setAvatar(`/assets/images/avatars/avatar_${Math.floor(Math.random() * 25) + 1}.jpg`);
     }, [doctor.id]);
-
 
     const validateDoctorData = useCallback((doctorData) => {
         const errors = {};
@@ -167,10 +168,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
                     sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
                     onClick={handleExpandDetails}
                 >
-                    <Avatar
-                        alt={doctor.doctorName}
-                        src={avatar}
-                    />
+                    <Avatar alt={doctor.doctorName} src={avatar} />
                     <Typography
                         variant="h5"
                         component="h2"
@@ -294,10 +292,15 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
                                 <Typography variant="body1" color="textSecondary">
                                     Consultation Fee Queue: ₹{doctor.doctorConsultationFeeOther}
                                 </Typography>
-                                <DoctorPhoneNumbers phoneNumbers={doctor.phoneNumbers} />
+                                <DoctorPhoneNumbers
+                                    phoneNumbers={doctor.phoneNumbers}
+                                    onPhoneNumberChange={() => {}} // Add empty handler for view mode
+                                    isEditing={false} // Explicitly set to false for view mode
+                                />
                                 <DoctorAvailability
                                     availability={doctor.doctorAvailability}
-                                    isEditing={isEditing}
+                                    onAvailabilityChange={() => {}} // Add empty handler for view mode
+                                    isEditing={false} // Explicitly set to false for view mode
                                 />
 
                                 <Box

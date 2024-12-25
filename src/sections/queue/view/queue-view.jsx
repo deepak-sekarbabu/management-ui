@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -24,6 +24,7 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 // Define the API URL
 const QUEUE_INFO = '/api/queue/details';
 const DOCTOR_CLINIC_INFO = '/api/doctor-clinic';
+const CLINIC_ID = 1;
 
 export const fetchDoctorInfo = async () => {
     try {
@@ -39,9 +40,9 @@ export const fetchDoctorInfo = async () => {
 };
 
 // Function to fetch queue information from the server
-export const getQueue = async () => {
+export const getQueue = async (clinicId, doctorId) => {
     try {
-        const response = await axios.get(QUEUE_INFO);
+        const response = await axios.get(`${QUEUE_INFO}/${CLINIC_ID}/${doctorId}`);
         return response.data;
     } catch (error) {
         console.error(error);
@@ -53,7 +54,6 @@ export const getQueue = async () => {
 
 export default function QueuePage() {
     const [selectedIds, setSelectedIds] = useState([]);
-
     const [doctorOptions, setDoctorOptions] = useState([]);
     const [queueInfo, setQueueInfo] = useState([]);
     const [page, setPage] = useState(0);
@@ -62,55 +62,37 @@ export default function QueuePage() {
     const [orderBy, setOrderBy] = useState('name');
     const [filterName, setFilterName] = useState('');
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [doctor, setDoctor] = useState('');
+    const [selectedDoctorId, setSelectedDoctorId] = useState('');
 
-    const fetchQueueInfo = async () => {
+    const fetchQueueInfo = useCallback(async () => {
         try {
-            const data = await getQueue(); // Call the getQueue function
-            setQueueInfo(data); // Update queueInfo state with the fetched data
+            const data = await getQueue(CLINIC_ID, selectedDoctorId);
+            setQueueInfo(data);
         } catch (error) {
             console.error('Error fetching queue information:', error);
         }
-    };
+    }, [selectedDoctorId]);
 
-    const handleDoctorChange = async (event) => {
-        const selectedDoctorId = event.target.value;
-        setDoctor(selectedDoctorId);
-        try {
-            // Update the API call to use the correct endpoint 1 is clinic id
-            const response = await axios.get(`${QUEUE_INFO}/1/${selectedDoctorId}`);
-            if (response.data) {
-                setQueueInfo(response.data);
-            } else {
-                setQueueInfo([]); // Set empty array if no data
-            }
-        } catch (error) {
-            console.error('Error fetching queue information for the selected doctor:', error);
-            setQueueInfo([]); // Set empty array on error
-        }
+    const handleDoctorChange = (event) => {
+        setSelectedDoctorId(event.target.value);
     };
 
     useEffect(() => {
-        fetchQueueInfo();
-    }, []);
-
-    useEffect(() => {
-        const fetchDoctorData = async () => {
-            try {
-                const data = await fetchDoctorInfo();
-                setDoctorOptions(data);
-                if (data.length > 0) {
-                    setDoctor(data[0].id);
-                    // Fetch initial queue data for the first doctor
-                    const response = await axios.get(`${QUEUE_INFO}/${data[0].id}`);
-                    setQueueInfo(response.data);
-                }
-            } catch (error) {
-                console.error('Error fetching doctor information:', error);
+        const loadDoctors = async () => {
+            const doctorData = await fetchDoctorInfo();
+            setDoctorOptions(doctorData);
+            if (doctorData.length > 0) {
+                setSelectedDoctorId(doctorData[0].id);
             }
         };
-        fetchDoctorData();
+        loadDoctors();
     }, []);
+
+    useEffect(() => {
+        if (selectedDoctorId) {
+            fetchQueueInfo();
+        }
+    }, [selectedDoctorId, fetchQueueInfo]);
 
     const handleSort = (event, id) => {
         const isAsc = orderBy === id && order === 'asc';
@@ -122,11 +104,16 @@ export default function QueuePage() {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = queueInfo.map((n) => n.patientName);
-            setSelected(newSelecteds);
+            // Select all patients and their IDs
+            const newSelectedNames = queueInfo.map((n) => n.patientName);
+            const newSelectedIds = queueInfo.map((n) => n.id);
+            setSelected(newSelectedNames);
+            setSelectedIds(newSelectedIds);
             return;
         }
+        // Clear selections
         setSelected([]);
+        setSelectedIds([]);
     };
 
     // Modify handleClick to track IDs along with names
@@ -191,10 +178,16 @@ export default function QueuePage() {
                     <InputLabel htmlFor="doctor-select" sx={{ marginRight: '20px' }}>
                         Doctor
                     </InputLabel>
-                    <Select value={doctor} onChange={handleDoctorChange} id="doctor-select">
-                        {doctorOptions.map((option) => (
-                            <MenuItem key={option.id} value={option.id}>
-                                {option.name}
+                    <Select
+                        id="doctor-select"
+                        value={selectedDoctorId}
+                        onChange={handleDoctorChange}
+                        displayEmpty
+                        aria-label="Select doctor"
+                    >
+                        {doctorOptions.map((doctor) => (
+                            <MenuItem key={doctor.id} value={doctor.id}>
+                                {doctor.name}
                             </MenuItem>
                         ))}
                     </Select>
@@ -206,7 +199,8 @@ export default function QueuePage() {
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
-                    selectedIds={selectedIds} // Pass selected IDs to toolbar
+                    selectedIds={selectedIds}
+                    onQueueUpdate={fetchQueueInfo}
                 />
 
                 <Scrollbar>

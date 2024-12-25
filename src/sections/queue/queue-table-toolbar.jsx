@@ -12,16 +12,38 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function QueueTableToolbar({ numSelected, filterName, onFilterName, selectedIds }) {
-    const PATIENT_DELETED = '/api/queue/patientDelete/';
-
+export default function QueueTableToolbar({
+    numSelected,
+    filterName,
+    onFilterName,
+    selectedIds,
+    onQueueUpdate,
+}) {
+    const PATIENT_DELETE = '/api/queue/patientDelete/';
     const handleDelete = async () => {
         try {
-            // Delete all selected IDs
-            const deletePromises = selectedIds.map((id) => axios.put(`${PATIENT_DELETED}${id}`));
-            await Promise.all(deletePromises);
+            console.log('Deleting queue items:', selectedIds);
+
+            // Convert to array if not already
+            const idsToDelete = Array.isArray(selectedIds) ? selectedIds : [selectedIds];
+
+            // Delete items in parallel
+            await Promise.all(
+                idsToDelete.map(async (id) => {
+                    try {
+                        await axios.put(PATIENT_DELETE + id);
+                        console.log(`Successfully deleted item ${id}`);
+                    } catch (error) {
+                        console.error(`Error deleting item ${id}:`, error);
+                        // Continue with next deletion even if one fails
+                    }
+                })
+            );
+
+            // Update queue after all deletions
+            onQueueUpdate();
         } catch (error) {
-            console.error('Failed to delete patients:', error);
+            console.error('Error in delete operation:', error);
         }
     };
 
@@ -79,5 +101,6 @@ QueueTableToolbar.propTypes = {
     numSelected: PropTypes.number,
     filterName: PropTypes.string,
     onFilterName: PropTypes.func,
-    selectedIds: PropTypes.array, // Update PropTypes
+    selectedIds: PropTypes.array,
+    onQueueUpdate: PropTypes.func,
 };

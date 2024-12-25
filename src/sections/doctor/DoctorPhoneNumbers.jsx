@@ -3,29 +3,33 @@ import React, { useState } from 'react';
 
 import { List, ListItem, TextField, Typography, ListItemText } from '@mui/material';
 
-const DoctorPhoneNumbers = ({ phoneNumbers, onPhoneNumberChange, isEditing }) => {
+const DoctorPhoneNumbers = ({
+    phoneNumbers,
+    onPhoneNumberChange = () => {},
+    isEditing = false,
+}) => {
     // State to keep track of validation errors
     const [errors, setErrors] = useState({});
 
     // Function to validate the phone number
     const validatePhoneNumber = (phoneNumber, index) => {
-        console.log("Index:", index, "Phone Number:", phoneNumber)
+        console.log('Index:', index, 'Phone Number:', phoneNumber);
         if (!phoneNumber || phoneNumber.trim() === '') {
             setErrors({
                 ...errors,
-                [index]: 'Phone number cannot be empty.'
+                [index]: 'Phone number cannot be empty.',
             });
         } else {
             const regex = /^\+91\d{10}$/;
             if (!regex.test(phoneNumber)) {
                 setErrors({
                     ...errors,
-                    [index]: 'Phone number must start with +91 and be followed by 10 digits.'
+                    [index]: 'Phone number must start with +91 and be followed by 10 digits.',
                 });
             } else {
                 setErrors({
                     ...errors,
-                    [index]: ''
+                    [index]: '',
                 });
             }
         }
@@ -36,7 +40,7 @@ const DoctorPhoneNumbers = ({ phoneNumbers, onPhoneNumberChange, isEditing }) =>
                 <ListItem key={index}>
                     {isEditing ? (
                         <TextField
-                            label='Should start +91 and be followed by 10 digits.'
+                            label="Should start +91 and be followed by 10 digits."
                             value={item.phoneNumber}
                             style={{ minWidth: '350px' }}
                             onChange={(e) => {
@@ -66,10 +70,10 @@ DoctorPhoneNumbers.propTypes = {
     phoneNumbers: PropTypes.arrayOf(
         PropTypes.shape({
             phoneNumber: PropTypes.string.isRequired,
-        }),
+        })
     ).isRequired,
-    onPhoneNumberChange: PropTypes.func.isRequired,
-    isEditing: PropTypes.bool.isRequired,
+    onPhoneNumberChange: PropTypes.func,
+    isEditing: PropTypes.bool,
 };
 
 export default DoctorPhoneNumbers;
