@@ -10,14 +10,14 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import Iconify from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
-
 export default function QueueTableToolbar({
     numSelected,
     filterName,
     onFilterName,
     selectedIds,
     onQueueUpdate,
+    setSelected,
+    setSelectedIds,
 }) {
     const PATIENT_DELETE = '/api/queue/patientDelete/';
     const handleDelete = async () => {
@@ -42,6 +42,10 @@ export default function QueueTableToolbar({
 
             // Update queue after all deletions
             onQueueUpdate();
+
+            // Reset selected items
+            setSelected([]);
+            setSelectedIds([]);
         } catch (error) {
             console.error('Error in delete operation:', error);
         }
@@ -103,4 +107,6 @@ QueueTableToolbar.propTypes = {
     onFilterName: PropTypes.func,
     selectedIds: PropTypes.array,
     onQueueUpdate: PropTypes.func,
+    setSelected: PropTypes.func,
+    setSelectedIds: PropTypes.func,
 };

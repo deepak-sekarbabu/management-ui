@@ -201,6 +201,8 @@ export default function QueuePage() {
                     onFilterName={handleFilterByName}
                     selectedIds={selectedIds}
                     onQueueUpdate={fetchQueueInfo}
+                    setSelected={setSelected}
+                    setSelectedIds={setSelectedIds}
                 />
 
                 <Scrollbar>
