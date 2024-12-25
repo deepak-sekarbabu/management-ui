@@ -63,6 +63,8 @@ export default function QueuePage() {
     const [filterName, setFilterName] = useState('');
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [selectedDoctorId, setSelectedDoctorId] = useState('');
+    const [shiftTimeFilter, setShiftTimeFilter] = useState('');
+    const [patientReachedFilter, setPatientReachedFilter] = useState('');
 
     const fetchQueueInfo = useCallback(async () => {
         try {
@@ -164,6 +166,8 @@ export default function QueuePage() {
         inputData: queueInfo,
         comparator: getComparator(order, orderBy),
         filterName,
+        shiftTimeFilter,
+        patientReachedFilter,
     });
 
     const notFound = !dataFiltered.length && !!filterName;
@@ -233,6 +237,10 @@ export default function QueuePage() {
                                     { id: 'time', label: 'Queue Time' },
                                     { id: '' },
                                 ]}
+                                shiftTimeFilter={shiftTimeFilter}
+                                setShiftTimeFilter={setShiftTimeFilter}
+                                patientReachedFilter={patientReachedFilter}
+                                setPatientReachedFilter={setPatientReachedFilter}
                             />
                             <TableBody>
                                 {dataFiltered
