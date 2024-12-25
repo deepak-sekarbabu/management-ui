@@ -19,6 +19,7 @@ import Iconify from 'src/components/iconify';
 const PATIENT_REACHED = '/api/queue/patientReached/';
 const PATIENT_CANCELLED = '/api/queue/patientCancelled/';
 const PATIENT_VISIT_DONE = '/api/queue/patientVisited/';
+const PATIENT_SKIP = '/api/queue/patientSkip/';
 
 export default function QueueTableRow({
     selected,
@@ -85,8 +86,16 @@ export default function QueueTableRow({
     };
 
     const handleSkipPatient = async () => {
-        console.log('handleSkipPatient');
-        setOpen(null);
+        try {
+            console.log(id);
+            await axios.put(PATIENT_SKIP + id);
+            setOpen(null);
+            if (onQueueUpdate) {
+                onQueueUpdate(); // Invoke the callback to reload the queue data
+            }
+        } catch (error) {
+            console.error('Failed to update patient visited status:', error);
+        }
     };
 
     return (
