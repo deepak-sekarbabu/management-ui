@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { GoogleLogin } from '@react-oauth/google';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -33,6 +35,35 @@ export default function LoginView() {
     router.push('/dashboard');
   };
 
+  const handleGoogleSuccess = (credentialResponse) => {
+
+    const decoded = jwtDecode(credentialResponse.credential);
+    console.log(decoded);
+    // Store user info in localStorage or session
+    localStorage.setItem('user', JSON.stringify({
+      email: decoded.email,
+      name: decoded.name,
+      picture: decoded.picture,
+      token: credentialResponse.credential
+    }));
+    router.push('/');
+  };
+
+  const handleGoogleError = () => {
+    console.error('Google Sign-In Failed');
+  };
+
+  const renderGoogleButton = (
+    <GoogleLogin
+      onSuccess={handleGoogleSuccess}
+      onError={handleGoogleError}
+      theme="outlined"
+      size="large"
+      width="100%"
+      text="sign_in_with"
+      shape="rectangular"
+    />
+  );
   const renderForm = (
     <>
       <Stack spacing={3}>
@@ -100,6 +131,8 @@ export default function LoginView() {
           }}
         >
           <Typography variant="h4">Sign in to Clinic Management</Typography>
+
+          {renderGoogleButton}
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
             Don’t have an account?
