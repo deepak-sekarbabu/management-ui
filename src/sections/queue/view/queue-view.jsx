@@ -28,7 +28,7 @@ const CLINIC_ID = 1;
 
 export const fetchDoctorInfo = async () => {
     try {
-        const response = await axios.get(DOCTOR_CLINIC_INFO);
+        const response = await axios.get(`${DOCTOR_CLINIC_INFO}/${CLINIC_ID}`);
         return response.data.map(({ doctorId, doctorName }) => ({
             id: doctorId,
             name: doctorName,
