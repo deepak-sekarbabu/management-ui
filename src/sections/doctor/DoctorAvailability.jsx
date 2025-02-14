@@ -5,10 +5,26 @@ import React, { useState, useEffect } from 'react';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import {
-    Paper, Table, Button, Select, MenuItem, TableRow, TableBody, TableCell, TableHead, TextField, TableContainer,
+    Paper,
+    Table,
+    Button,
+    Select,
+    MenuItem,
+    TableRow,
+    TableBody,
+    TableCell,
+    TableHead,
+    TextField,
+    FormControl,
+    TableContainer,
+    FormHelperText,
 } from '@mui/material';
 
-const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) => {
+const DoctorAvailability = ({
+    availability,
+    onAvailabilityChange = () => {},
+    isEditing = false,
+}) => {
     const [editedAvailability, setEditedAvailability] = useState([]);
     const [errors, setErrors] = useState({});
 
@@ -21,110 +37,40 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
             value = Number(value);
         }
 
-        if (field === 'shiftStartTime') {
-            const shiftEndTime = dayjs(editedAvailability[index].shiftEndTime, 'HH:mm:ss');
-            const shiftStartTime = dayjs(value, 'HH:mm:ss');
-            if (shiftStartTime.isAfter(shiftEndTime)) {
-                console.log('Shift start time must be less than shift end time.');
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    [index]: {
-                        ...prevErrors[index],
-                        shiftStartTime: 'Shift start time must be less than shift end time.',
-                    },
-                }));
+        const validateTimes = (startTime, endTime) => {
+            if (!startTime || !endTime) return;
+
+            const start = dayjs(startTime, 'HH:mm:ss');
+            const end = dayjs(endTime, 'HH:mm:ss');
+
+            const newErrors = { ...errors };
+            if (!newErrors[index]) newErrors[index] = {};
+
+            if (start.isAfter(end)) {
+                newErrors[index].shiftStartTime = 'Start time must be before end time';
+                newErrors[index].shiftEndTime = 'End time must be after start time';
             } else {
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    [index]: {
-                        ...prevErrors[index],
-                        shiftStartTime: null,
-                    },
-                }));
+                delete newErrors[index].shiftStartTime;
+                delete newErrors[index].shiftEndTime;
             }
-            // Revalidate shiftEndTime
-            const RevalidateShiftEndTime = dayjs(editedAvailability[index].shiftEndTime, 'HH:mm:ss');
-            if (RevalidateShiftEndTime.isBefore(shiftStartTime)) {
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    [index]: {
-                        ...prevErrors[index],
-                        shiftEndTime: 'Shift end time must be greater than shift start time.',
-                    },
-                }));
-            } else {
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    [index]: {
-                        ...prevErrors[index],
-                        shiftEndTime: null,
-                    },
-                }));
-            }
+
+            setErrors(newErrors);
+        };
+
+        if (field === 'shiftStartTime' || field === 'shiftEndTime') {
+            const otherTime =
+                field === 'shiftStartTime'
+                    ? editedAvailability[index].shiftEndTime
+                    : editedAvailability[index].shiftStartTime;
+            validateTimes(
+                field === 'shiftStartTime' ? value : otherTime,
+                field === 'shiftEndTime' ? value : otherTime
+            );
         }
 
-        if (field === 'shiftEndTime') {
-            const shiftStartTime = dayjs(editedAvailability[index].shiftStartTime, 'HH:mm:ss');
-            const shiftEndTime = dayjs(value, 'HH:mm:ss');
-            console.log(shiftStartTime, shiftEndTime);
-            if (shiftEndTime.isBefore(shiftStartTime)) {
-                console.log('Shift end time must be greater than shift start time.');
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    [index]: {
-                        ...prevErrors[index],
-                        shiftEndTime: 'Shift end time must be greater than shift start time.',
-                    },
-                }));
-            } else {
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    [index]: {
-                        ...prevErrors[index],
-                        shiftEndTime: null,
-                    },
-                }));
-            }
-            // Revalidate shiftStartTime
-            const RevalidateShiftStartTime = dayjs(editedAvailability[index].shiftStartTime, 'HH:mm:ss');
-            if (RevalidateShiftStartTime.isAfter(shiftEndTime)) {
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    [index]: {
-                        ...prevErrors[index],
-                        shiftStartTime: 'Shift start time must be less than shift end time.',
-                    },
-                }));
-            } else {
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    [index]: {
-                        ...prevErrors[index],
-                        shiftStartTime: null,
-                    },
-                }));
-            }
-        }
-
-        if (field === 'availableDays' && !value) {
-            setErrors((prevErrors) => ({
-                ...prevErrors,
-                [index]: {
-                    ...prevErrors[index],
-                    availableDays: 'Available days cannot be empty',
-                },
-            }));
-        } else {
-            setErrors((prevErrors) => ({
-                ...prevErrors,
-                [index]: {
-                    ...prevErrors[index],
-                    availableDays: null,
-                },
-            }));
-        }
-
-        const updatedAvailability = editedAvailability.map((item, i) => i === index ? { ...item, [field]: value } : item);
+        const updatedAvailability = editedAvailability.map((item, i) =>
+            i === index ? { ...item, [field]: value } : item
+        );
         setEditedAvailability(updatedAvailability);
         onAvailabilityChange(updatedAvailability);
     };
@@ -153,170 +99,185 @@ const DoctorAvailability = ({ availability, onAvailabilityChange, isEditing }) =
     const shiftTimes = ['MORNING', 'AFTERNOON', 'EVENING', 'NIGHT'];
     const configTypes = ['APPOINTMENT', 'QUEUE'];
 
+    const renderSelect = (index, item, field, options, label) => (
+        <FormControl error={!!errors[index]?.[field]} fullWidth>
+            <Select
+                value={item[field] || ''}
+                displayEmpty
+                renderValue={(value) => (value === '' ? `Select ${label}` : value)}
+                onChange={(e) => handleAvailabilityChange(index, field, e.target.value)}
+            >
+                {options.map((option) => (
+                    <MenuItem key={option} value={option}>
+                        {option}
+                    </MenuItem>
+                ))}
+            </Select>
+            {errors[index]?.[field] && <FormHelperText>{errors[index][field]}</FormHelperText>}
+        </FormControl>
+    );
+
     return (
-        <TableContainer component={Paper}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell align="left">Available Days</TableCell>
-                        <TableCell align="left">Shift Time</TableCell>
-                        <TableCell align="left">Shift Start Time</TableCell>
-                        <TableCell align="left">Shift End Time</TableCell>
-                        <TableCell align="left">Consultation Time</TableCell>
-                        <TableCell align="left">Config Type</TableCell>
-                        {isEditing && <TableCell align="center">Actions</TableCell>}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {editedAvailability.map((item, index) => (
-                        <TableRow key={index}>
-                            {isEditing ? (
-                                <>
-                                    <TableCell align="left">
-                                        <Select
-                                            id="availableDays"
-                                            name="availableDays"
-                                            value={item.availableDays || ''}
-                                            displayEmpty
-                                            renderValue={(value) => value === '' ? 'Select Day' : value}
-                                            onChange={(e) => handleAvailabilityChange(index, 'availableDays', e.target.value)}
-                                            error={!!errors[index]?.availableDays}
-                                            helperText={errors[index]?.availableDays}
-                                        >
-                                            {weekDays.map((day) => (
-                                                <MenuItem key={day} value={day}>
-                                                    {day}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <Select
-                                            id="shiftTime"
-                                            name="shiftTime"
-                                            value={item.shiftTime || ''}
-                                            displayEmpty
-                                            renderValue={(value) => value === '' ? 'Select Time' : value}
-                                            onChange={(e) => handleAvailabilityChange(index, 'shiftTime', e.target.value)}
-                                            error={!!errors[index]?.shiftTime}
-                                            helperText={errors[index]?.shiftTime}
-                                        >
-                                            {shiftTimes.map((time) => (
-                                                <MenuItem key={time} value={time}>
-                                                    {time}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </TableCell>
-                                    <TableCell align="left" style={{ minWidth: '175px' }}>
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <TimePicker
-                                                value={item.shiftStartTime ? dayjs(item.shiftStartTime, 'HH:mm:ss') : null}
-                                                onChange={(value) => handleAvailabilityChange(index, 'shiftStartTime', value ? value.format('HH:mm:ss') : '')}
-                                                onError={!!errors[index]?.shiftStartTime}
-                                                slotProps={{
-                                                    textField: {
-                                                        helperText: errors[index]?.shiftStartTime || '',
-                                                    },
-                                                }}
-                                            />
-                                        </LocalizationProvider>
-                                    </TableCell>
-                                    <TableCell align="left" style={{ minWidth: '175px' }}>
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <TimePicker
-                                                value={item.shiftEndTime ? dayjs(item.shiftEndTime, 'HH:mm:ss') : null}
-                                                onChange={(value) => handleAvailabilityChange(index, 'shiftEndTime', value ? value.format('HH:mm:ss') : '')}
-                                                onError={!!errors[index]?.shiftEndTime}
-                                                slotProps={{
-                                                    textField: {
-                                                        helperText: errors[index]?.shiftEndTime || '',
-                                                    },
-                                                }}
-                                            />
-                                        </LocalizationProvider>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <TextField
-                                            id="consultationTime"
-                                            name="consultationTime"
-                                            value={item.consultationTime || ''}
-                                            label='In Minutes'
-                                            style={{ minWidth: '150px' }}
-                                            onChange={(e) => handleAvailabilityChange(index, 'consultationTime', e.target.value)}
-                                            inputProps={{
-                                                type: 'number',
-                                                min: 2,
-                                                max: 60,
-                                            }}
-                                            error={!!errors[index]?.consultationTime}
-                                            helperText={errors[index]?.consultationTime}
-                                        />
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <Select
-                                            id="configType"
-                                            name="configType"
-                                            value={item.configType || ''}
-                                            displayEmpty
-                                            renderValue={(value) => value === '' ? 'Select Config' : value}
-                                            onChange={(e) => handleAvailabilityChange(index, 'configType', e.target.value)}
-                                            error={!!errors[index]?.configType}
-                                            helperText={errors[index]?.configType}
-                                        >
-                                            {configTypes.map((type) => (
-                                                <MenuItem key={type} value={type}>
-                                                    {type}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <Button onClick={() => handleDeleteRow(index)}>
-                                            Delete
-                                        </Button>
-                                    </TableCell>
-                                </>
-                            ) : (
-                                <>
-                                    <TableCell align="left">{item.availableDays}</TableCell>
-                                    <TableCell align="left">{item.shiftTime}</TableCell>
-                                    <TableCell align="left">{item.shiftStartTime}</TableCell>
-                                    <TableCell align="left">{item.shiftEndTime}</TableCell>
-                                    <TableCell align="left">{item.consultationTime}</TableCell>
-                                    <TableCell align="left">{item.configType}</TableCell>
-                                </>
-                            )}
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Available Days</TableCell>
+                            <TableCell>Shift Time</TableCell>
+                            <TableCell>Shift Start Time</TableCell>
+                            <TableCell>Shift End Time</TableCell>
+                            <TableCell>Consultation Time</TableCell>
+                            <TableCell>Config Type</TableCell>
+                            {isEditing && <TableCell align="center">Actions</TableCell>}
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-            {isEditing && (
-                <Button
-                    variant="outlined"
-                    onClick={handleAddRow}
-                    style={{ marginTop: '16px', marginLeft: '12px' }}
-                >
-                    Add Row
-                </Button>
-            )}
-        </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                        {editedAvailability.map((item, index) => (
+                            <TableRow key={index}>
+                                {isEditing ? (
+                                    <>
+                                        <TableCell>
+                                            {renderSelect(
+                                                index,
+                                                item,
+                                                'availableDays',
+                                                weekDays,
+                                                'Day'
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            {renderSelect(
+                                                index,
+                                                item,
+                                                'shiftTime',
+                                                shiftTimes,
+                                                'Time'
+                                            )}
+                                        </TableCell>
+                                        <TableCell style={{ minWidth: '175px' }}>
+                                            <TimePicker
+                                                value={
+                                                    item.shiftStartTime
+                                                        ? dayjs(item.shiftStartTime, 'HH:mm:ss')
+                                                        : null
+                                                }
+                                                onChange={(value) =>
+                                                    handleAvailabilityChange(
+                                                        index,
+                                                        'shiftStartTime',
+                                                        value ? value.format('HH:mm:ss') : ''
+                                                    )
+                                                }
+                                                slotProps={{
+                                                    textField: {
+                                                        error: !!errors[index]?.shiftStartTime,
+                                                        helperText:
+                                                            errors[index]?.shiftStartTime || '',
+                                                    },
+                                                }}
+                                            />
+                                        </TableCell>
+                                        <TableCell style={{ minWidth: '175px' }}>
+                                            <TimePicker
+                                                value={
+                                                    item.shiftEndTime
+                                                        ? dayjs(item.shiftEndTime, 'HH:mm:ss')
+                                                        : null
+                                                }
+                                                onChange={(value) =>
+                                                    handleAvailabilityChange(
+                                                        index,
+                                                        'shiftEndTime',
+                                                        value ? value.format('HH:mm:ss') : ''
+                                                    )
+                                                }
+                                                slotProps={{
+                                                    textField: {
+                                                        error: !!errors[index]?.shiftEndTime,
+                                                        helperText:
+                                                            errors[index]?.shiftEndTime || '',
+                                                    },
+                                                }}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextField
+                                                value={item.consultationTime || ''}
+                                                label="In Minutes"
+                                                style={{ minWidth: '150px' }}
+                                                onChange={(e) =>
+                                                    handleAvailabilityChange(
+                                                        index,
+                                                        'consultationTime',
+                                                        e.target.value
+                                                    )
+                                                }
+                                                inputProps={{
+                                                    type: 'number',
+                                                    min: 2,
+                                                    max: 60,
+                                                }}
+                                                error={!!errors[index]?.consultationTime}
+                                                helperText={errors[index]?.consultationTime || ''}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            {renderSelect(
+                                                index,
+                                                item,
+                                                'configType',
+                                                configTypes,
+                                                'Config'
+                                            )}
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Button onClick={() => handleDeleteRow(index)}>
+                                                Delete
+                                            </Button>
+                                        </TableCell>
+                                    </>
+                                ) : (
+                                    <>
+                                        <TableCell>{item.availableDays}</TableCell>
+                                        <TableCell>{item.shiftTime}</TableCell>
+                                        <TableCell>{item.shiftStartTime}</TableCell>
+                                        <TableCell>{item.shiftEndTime}</TableCell>
+                                        <TableCell>{item.consultationTime}</TableCell>
+                                        <TableCell>{item.configType}</TableCell>
+                                    </>
+                                )}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+                {isEditing && (
+                    <Button
+                        variant="outlined"
+                        onClick={handleAddRow}
+                        style={{ marginTop: '16px', marginLeft: '12px', marginBottom: '16px' }}
+                    >
+                        Add Row
+                    </Button>
+                )}
+            </TableContainer>
+        </LocalizationProvider>
     );
 };
 
 DoctorAvailability.propTypes = {
     availability: PropTypes.arrayOf(
         PropTypes.shape({
-            availableDays: PropTypes.string,
-            shiftTime: PropTypes.string,
-            shiftStartTime: PropTypes.string,
-            shiftEndTime: PropTypes.string,
-            consultationTime: PropTypes.number,
-            configType: PropTypes.string,
+            availableDays: PropTypes.string.isRequired,
+            shiftTime: PropTypes.string.isRequired,
+            shiftStartTime: PropTypes.string.isRequired,
+            shiftEndTime: PropTypes.string.isRequired,
+            consultationTime: PropTypes.number.isRequired,
+            configType: PropTypes.string.isRequired,
         })
     ).isRequired,
-    onAvailabilityChange: PropTypes.func.isRequired,
-    isEditing: PropTypes.bool.isRequired,
+    onAvailabilityChange: PropTypes.func,
+    isEditing: PropTypes.bool,
 };
 
 export default DoctorAvailability;

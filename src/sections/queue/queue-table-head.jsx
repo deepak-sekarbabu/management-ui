@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
+import Select from '@mui/material/Select';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
+import MenuItem from '@mui/material/MenuItem';
 import TableHead from '@mui/material/TableHead';
 import TableCell from '@mui/material/TableCell';
 import TableSortLabel from '@mui/material/TableSortLabel';
@@ -19,6 +21,10 @@ export default function QueueTableHead({
     numSelected,
     onRequestSort,
     onSelectAllClick,
+    shiftTimeFilter,
+    setShiftTimeFilter,
+    patientReachedFilter,
+    setPatientReachedFilter,
 }) {
     const onSort = (property) => (event) => {
         onRequestSort(event, property);
@@ -55,6 +61,31 @@ export default function QueueTableHead({
                                 </Box>
                             ) : null}
                         </TableSortLabel>
+                        {headCell.id === 'shiftTime' && (
+                            <Select
+                                value={shiftTimeFilter}
+                                onChange={(e) => setShiftTimeFilter(e.target.value)}
+                                displayEmpty
+                                sx={{ marginTop: 1 }}
+                            >
+                                <MenuItem value="">All</MenuItem>
+                                <MenuItem value="MORNING">Morning</MenuItem>
+                                <MenuItem value="AFTERNOON">Afternoon</MenuItem>
+                                <MenuItem value="EVENING">Evening</MenuItem>
+                            </Select>
+                        )}
+                        {headCell.id === 'patientReached' && (
+                            <Select
+                                value={patientReachedFilter}
+                                onChange={(e) => setPatientReachedFilter(e.target.value)}
+                                displayEmpty
+                                sx={{ marginTop: 1 }}
+                            >
+                                <MenuItem value="">All</MenuItem>
+                                <MenuItem value="true">Yes</MenuItem>
+                                <MenuItem value="false">No</MenuItem>
+                            </Select>
+                        )}
                     </TableCell>
                 ))}
             </TableRow>
@@ -70,4 +101,8 @@ QueueTableHead.propTypes = {
     numSelected: PropTypes.number,
     onRequestSort: PropTypes.func,
     onSelectAllClick: PropTypes.func,
+    shiftTimeFilter: PropTypes.string,
+    setShiftTimeFilter: PropTypes.func,
+    patientReachedFilter: PropTypes.string,
+    setPatientReachedFilter: PropTypes.func,
 };

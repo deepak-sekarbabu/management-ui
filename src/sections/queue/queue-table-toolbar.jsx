@@ -1,3 +1,4 @@
+import axios from 'axios';
 import PropTypes from 'prop-types';
 
 import Tooltip from '@mui/material/Tooltip';
@@ -9,9 +10,47 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import Iconify from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
+export default function QueueTableToolbar({
+    numSelected,
+    filterName,
+    onFilterName,
+    selectedIds,
+    onQueueUpdate,
+    setSelected,
+    setSelectedIds,
+}) {
+    const PATIENT_DELETE = '/api/queue/patientDelete/';
+    const handleDelete = async () => {
+        try {
+            console.log('Deleting queue items:', selectedIds);
 
-export default function QueueTableToolbar({ numSelected, filterName, onFilterName }) {
+            // Convert to array if not already
+            const idsToDelete = Array.isArray(selectedIds) ? selectedIds : [selectedIds];
+
+            // Delete items in parallel
+            await Promise.all(
+                idsToDelete.map(async (id) => {
+                    try {
+                        await axios.put(PATIENT_DELETE + id);
+                        console.log(`Successfully deleted item ${id}`);
+                    } catch (error) {
+                        console.error(`Error deleting item ${id}:`, error);
+                        // Continue with next deletion even if one fails
+                    }
+                })
+            );
+
+            // Update queue after all deletions
+            onQueueUpdate();
+
+            // Reset selected items
+            setSelected([]);
+            setSelectedIds([]);
+        } catch (error) {
+            console.error('Error in delete operation:', error);
+        }
+    };
+
     return (
         <Toolbar
             sx={{
@@ -47,7 +86,7 @@ export default function QueueTableToolbar({ numSelected, filterName, onFilterNam
 
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
-                    <IconButton>
+                    <IconButton onClick={handleDelete}>
                         <Iconify icon="eva:trash-2-fill" />
                     </IconButton>
                 </Tooltip>
@@ -66,4 +105,8 @@ QueueTableToolbar.propTypes = {
     numSelected: PropTypes.number,
     filterName: PropTypes.string,
     onFilterName: PropTypes.func,
+    selectedIds: PropTypes.array,
+    onQueueUpdate: PropTypes.func,
+    setSelected: PropTypes.func,
+    setSelectedIds: PropTypes.func,
 };

@@ -35,7 +35,13 @@ export function getComparator(order, orderBy) {
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export function applyFilter({ inputData, comparator, filterName }) {
+export function applyFilter({
+    inputData,
+    comparator,
+    filterName,
+    shiftTimeFilter,
+    patientReachedFilter,
+}) {
     const stabilizedThis = inputData.map((el, index) => [el, index]);
 
     stabilizedThis.sort((a, b) => {
@@ -50,6 +56,15 @@ export function applyFilter({ inputData, comparator, filterName }) {
         inputData = inputData.filter(
             (data) => data.patientName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
         );
+    }
+
+    if (shiftTimeFilter) {
+        inputData = inputData.filter((data) => data.shiftTime === shiftTimeFilter);
+    }
+
+    if (patientReachedFilter) {
+        // Convert string 'true'/'false' to match the data format
+        inputData = inputData.filter((data) => data.patientReached === patientReachedFilter);
     }
 
     return inputData;
