@@ -80,6 +80,8 @@ const DoctorPage = () => {
                     configType: '',
                 },
             ],
+            languagesSpoken: [],
+            qualifications: [],
         };
         setNewDoctor(newDoctorEntry);
     };

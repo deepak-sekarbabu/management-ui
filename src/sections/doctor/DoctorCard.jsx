@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
     Box,
     Card,
+    Chip,
     Radio,
     Avatar,
     Button,
@@ -11,6 +12,7 @@ import {
     RadioGroup,
     Typography,
     CardContent,
+    Autocomplete,
     FormControlLabel,
 } from '@mui/material';
 
@@ -288,6 +290,60 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
                                         type: 'number', // This ensures that only numbers can be entered
                                     }}
                                 />
+                                <Autocomplete
+                                    multiple
+                                    freeSolo
+                                    options={[]}
+                                    value={formState.languagesSpoken || []}
+                                    onChange={(e, value) =>
+                                        handleInputChange('languagesSpoken', value)
+                                    }
+                                    renderTags={(value, getTagProps) =>
+                                        value.map((option, index) => (
+                                            <Chip
+                                                variant="outlined"
+                                                label={option}
+                                                {...getTagProps({ index })}
+                                            />
+                                        ))
+                                    }
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            variant="outlined"
+                                            label="Languages Spoken"
+                                            placeholder="Add language"
+                                        />
+                                    )}
+                                    sx={{ mt: 2 }}
+                                />
+                                <Autocomplete
+                                    multiple
+                                    freeSolo
+                                    options={[]}
+                                    value={formState.qualifications || []}
+                                    onChange={(e, value) =>
+                                        handleInputChange('qualifications', value)
+                                    }
+                                    renderTags={(value, getTagProps) =>
+                                        value.map((option, index) => (
+                                            <Chip
+                                                variant="outlined"
+                                                label={option}
+                                                {...getTagProps({ index })}
+                                            />
+                                        ))
+                                    }
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            variant="outlined"
+                                            label="Qualifications"
+                                            placeholder="Add qualification"
+                                        />
+                                    )}
+                                    sx={{ mt: 2 }}
+                                />
                                 <DoctorPhoneNumbers
                                     phoneNumbers={formState.phoneNumbers}
                                     onPhoneNumberChange={handlePhoneNumberChange}
@@ -333,6 +389,12 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
                                 </Typography>
                                 <Typography variant="body1" color="textSecondary">
                                     Consultation Fee Queue: ₹{doctor.doctorConsultationFeeOther}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary">
+                                    Languages Spoken: {(doctor.languagesSpoken || []).join(', ')}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary">
+                                    Qualifications: {(doctor.qualifications || []).join(', ')}
                                 </Typography>
                                 <DoctorPhoneNumbers
                                     phoneNumbers={doctor.phoneNumbers}
@@ -394,6 +456,8 @@ DoctorCard.propTypes = {
                 configType: PropTypes.string.isRequired,
             })
         ).isRequired,
+        languagesSpoken: PropTypes.arrayOf(PropTypes.string),
+        qualifications: PropTypes.arrayOf(PropTypes.string),
     }).isRequired,
     isNewDoctor: PropTypes.bool,
     onSave: PropTypes.func,
