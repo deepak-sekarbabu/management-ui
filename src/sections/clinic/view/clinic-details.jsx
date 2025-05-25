@@ -18,7 +18,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
         updatedPhoneNumbers[index] = { ...updatedPhoneNumbers[index], phoneNumber: value };
         setFormValues({ ...formValues, clinicPhoneNumbers: updatedPhoneNumbers });
         onFormValuesChange({ ...formValues, clinicPhoneNumbers: updatedPhoneNumbers });
-        setPhoneNumberErrors(prevErrors => {
+        setPhoneNumberErrors((prevErrors) => {
             const newErrors = [...prevErrors];
             newErrors[index] = !isValid;
             return newErrors;
@@ -108,7 +108,11 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     fullWidth
                     margin="normal"
                     error={formValues.clinicName.length > 149}
-                    helperText={formValues.clinicName.length > 149 ? 'Clinic Name should not exceed 149 characters' : ''}
+                    helperText={
+                        formValues.clinicName.length > 149
+                            ? 'Clinic Name should not exceed 149 characters'
+                            : ''
+                    }
                 />
 
                 <TextField
@@ -120,7 +124,11 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     fullWidth
                     margin="normal"
                     error={formValues.clinicAddress.length > 199}
-                    helperText={formValues.clinicAddress.length > 199 ? 'Clinic Address should not exceed 199 characters' : ''}
+                    helperText={
+                        formValues.clinicAddress.length > 199
+                            ? 'Clinic Address should not exceed 199 characters'
+                            : ''
+                    }
                 />
 
                 <TextField
@@ -132,7 +140,11 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     fullWidth
                     margin="normal"
                     error={!/^\d+$/.test(formValues.clinicPinCode)}
-                    helperText={!/^\d+$/.test(formValues.clinicPinCode) ? 'Clinic Pin Code should contain only numbers' : ''}
+                    helperText={
+                        !/^\d+$/.test(formValues.clinicPinCode)
+                            ? 'Clinic Pin Code should contain only numbers'
+                            : ''
+                    }
                 />
 
                 <Stack mt={2} spacing={2}>
@@ -148,12 +160,16 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                             InputProps={{
                                 inputProps: {
                                     maxLength: 13,
-                                    pattern: "^\\+91\\d{10}$",
-                                    title: "Phone number should start with +91 and have 10 digits",
+                                    pattern: '^\\+91\\d{10}$',
+                                    title: 'Phone number should start with +91 and have 10 digits',
                                 },
                             }}
                             error={phoneNumberErrors[index]}
-                            helperText={phoneNumberErrors[index] ? 'Phone number should start with +91 and have 10 digits' : ''}
+                            helperText={
+                                phoneNumberErrors[index]
+                                    ? 'Phone number should start with +91 and have 10 digits'
+                                    : ''
+                            }
                         />
                     ))}
                 </Stack>

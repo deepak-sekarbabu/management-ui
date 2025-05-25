@@ -32,4 +32,3 @@ export const queueInfo = [...Array(50)].map((_, index) => ({
     patientReached: sample(['true', 'false']),
     time: appointmentTimes[index % appointmentTimes.length].toString(),
 }));
-

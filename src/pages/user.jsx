@@ -5,13 +5,13 @@ import { UserView } from 'src/sections/user/view';
 // ----------------------------------------------------------------------
 
 export default function UserPage() {
-  return (
-    <>
-      <Helmet>
-        <title> Users </title>
-      </Helmet>
+    return (
+        <>
+            <Helmet>
+                <title> Users </title>
+            </Helmet>
 
-      <UserView />
-    </>
-  );
+            <UserView />
+        </>
+    );
 }
