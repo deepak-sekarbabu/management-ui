@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
-import { Box, Card, Stack, Button, Container, Typography, CircularProgress } from '@mui/material';
+import { Box, Card, Stack, Button, Divider, Container, Typography, CardHeader, CircularProgress } from '@mui/material';
 
 import ClinicDetails from './clinic-details';
 
@@ -83,38 +83,47 @@ const ClinicPage = () => {
 
     return (
         <Card>
-            <Typography p={2} variant="h2">
-                Clinic Information
-            </Typography>
-            <ClinicDetails
-                clinic={clinicData}
-                isEditable={isEditable}
-                onFormValuesChange={handleFormValuesChange}
-            />
-            <Box mt={2}>
-                <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="center"
-                    spacing={2}
-                    mb={5}
-                >
-                    {isEditable ? (
-                        <>
+            <CardHeader title="Clinic Information" sx={{ pb: 0 }} />
+            <Divider />
+            {isEditable ? (
+                <>
+                    <ClinicDetails
+                        clinic={editedClinicData}
+                        isEditable={isEditable}
+                        onFormValuesChange={handleFormValuesChange}
+                    />
+                    <Box mt={2}>
+                        <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} mb={5}>
                             <Button variant="contained" onClick={handleSave}>
                                 Save
                             </Button>
                             <Button variant="outlined" onClick={handleCancel}>
                                 Cancel
                             </Button>
-                        </>
-                    ) : (
+                        </Stack>
+                    </Box>
+                </>
+            ) : (
+                <Box p={3}>
+                    <Stack spacing={2}>
+                        <Typography variant="h5">{clinicData.clinicName}</Typography>
+                        <Typography color="textSecondary">{clinicData.clinicAddress}</Typography>
+                        <Typography color="textSecondary">Pin Code: {clinicData.clinicPinCode}</Typography>
+                        <Typography color="textSecondary">Email: {clinicData.clinicEmail}</Typography>
+                        <Typography color="textSecondary">Website: {clinicData.clinicWebsite}</Typography>
+                        <Typography color="textSecondary">Timings: {clinicData.clinicTimings}</Typography>
+                        <Typography color="textSecondary">Amenities: {clinicData.clinicAmenities}</Typography>
+                        <Typography color="textSecondary">
+                            Phone Numbers: {clinicData.clinicPhoneNumbers.map((p) => p.phoneNumber).join(', ')}
+                        </Typography>
+                    </Stack>
+                    <Box mt={3} display="flex" justifyContent="center">
                         <Button variant="outlined" onClick={handleEdit}>
                             Edit
                         </Button>
-                    )}
-                </Stack>
-            </Box>
+                    </Box>
+                </Box>
+            )}
         </Card>
     );
 };
