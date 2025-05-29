@@ -1,4 +1,6 @@
+import axios from 'axios';
 import { useState } from 'react';
+import jwt_decode from 'jwt-decode';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -24,24 +26,53 @@ import Iconify from 'src/components/iconify';
 
 export default function LoginView() {
     const theme = useTheme();
-
     const router = useRouter();
 
     const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleClick = () => {
-        router.push('/dashboard');
+    // TODO: Run 'npm i jwt-decode' if you see an import error for jwt-decode
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        try {
+            // Use the correct backend API endpoint as per API spec
+            const response = await axios.post('http://localhost:8080/auth/login', {
+                username: email, // API expects 'username' field
+                password,
+            });
+            const { token } = response.data;
+            localStorage.setItem('token', token);
+            // Decode JWT to extract user info
+            const decoded = jwt_decode(token);
+            localStorage.setItem('user', JSON.stringify(decoded));
+            router.push('/');
+        } catch (err) {
+            setError('Invalid username or password');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const renderForm = (
-        <>
+        <form onSubmit={handleLogin}>
             <Stack spacing={3}>
-                <TextField name="email" label="Email address" />
-
+                <TextField
+                    name="email"
+                    label="Email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
                 <TextField
                     name="password"
                     label="Password"
                     type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">
@@ -58,24 +89,27 @@ export default function LoginView() {
                     }}
                 />
             </Stack>
-
+            {error && (
+                <Typography color="error" sx={{ mt: 2 }}>
+                    {error}
+                </Typography>
+            )}
             <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
                 <Link variant="subtitle2" underline="hover">
                     Forgot password?
                 </Link>
             </Stack>
-
             <LoadingButton
                 fullWidth
                 size="large"
                 type="submit"
                 variant="contained"
                 color="inherit"
-                onClick={handleClick}
+                loading={loading}
             >
                 Login
             </LoadingButton>
-        </>
+        </form>
     );
 
     return (
@@ -95,7 +129,6 @@ export default function LoginView() {
                     left: { xs: 16, md: 24 },
                 }}
             />
-
             <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
                 <Card
                     sx={{
@@ -105,14 +138,12 @@ export default function LoginView() {
                     }}
                 >
                     <Typography variant="h4">Sign in to Clinic Management</Typography>
-
                     <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
                         Don’t have an account?
                         <Link variant="subtitle2" sx={{ ml: 0.5 }}>
                             Get started
                         </Link>
                     </Typography>
-
                     <Stack direction="row" spacing={2}>
                         <Button
                             fullWidth
@@ -123,7 +154,6 @@ export default function LoginView() {
                         >
                             <Iconify icon="eva:google-fill" color="#DF3E30" />
                         </Button>
-
                         <Button
                             fullWidth
                             size="large"
@@ -133,7 +163,6 @@ export default function LoginView() {
                         >
                             <Iconify icon="eva:facebook-fill" color="#1877F2" />
                         </Button>
-
                         <Button
                             fullWidth
                             size="large"
@@ -144,13 +173,11 @@ export default function LoginView() {
                             <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
                         </Button>
                     </Stack>
-
                     <Divider sx={{ my: 3 }}>
                         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                             OR
                         </Typography>
                     </Divider>
-
                     {renderForm}
                 </Card>
             </Stack>
