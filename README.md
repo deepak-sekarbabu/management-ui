@@ -16,21 +16,25 @@ A comprehensive React-based management interface built with Material-UI, designe
 ## Tech Stack
 
 ### Core
+
 - React 18 - Frontend library
 - Material-UI (MUI) v5 - UI component library
 - Vite - Build tool and development server
 - Emotion - CSS-in-JS styling solution
 
 ### Data Visualization & Management
+
 - ApexCharts - Interactive charts and graphs
 - Axios - HTTP client for API requests
 - date-fns & dayjs - Date manipulation utilities
 
 ### State Management & Routing
+
 - Redux Toolkit - State management
 - React Router v6 - Navigation and routing
 
 ### Development Tools
+
 - TypeScript - Type checking and code quality
 - ESLint - Code linting
 - Prettier - Code formatting
@@ -49,6 +53,7 @@ A comprehensive React-based management interface built with Material-UI, designe
 ### Installation
 
 1. Clone the repository
+
 ```bash
 git clone https://github.com/your-username/management-ui.git
 cd management-ui
@@ -69,10 +74,10 @@ cp .env.example .env
 
 ```
 
-bash
 Edit the .env file with your configuration
 
 Available Scripts
+
 ```
 # Development
 yarn dev          # Start development server
@@ -94,9 +99,7 @@ yarn test:watch   # Run tests in watch mode
 yarn test:coverage # Run tests with coverage report
 ```
 
-
 ```
-bash
 Project Structure
 src/
 ├── assets/        # Static assets (images, fonts, etc.)
@@ -111,18 +114,17 @@ src/
 ├── types/         # TypeScript type definitions
 └── utils/         # Utility functions
 ```
+
 ```
-text
 Environment Variables
 VITE_API_BASE_URL=your_api_base_url
 VITE_AUTH_TOKEN_KEY=your_auth_token_key
 VITE_ENV=development
 ```
 
-
 ```
-env
 Browser Support
+
 Chrome (latest)
 
 Firefox (latest)
@@ -131,12 +133,12 @@ Safari (latest)
 
 Edge (latest)
 ```
+
 Deployment
 Build for Production
 yarn build
 
 ```
-bash
 The build artifacts will be stored in the dist/ directory.
 
 Deploy to Production
@@ -157,7 +159,9 @@ Push to the branch ( git push origin feature/amazing-feature)
 
 Open a Pull Request
 ```
+
 ## Coding Standards
+
 Follow the ESLint configuration
 
 Write meaningful commit messages
@@ -167,15 +171,18 @@ Update documentation for significant changes
 Add tests for new features
 
 Testing
+
 # Run all tests
+
 yarn test
 
 # Run tests with coverage
+
 yarn test:coverage
 
 # Run tests in watch mode
-yarn test:watch
 
+yarn test:watch
 
 bash
 Performance Optimization
@@ -207,9 +214,11 @@ Check for port conflicts
 Verify environment variables
 
 ## License
+
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
+
 Material-UI team for the excellent component library
 
 React team for the amazing framework
@@ -217,4 +226,5 @@ React team for the amazing framework
 All contributors who have helped with the project
 
 ## Support
-For support, email support@yourproject.com or create an issue in the repository.
+
+For support, email <support@yourproject.com> or create an issue in the repository.
