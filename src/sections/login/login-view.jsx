@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
@@ -18,12 +17,14 @@ import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+import { useAuth } from 'src/components/AuthProvider';
 
 // ----------------------------------------------------------------------
 
 export default function LoginView() {
     const theme = useTheme();
     const router = useRouter();
+    const { login, isAuthenticated } = useAuth();
 
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
@@ -31,76 +32,24 @@ export default function LoginView() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    // Check if user is already logged in
+    // Redirect if already authenticated
     useEffect(() => {
-        const validateSession = async () => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                try {
-                    const response = await axios.post('http://localhost:8080/auth/validate', {
-                        token,
-                    });
-                    if (response.data.valid) {
-                        // Store user info from validation
-                        const { username, role, clinicIds } = response.data;
-                        localStorage.setItem(
-                            'userInfo',
-                            JSON.stringify({ username, role, clinicIds })
-                        );
-                        router.push('/');
-                    } else {
-                        // Clear invalid session
-                        localStorage.removeItem('token');
-                        localStorage.removeItem('userInfo');
-                    }
-                } catch (err) {
-                    // Clear session on validation error
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('userInfo');
-                }
-            }
-        };
-
-        validateSession();
-    }, [router]);
+        if (isAuthenticated) {
+            router.push('/');
+        }
+    }, [isAuthenticated, router]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
-        try {
-            // Authenticate user
-            const response = await axios.post('http://localhost:8080/auth/login', {
-                username: email,
-                password,
-            });
-
-            const { token } = response.data;
-            localStorage.setItem('token', token);
-
-            // Validate the token immediately after login
-            const validationResponse = await axios.post('http://localhost:8080/auth/validate', {
-                token,
-            });
-            if (validationResponse.data.valid) {
-                const { username, role, clinicIds } = validationResponse.data;
-                localStorage.setItem('userInfo', JSON.stringify({ username, role, clinicIds }));
-
-                // Set authorization header for future requests
-                axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-                router.push('/');
-            } else {
-                throw new Error('Token validation failed');
-            }
-        } catch (err) {
-            setError(err.response?.data?.message || 'Invalid username or password');
-            // Clear any partial session data
-            localStorage.removeItem('token');
-            localStorage.removeItem('userInfo');
-        } finally {
-            setLoading(false);
+        const result = await login(email, password);
+        if (result.success) {
+            router.push('/');
+        } else {
+            setError(result.message);
         }
+        setLoading(false);
     };
 
     const renderForm = (

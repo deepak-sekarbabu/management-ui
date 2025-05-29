@@ -1,7 +1,10 @@
+import PropTypes from 'prop-types';
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
 import DashboardLayout from 'src/layouts/dashboard';
+
+import { useAuth } from 'src/components/AuthProvider';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const UserPage = lazy(() => import('src/pages/user'));
@@ -13,15 +16,28 @@ export const LoginPage = lazy(() => import('src/pages/login'));
 
 // ----------------------------------------------------------------------
 
+function ProtectedRoute({ children }) {
+    const { isAuthenticated, loading } = useAuth();
+    if (loading) return null; // or a loading spinner
+    if (!isAuthenticated) return <Navigate to="/login" replace />;
+    return children;
+}
+
+ProtectedRoute.propTypes = {
+    children: PropTypes.node.isRequired,
+};
+
 export default function Router() {
     const routes = useRoutes([
         {
             element: (
-                <DashboardLayout>
-                    <Suspense>
-                        <Outlet />
-                    </Suspense>
-                </DashboardLayout>
+                <ProtectedRoute>
+                    <DashboardLayout>
+                        <Suspense>
+                            <Outlet />
+                        </Suspense>
+                    </DashboardLayout>
+                </ProtectedRoute>
             ),
             children: [
                 { element: <IndexPage />, index: true },
