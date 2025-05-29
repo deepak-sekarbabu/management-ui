@@ -1,12 +1,10 @@
 import axios from 'axios';
-import { useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -33,25 +31,73 @@ export default function LoginView() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    // TODO: Run 'npm i jwt-decode' if you see an import error for jwt-decode
+    // Check if user is already logged in
+    useEffect(() => {
+        const validateSession = async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const response = await axios.post('http://localhost:8080/auth/validate', {
+                        token,
+                    });
+                    if (response.data.valid) {
+                        // Store user info from validation
+                        const { username, role, clinicIds } = response.data;
+                        localStorage.setItem(
+                            'userInfo',
+                            JSON.stringify({ username, role, clinicIds })
+                        );
+                        router.push('/');
+                    } else {
+                        // Clear invalid session
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('userInfo');
+                    }
+                } catch (err) {
+                    // Clear session on validation error
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('userInfo');
+                }
+            }
+        };
+
+        validateSession();
+    }, [router]);
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
         try {
-            // Use the correct backend API endpoint as per API spec
+            // Authenticate user
             const response = await axios.post('http://localhost:8080/auth/login', {
-                username: email, // API expects 'username' field
+                username: email,
                 password,
             });
+
             const { token } = response.data;
             localStorage.setItem('token', token);
-            // Decode JWT to extract user info
-            const decoded = jwtDecode(token);
-            localStorage.setItem('user', JSON.stringify(decoded));
-            router.push('/');
+
+            // Validate the token immediately after login
+            const validationResponse = await axios.post('http://localhost:8080/auth/validate', {
+                token,
+            });
+            if (validationResponse.data.valid) {
+                const { username, role, clinicIds } = validationResponse.data;
+                localStorage.setItem('userInfo', JSON.stringify({ username, role, clinicIds }));
+
+                // Set authorization header for future requests
+                axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+                router.push('/');
+            } else {
+                throw new Error('Token validation failed');
+            }
         } catch (err) {
-            setError('Invalid username or password');
+            setError(err.response?.data?.message || 'Invalid username or password');
+            // Clear any partial session data
+            localStorage.removeItem('token');
+            localStorage.removeItem('userInfo');
         } finally {
             setLoading(false);
         }
@@ -62,7 +108,7 @@ export default function LoginView() {
             <Stack spacing={3}>
                 <TextField
                     name="email"
-                    label="Email address"
+                    label="Username"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
@@ -140,11 +186,6 @@ export default function LoginView() {
 
                     <Stack direction="row" spacing={2} />
 
-                    <Divider sx={{ my: 3 }}>
-                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                            OR
-                        </Typography>
-                    </Divider>
                     {renderForm}
                 </Card>
             </Stack>

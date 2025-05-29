@@ -3,7 +3,7 @@
         "id": 1,
         "doctorId": "AB00001",
         "clinicId": 1,
-        "doctorName": "Dr. Deepak Sekarbabu",
+        "doctorName": "Dr. john_doe",
         "doctorSpeciality": "Dental Specialist",
         "doctorExperience": 12,
         "doctorConsultationFee": 500,
