@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
+import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
+import { alpha } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
@@ -22,7 +22,7 @@ import { useAuth } from 'src/components/AuthProvider';
 // ----------------------------------------------------------------------
 
 export default function LoginView() {
-    const theme = useTheme();
+
     const router = useRouter();
     const { login, isAuthenticated } = useAuth();
 
@@ -54,12 +54,19 @@ export default function LoginView() {
 
     const renderForm = (
         <form onSubmit={handleLogin}>
-            <Stack spacing={3}>
+            <Stack spacing={3} sx={{ mb: 1 }}>
                 <TextField
                     name="email"
                     label="Username"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    fullWidth
+                    size="medium"
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: 1,
+                        },
+                    }}
                 />
                 <TextField
                     name="password"
@@ -67,15 +74,29 @@ export default function LoginView() {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    fullWidth
+                    size="medium"
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: 1,
+                        },
+                    }}
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">
                                 <IconButton
                                     onClick={() => setShowPassword(!showPassword)}
                                     edge="end"
+                                    sx={{
+                                        color: 'text.secondary',
+                                        '&:hover': {
+                                            backgroundColor: 'action.hover',
+                                        },
+                                    }}
                                 >
                                     <Iconify
                                         icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'}
+                                        sx={{ width: 20, height: 20 }}
                                     />
                                 </IconButton>
                             </InputAdornment>
@@ -84,12 +105,33 @@ export default function LoginView() {
                 />
             </Stack>
             {error && (
-                <Typography color="error" sx={{ mt: 2 }}>
+                <Typography 
+                    color="error" 
+                    variant="body2" 
+                    sx={{ 
+                        mt: 1,
+                        mb: 2,
+                        textAlign: 'center',
+                        backgroundColor: (theme) => alpha(theme.palette.error.main, 0.08),
+                        p: 1,
+                        borderRadius: 1,
+                    }}
+                >
                     {error}
                 </Typography>
             )}
-            <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
-                <Link variant="subtitle2" underline="hover">
+            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 3 }}>
+                <div /> {/* Empty div for flex spacing */}
+                <Link 
+                    variant="caption" 
+                    underline="hover"
+                    sx={{ 
+                        color: 'text.secondary',
+                        '&:hover': {
+                            color: 'primary.main',
+                        },
+                    }}
+                >
                     Forgot password?
                 </Link>
             </Stack>
@@ -98,7 +140,16 @@ export default function LoginView() {
                 size="large"
                 type="submit"
                 variant="contained"
-                color="inherit"
+                color="primary"
+                sx={{
+                    height: 48,
+                    fontSize: '1rem',
+                    textTransform: 'none',
+                    boxShadow: 'none',
+                    '&:hover': {
+                        boxShadow: (theme) => theme.customShadows.z8,
+                    },
+                }}
                 loading={loading}
             >
                 Login
@@ -110,10 +161,14 @@ export default function LoginView() {
         <Box
             sx={{
                 ...bgGradient({
-                    color: alpha(theme.palette.background.default, 0.9),
+                    color: (theme) => alpha(theme.palette.background.default, 0.9),
                     imgUrl: '/assets/background/overlay_4.jpg',
                 }),
-                height: 1,
+                minHeight: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                p: 3,
             }}
         >
             <Logo
@@ -121,23 +176,57 @@ export default function LoginView() {
                     position: 'fixed',
                     top: { xs: 16, md: 24 },
                     left: { xs: 16, md: 24 },
-                }}
+                                    }}
             />
-            <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
+            <Box
+                component="main"
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flex: 1,
+                    py: { xs: 8, md: 12 },
+                }}
+            >
                 <Card
                     sx={{
-                        p: 5,
+                        p: { xs: 3, sm: 5 },
                         width: 1,
-                        maxWidth: 420,
+                        maxWidth: 440,
+                        borderRadius: 2,
+                        boxShadow: (theme) => theme.customShadows.z24,
+                        border: (theme) => `1px solid ${theme.palette.divider}`,
                     }}
                 >
-                    <Typography variant="h4">Sign in to Clinic Management</Typography>
-
-                    <Stack direction="row" spacing={2} />
+                    <Box sx={{ textAlign: 'center', mb: 4 }}>
+                        <Typography variant="h4" sx={{ mb: 1, fontWeight: 'bold' }}>
+                            Welcome back
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                            Sign in to your Clinic Management account
+                        </Typography>
+                    </Box>
 
                     {renderForm}
+                    
+                    <Typography variant="body2" sx={{ mt: 3, textAlign: 'center', color: 'text.secondary' }}>
+                        Don&apos;t have an account?{' '}
+                        <Link 
+                            href="#" 
+                            variant="subtitle2" 
+                            sx={{ 
+                                ml: 0.5,
+                                '&:hover': {
+                                    color: 'primary.main',
+                                },
+                            }}
+                        >
+                            Get started
+                        </Link>
+                    </Typography>
                 </Card>
-            </Stack>
+            </Box>
         </Box>
     );
 }
