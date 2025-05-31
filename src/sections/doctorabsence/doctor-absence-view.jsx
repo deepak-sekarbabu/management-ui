@@ -87,7 +87,7 @@ const DoctorAbsencePage = () => {
             }
 
             const response = await fetch(
-                `api/doctor-absence/after-date/clinic/${clinicId}?afterDate=01-01-2024`,
+                `api/doctor-absence/after-date/clinic/${clinicId}?afterDate=${new Date().getDate() === 1 ? new Date().toLocaleDateString('en-GB').split('/').join('-') : new Date(new Date().getFullYear(), new Date().getMonth(), 1).toLocaleDateString('en-GB').split('/').join('-')}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
