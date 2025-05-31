@@ -1,37 +1,68 @@
 import { v4 as uuidv4 } from 'uuid';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Box, Card, Stack, Button, Container, Typography, CircularProgress } from '@mui/material';
 
+import { useAuth } from 'src/components/AuthProvider';
+
 import DoctorCard from './DoctorCard';
 
-// Fetch data from the specified URL
-const fetchData = async () => {
-    const response = await fetch('api/clinic/doctorinformation/1');
-    if (!response.ok) {
-        throw new Error(`HTTP error status: ${response.status}`);
-    }
-    return response.json();
-};
-
 const DoctorPage = () => {
+    const { user } = useAuth();
     const [doctors, setDoctors] = useState([]);
     const [newDoctor, setNewDoctor] = useState(null);
     const [isLoading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const loadData = async () => {
+    // Fetch data from the specified URL
+    const fetchData = useCallback(async (clinicId) => {
         try {
-            const data = await fetchData();
-            setDoctors(data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            const response = await fetch(`/api/clinic/doctorinformation/${clinicId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (fetchError) {
+            console.error('Error fetching doctor data:', fetchError);
+            throw fetchError;
         }
-        setLoading(false);
-    };
+    }, []);
+
+    const loadData = useCallback(async () => {
+        if (!user?.clinicIds?.length) {
+            console.error('No clinic IDs found for user');
+            setError('No clinic assigned to this user');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const clinicId = user.clinicIds[0];
+            const data = await fetchData(clinicId);
+            setDoctors(data);
+            setError(null);
+        } catch (loadError) {
+            console.error('Error loading doctor data:', loadError);
+            setError('Failed to load doctor information');
+        } finally {
+            setLoading(false);
+        }
+    }, [fetchData, user?.clinicIds]);
 
     useEffect(() => {
         loadData();
-    }, []);
+    }, [loadData]);
 
     if (isLoading) {
         return (
@@ -46,15 +77,22 @@ const DoctorPage = () => {
                     <Typography variant="h2" gutterBottom>
                         Doctor Information
                     </Typography>
+                    {error ? (
+                        <Typography color="error" sx={{ mt: 2 }}>
+                            {error}
+                        </Typography>
+                    ) : (
+                        <CircularProgress
+                            size={60}
+                            sx={{
+                                position: 'fixed',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                            }}
+                        />
+                    )}
                 </Stack>
-                <CircularProgress
-                    style={{
-                        position: 'fixed',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                    }}
-                />
             </Container>
         );
     }
@@ -103,13 +141,23 @@ const DoctorPage = () => {
             console.log('Doctor removed successfully');
             setNewDoctor(null);
             setDoctors(doctors.filter((doctor) => doctor.id !== doctorId));
-        } catch (error) {
-            console.error('Error removing doctor:', error);
+        } catch (removeError) {
+            console.error('Error removing doctor:', removeError);
         }
     };
 
     const saveNewDoctor = async (newDoctorData) => {
         try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            const headers = {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            };
+
             let response;
             if (typeof newDoctorData.id === 'string' && newDoctorData.id.includes('-')) {
                 // New doctor (UUID)
@@ -120,21 +168,18 @@ const DoctorPage = () => {
                     return acc;
                 }, {});
                 console.log('Adding new Doctor', dataWithoutId);
+
                 response = await fetch('api/doctor', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers,
                     body: JSON.stringify(dataWithoutId),
                 });
             } else {
                 // Existing doctor
-                console.log('Updating existing  Doctor : id', newDoctorData, newDoctorData.id);
+                console.log('Updating existing Doctor : id', newDoctorData, newDoctorData.id);
                 response = await fetch(`api/doctor/${newDoctorData.id}`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers,
                     body: JSON.stringify(newDoctorData),
                 });
             }
@@ -144,8 +189,8 @@ const DoctorPage = () => {
             console.log('Doctor saved successfully');
             await loadData();
             setNewDoctor(null);
-        } catch (error) {
-            console.error('Error saving doctor:', error);
+        } catch (saveError) {
+            console.error('Error saving doctor:', saveError);
         }
     };
 
