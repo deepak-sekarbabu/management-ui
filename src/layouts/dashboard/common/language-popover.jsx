@@ -32,6 +32,7 @@ export default function LanguagePopover() {
         <>
             <IconButton
                 onClick={handleOpen}
+                aria-label="open language selection menu"
                 sx={{
                     width: 40,
                     height: 40,

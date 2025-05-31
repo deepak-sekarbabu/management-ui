@@ -125,7 +125,7 @@ export default function QueueTableRow({
                 <TableCell>{time}</TableCell>
                 <TableCell sx={{ display: 'none' }}>{id}</TableCell>
                 <TableCell align="right">
-                    <IconButton onClick={handleOpenMenu}>
+                    <IconButton onClick={handleOpenMenu} aria-label="open actions menu">
                         <Iconify icon="eva:more-vertical-fill" />
                     </IconButton>
                 </TableCell>
