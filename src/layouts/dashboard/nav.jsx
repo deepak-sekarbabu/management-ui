@@ -64,9 +64,18 @@ export default function Nav({ openNav, onCloseNav }) {
 
     const renderMenu = (
         <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
-            {navConfig.map((item) => (
-                <NavItem key={item.title} item={item} />
-            ))}
+            {navConfig
+                .filter((item) => {
+                    // If no roles are specified, show to everyone
+                    if (!item.roles) return true;
+                    // If user has no role, don't show the item
+                    if (!user?.role) return false;
+                    // Check if user's role is in the allowed roles for this item
+                    return item.roles.includes(user.role.toLowerCase());
+                })
+                .map((item) => (
+                    <NavItem key={item.title} item={item} />
+                ))}
         </Stack>
     );
 
