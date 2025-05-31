@@ -102,7 +102,7 @@ const DoctorPage = () => {
             id: uuidv4(),
             doctorName: '',
             doctorId: '',
-            clinicId: 1,
+            clinicId: user?.clinicIds?.[0],
             doctorSpeciality: '',
             doctorExperience: 0,
             doctorConsultationFee: 0,
@@ -115,11 +115,13 @@ const DoctorPage = () => {
                     shiftStartTime: '',
                     shiftEndTime: '',
                     consultationTime: 0,
-                    configType: '',
+                    configType: 'APPOINTMENT',
                 },
             ],
             languagesSpoken: [],
             qualifications: [],
+            gender: 'Male',
+            doctorEmail: ''
         };
         setNewDoctor(newDoctorEntry);
     };
@@ -158,15 +160,25 @@ const DoctorPage = () => {
                 Authorization: `Bearer ${token}`,
             };
 
+            // Ensure qualifications is an array and handle null/undefined cases
+            const doctorData = {
+                ...newDoctorData,
+                qualifications: Array.isArray(newDoctorData.qualifications)
+                    ? newDoctorData.qualifications
+                    : [],
+                clinicId: user?.clinicIds?.[0] || 1, // Add clinicId from user's token or default to 1
+                phoneNumbers: Array.isArray(newDoctorData.phoneNumbers)
+                    ? newDoctorData.phoneNumbers.map((phone) => ({
+                          phoneNumber: typeof phone === 'string' ? phone : phone.phoneNumber,
+                      }))
+                    : [],
+            };
+
             let response;
             if (typeof newDoctorData.id === 'string' && newDoctorData.id.includes('-')) {
                 // New doctor (UUID)
-                const dataWithoutId = Object.keys(newDoctorData).reduce((acc, key) => {
-                    if (key !== 'id') {
-                        acc[key] = newDoctorData[key];
-                    }
-                    return acc;
-                }, {});
+                // eslint-disable-next-line no-unused-vars
+                const { id: _id, ...dataWithoutId } = doctorData;
                 console.log('Adding new Doctor', dataWithoutId);
 
                 response = await fetch('api/doctor', {
@@ -176,11 +188,11 @@ const DoctorPage = () => {
                 });
             } else {
                 // Existing doctor
-                console.log('Updating existing Doctor : id', newDoctorData, newDoctorData.id);
-                response = await fetch(`api/doctor/${newDoctorData.id}`, {
+                console.log('Updating existing Doctor:', doctorData);
+                response = await fetch(`api/doctor/${doctorData.id}`, {
                     method: 'PUT',
                     headers,
-                    body: JSON.stringify(newDoctorData),
+                    body: JSON.stringify(doctorData),
                 });
             }
             if (!response.ok) {
