@@ -87,6 +87,7 @@ export default function LoginView() {
                                 <IconButton
                                     onClick={() => setShowPassword(!showPassword)}
                                     edge="end"
+                                    aria-label="toggle password visibility"
                                     sx={{
                                         color: 'text.secondary',
                                         '&:hover': {

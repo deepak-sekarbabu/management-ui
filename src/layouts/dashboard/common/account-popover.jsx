@@ -51,6 +51,7 @@ export default function AccountPopover() {
         <>
             <IconButton
                 onClick={handleOpen}
+                aria-label="open user account menu"
                 sx={{
                     width: 40,
                     height: 40,

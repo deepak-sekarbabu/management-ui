@@ -104,7 +104,7 @@ function TaskItem({ task, checked, onChange }) {
                     sx={{ flexGrow: 1, m: 0 }}
                 />
 
-                <IconButton color={open ? 'inherit' : 'default'} onClick={handleOpenMenu}>
+                <IconButton color={open ? 'inherit' : 'default'} onClick={handleOpenMenu} aria-label="show task options">
                     <Iconify icon="eva:more-vertical-fill" />
                 </IconButton>
             </Stack>

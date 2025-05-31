@@ -63,7 +63,7 @@ export default function UserTableRow({
                 </TableCell>
 
                 <TableCell align="right">
-                    <IconButton onClick={handleOpenMenu}>
+                    <IconButton onClick={handleOpenMenu} aria-label="open user actions">
                         <Iconify icon="eva:more-vertical-fill" />
                     </IconButton>
                 </TableCell>

@@ -29,7 +29,7 @@ export default function Header({ onOpenNav }) {
     const renderContent = (
         <>
             {!lgUp && (
-                <IconButton onClick={onOpenNav} sx={{ mr: 1 }}>
+                <IconButton onClick={onOpenNav} sx={{ mr: 1 }} aria-label="open navigation menu">
                     <Iconify icon="eva:menu-2-fill" />
                 </IconButton>
             )}
