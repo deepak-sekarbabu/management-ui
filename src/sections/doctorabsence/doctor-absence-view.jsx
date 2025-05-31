@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import Alert from '@mui/material/Alert';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -23,7 +23,10 @@ import {
     CircularProgress,
 } from '@mui/material';
 
+import { useAuth } from 'src/components/AuthProvider';
+
 const DoctorAbsencePage = () => {
+    const { user } = useAuth();
     const [doctorAbsence, setDoctorAbsence] = useState([]);
     const [newRow, setNewRow] = useState({
         doctorId: '',
@@ -36,53 +39,95 @@ const DoctorAbsencePage = () => {
     const [isAdding, setIsAdding] = useState(false);
     const [showErrorAlert, setShowErrorAlert] = useState(false);
     const [showErrorAlertSaving, setShowErrorAlertSaving] = useState(false);
-    const [doctorData, setDoctorData] = useState([]); // State to hold doctor data
+    const [doctorData, setDoctorData] = useState([]);
     const [isLoading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchDoctorData = async () => {
-            try {
-                const response = await fetch('api/doctor-clinic/1');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch doctor data');
-                }
-                const data = await response.json();
-                setDoctorData(data);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching doctor data:', error);
+    const fetchDoctorData = useCallback(async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found');
             }
-        };
+            
+            const clinicId = user?.clinicIds?.[0];
+            if (!clinicId) {
+                throw new Error('No clinic assigned to this user');
+            }
 
+            const response = await fetch(`api/doctor-clinic/${clinicId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch doctor data');
+            }
+            const data = await response.json();
+            setDoctorData(data);
+        } catch (error) {
+            console.error('Error fetching doctor data:', error);
+            setShowErrorAlert(true);
+        } finally {
+            setLoading(false);
+        }
+    }, [user?.clinicIds]);
+
+    const fetchDoctorAbsence = useCallback(async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+            
+            const clinicId = user?.clinicIds?.[0];
+            if (!clinicId) {
+                throw new Error('No clinic assigned to this user');
+            }
+
+            const response = await fetch(
+                `api/doctor-absence/after-date/clinic/${clinicId}?afterDate=01-01-2024`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch doctor absence data');
+            }
+            const data = await response.json();
+            setDoctorAbsence(data);
+        } catch (error) {
+            console.error('Error fetching doctor absence data:', error);
+            setShowErrorAlert(true);
+        } finally {
+            setLoading(false);
+        }
+    }, [user?.clinicIds]);
+
+    useEffect(() => {
         fetchDoctorData();
-    }, []);
-
-    useEffect(() => {
-        const fetchDoctorAbsence = async () => {
-            try {
-                const response = await fetch(
-                    'api/doctor-absence/after-date/clinic/1?afterDate=01-01-2024'
-                );
-                if (!response.ok) {
-                    throw new Error('Something went wrong!');
-                }
-                const data = await response.json();
-                setDoctorAbsence(data);
-                setLoading(false);
-            } catch (error) {
-                console.error(error);
-                setLoading(false);
-            }
-        };
-
         fetchDoctorAbsence();
-    }, []);
+    }, [fetchDoctorData, fetchDoctorAbsence]);
 
     const handleRemove = async (id) => {
         console.log('Removing row with ID:', id);
         try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
             const response = await fetch(`api/doctor-absence/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             });
 
             if (!response.ok) {
@@ -95,6 +140,7 @@ const DoctorAbsencePage = () => {
             );
         } catch (error) {
             console.error('Error deleting the record:', error);
+            setShowErrorAlertSaving(true);
         }
     };
 
@@ -112,45 +158,59 @@ const DoctorAbsencePage = () => {
         }
         setShowErrorAlert(false);
 
-        const formattedAbsenceDate = newRow.absenceDate
-            .toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-            })
-            .replace(/\//g, '-');
-
-        const formattedAbsenceStartTime = newRow.absenceStartTime.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false,
-        });
-
-        const formattedAbsenceEndTime = newRow.absenceEndTime.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false,
-        });
-
-        const newAbsence = {
-            doctorId: newRow.doctorId,
-            doctorName: newRow.doctorName,
-            clinicId: 1,
-            absenceDate: formattedAbsenceDate,
-            absenceStartTime: formattedAbsenceStartTime,
-            absenceEndTime: formattedAbsenceEndTime,
-            optionalMessage: newRow.optionalMessage,
-        };
-
         try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            const clinicId = user?.clinicIds?.[0];
+            if (!clinicId) {
+                throw new Error('No clinic assigned to this user');
+            }
+
+            // Format dates for the API
+            const formattedAbsenceDate = newRow.absenceDate
+                ? newRow.absenceDate.toLocaleDateString('en-GB', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                  }).replace(/\//g, '-')
+                : '';
+
+            const formattedAbsenceStartTime = newRow.absenceStartTime
+                ? newRow.absenceStartTime.toLocaleTimeString('en-US', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                      hour12: false,
+                  })
+                : '';
+
+            const formattedAbsenceEndTime = newRow.absenceEndTime
+                ? newRow.absenceEndTime.toLocaleTimeString('en-US', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                      hour12: false,
+                  })
+                : '';
+
             const response = await fetch('api/doctor-absence', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(newAbsence),
+                body: JSON.stringify({
+                    doctorId: parseInt(newRow.doctorId, 10),
+                    doctorName: newRow.doctorName,
+                    absenceDate: formattedAbsenceDate,
+                    absenceStartTime: formattedAbsenceStartTime,
+                    absenceEndTime: formattedAbsenceEndTime,
+                    optionalMessage: newRow.optionalMessage || '',
+clinicId,
+                }),
             });
 
             if (!response.ok) {
