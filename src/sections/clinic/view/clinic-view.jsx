@@ -13,6 +13,8 @@ import {
     CircularProgress,
 } from '@mui/material';
 
+import { useAuth } from 'src/components/AuthProvider';
+
 import ClinicDetails from './clinic-details';
 
 const GET_CLINIC_INFO = '/api/clinic/';
@@ -24,21 +26,31 @@ const ClinicPage = () => {
     const [editedClinicData, setEditedClinicData] = useState({});
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [isLoading, setLoading] = useState(true);
+    const { user } = useAuth();
 
     useEffect(() => {
         const fetchClinicData = async () => {
+            if (!user?.clinicIds?.length) {
+                console.error('No clinic IDs found for user');
+                setLoading(false);
+                return;
+            }
+
             try {
-                const response = await axios.get(`${GET_CLINIC_INFO}1`);
+                // Use the first clinic ID from the user's clinicIds array
+                const clinicId = user.clinicIds[0];
+                const response = await axios.get(`${GET_CLINIC_INFO}${clinicId}`);
                 setClinicData(response.data);
                 setEditedClinicData(response.data);
-                setLoading(false);
             } catch (error) {
                 console.error('Error fetching clinic data:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchClinicData();
-    }, []);
+    }, [user]);
 
     if (isLoading) {
         return (
@@ -77,7 +89,11 @@ const ClinicPage = () => {
     const handleSave = async () => {
         console.log(editedClinicData);
         try {
-            await axios.put(`${UPDATE_CLINIC_INFO}1`, editedClinicData);
+            if (!user?.clinicIds?.length) {
+                throw new Error('No clinic IDs found for user');
+            }
+            const clinicId = user.clinicIds[0];
+            await axios.put(`${UPDATE_CLINIC_INFO}${clinicId}`, editedClinicData);
             setClinicData(editedClinicData);
             setEditMode(false);
             setHasUnsavedChanges(false);

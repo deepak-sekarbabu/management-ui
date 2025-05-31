@@ -37,7 +37,6 @@ const navConfig = [
         path: '/queue',
         icon: icon('ic_user'),
     },
-
 ];
 
 export default navConfig;
