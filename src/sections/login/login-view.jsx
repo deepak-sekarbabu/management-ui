@@ -22,7 +22,6 @@ import { useAuth } from 'src/components/AuthProvider';
 // ----------------------------------------------------------------------
 
 export default function LoginView() {
-
     const router = useRouter();
     const { login, isAuthenticated } = useAuth();
 
@@ -106,10 +105,10 @@ export default function LoginView() {
                 />
             </Stack>
             {error && (
-                <Typography 
-                    color="error" 
-                    variant="body2" 
-                    sx={{ 
+                <Typography
+                    color="error"
+                    variant="body2"
+                    sx={{
                         mt: 1,
                         mb: 2,
                         textAlign: 'center',
@@ -121,12 +120,17 @@ export default function LoginView() {
                     {error}
                 </Typography>
             )}
-            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 3 }}>
+            <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ mb: 3 }}
+            >
                 <div /> {/* Empty div for flex spacing */}
-                <Link 
-                    variant="caption" 
+                <Link
+                    variant="caption"
                     underline="hover"
-                    sx={{ 
+                    sx={{
                         color: 'text.secondary',
                         '&:hover': {
                             color: 'primary.main',
@@ -177,7 +181,7 @@ export default function LoginView() {
                     position: 'fixed',
                     top: { xs: 16, md: 24 },
                     left: { xs: 16, md: 24 },
-                                    }}
+                }}
             />
             <Box
                 component="main"
@@ -210,13 +214,16 @@ export default function LoginView() {
                     </Box>
 
                     {renderForm}
-                    
-                    <Typography variant="body2" sx={{ mt: 3, textAlign: 'center', color: 'text.secondary' }}>
+
+                    <Typography
+                        variant="body2"
+                        sx={{ mt: 3, textAlign: 'center', color: 'text.secondary' }}
+                    >
                         Don&apos;t have an account?{' '}
-                        <Link 
-                            href="#" 
-                            variant="subtitle2" 
-                            sx={{ 
+                        <Link
+                            href="#"
+                            variant="subtitle2"
+                            sx={{
                                 ml: 0.5,
                                 '&:hover': {
                                     color: 'primary.main',
