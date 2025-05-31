@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import React, { useMemo, useState, useEffect, useContext, useCallback, createContext } from 'react';
 
+import config from 'src/config';
+
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -26,7 +28,9 @@ export function AuthProvider({ children }) {
         const storedToken = localStorage.getItem('token');
         if (storedToken) {
             axios
-                .post('http://localhost:8080/auth/validate', { token: storedToken })
+                .post(`${config.api.baseUrl}${config.api.endpoints.auth.validate}`, {
+                    token: storedToken,
+                })
                 .then((res) => {
                     if (res.data.valid) {
                         setUser({
@@ -54,17 +58,23 @@ export function AuthProvider({ children }) {
         async (username, password) => {
             setLoading(true);
             try {
-                const res = await axios.post('http://localhost:8080/auth/login', {
-                    username,
-                    password,
-                });
+                const res = await axios.post(
+                    `${config.api.baseUrl}${config.api.endpoints.auth.login}`,
+                    {
+                        username,
+                        password,
+                    }
+                );
                 const receivedToken = res.data.token;
                 localStorage.setItem('token', receivedToken);
                 axios.defaults.headers.common.Authorization = `Bearer ${receivedToken}`;
                 // Validate token and get user info
-                const validationRes = await axios.post('http://localhost:8080/auth/validate', {
-                    token: receivedToken,
-                });
+                const validationRes = await axios.post(
+                    `${config.api.baseUrl}${config.api.endpoints.auth.validate}`,
+                    {
+                        token: receivedToken,
+                    }
+                );
                 if (validationRes.data.valid) {
                     setUser({
                         username: validationRes.data.username,

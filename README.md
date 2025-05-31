@@ -42,6 +42,35 @@ A comprehensive React-based management interface built with Material-UI, designe
 - Jest - Unit testing
 - React Testing Library - Component testing
 
+## Environment Variables
+
+This project uses environment variables for configuration. Copy `.env.example` to `.env` and update the values as needed:
+
+```bash
+cp .env.example .env
+```
+
+### Available Environment Variables
+
+#### API Configuration
+- `VITE_API_BASE_URL`: Base URL for API requests (e.g., `http://localhost:8080`)
+- `VITE_API_AUTH_PATH`: Path for authentication endpoints (default: `/auth`)
+- `VITE_API_VALIDATE_PATH`: Path for token validation (default: `/auth/validate`)
+- `VITE_API_LOGIN_PATH`: Path for login endpoint (default: `/auth/login`)
+
+#### Application Settings
+- `VITE_APP_NAME`: Application name (default: "Management UI")
+- `VITE_APP_ENV`: Application environment (e.g., `development`, `production`)
+- `VITE_APP_VERSION`: Application version
+
+#### Feature Flags
+- `VITE_ENABLE_ANALYTICS`: Enable/disable analytics (default: `false`)
+- `VITE_ENABLE_LOGGING`: Enable/disable logging (default: `true`)
+
+#### Pagination
+- `VITE_DEFAULT_PAGE_SIZE`: Default number of items per page (default: `10`)
+- `VITE_MAX_PAGE_SIZE`: Maximum number of items per page (default: `100`)
+
 ## Getting Started
 
 ### Prerequisites

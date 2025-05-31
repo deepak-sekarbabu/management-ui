@@ -48,7 +48,7 @@ const DoctorAbsencePage = () => {
             if (!token) {
                 throw new Error('No authentication token found');
             }
-            
+
             const clinicId = user?.clinicIds?.[0];
             if (!clinicId) {
                 throw new Error('No clinic assigned to this user');
@@ -56,9 +56,9 @@ const DoctorAbsencePage = () => {
 
             const response = await fetch(`api/doctor-clinic/${clinicId}`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
             });
 
             if (!response.ok) {
@@ -80,7 +80,7 @@ const DoctorAbsencePage = () => {
             if (!token) {
                 throw new Error('No authentication token found');
             }
-            
+
             const clinicId = user?.clinicIds?.[0];
             if (!clinicId) {
                 throw new Error('No clinic assigned to this user');
@@ -90,9 +90,9 @@ const DoctorAbsencePage = () => {
                 `api/doctor-absence/after-date/clinic/${clinicId}?afterDate=01-01-2024`,
                 {
                     headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
                 }
             );
 
@@ -125,9 +125,9 @@ const DoctorAbsencePage = () => {
             const response = await fetch(`api/doctor-absence/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
             });
 
             if (!response.ok) {
@@ -171,11 +171,13 @@ const DoctorAbsencePage = () => {
 
             // Format dates for the API
             const formattedAbsenceDate = newRow.absenceDate
-                ? newRow.absenceDate.toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                  }).replace(/\//g, '-')
+                ? newRow.absenceDate
+                      .toLocaleDateString('en-GB', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                      })
+                      .replace(/\//g, '-')
                 : '';
 
             const formattedAbsenceStartTime = newRow.absenceStartTime
@@ -200,7 +202,7 @@ const DoctorAbsencePage = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     doctorId: parseInt(newRow.doctorId, 10),
@@ -209,7 +211,7 @@ const DoctorAbsencePage = () => {
                     absenceStartTime: formattedAbsenceStartTime,
                     absenceEndTime: formattedAbsenceEndTime,
                     optionalMessage: newRow.optionalMessage || '',
-clinicId,
+                    clinicId,
                 }),
             });
 

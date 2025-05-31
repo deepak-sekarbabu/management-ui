@@ -121,7 +121,7 @@ const DoctorPage = () => {
             languagesSpoken: [],
             qualifications: [],
             gender: 'Male',
-            doctorEmail: ''
+            doctorEmail: '',
         };
         setNewDoctor(newDoctorEntry);
     };
