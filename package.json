@@ -27,6 +27,7 @@
         "@mui/material": "^5.17.1",
         "@mui/x-date-pickers": "^7.29.4",
         "@mui/x-date-pickers-pro": "^7.29.4",
+        "@stagewise/toolbar-react": "^0.2.0",
         "apexcharts": "^4.7.0",
         "axios": "^1.9.0",
         "date-fns": "^2.30.0",
@@ -46,7 +47,6 @@
         "uuid": "^11.1.0"
     },
     "devDependencies": {
-        "@stagewise/toolbar-react": "^0.2.0",
         "@vitejs/plugin-react-swc": "^3.10.0",
         "eslint": "^8.51.0",
         "eslint-config-airbnb": "^19.0.4",
