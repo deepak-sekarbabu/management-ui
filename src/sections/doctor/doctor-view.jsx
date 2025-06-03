@@ -137,8 +137,8 @@ const DoctorPage = () => {
             const response = await fetch(`api/doctor/${doctorId}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
                 },
             });
 
