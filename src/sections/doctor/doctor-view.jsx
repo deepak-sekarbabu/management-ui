@@ -194,7 +194,7 @@ const DoctorPage = () => {
             } else {
                 // Existing doctor
                 console.log('Updating existing Doctor:', doctorData);
-                response = await fetch(`api/doctor/${doctorData.id}`, {
+                response = await fetch(`api/doctor/${doctorData.clinicId}/${doctorData.doctorId}`, {
                     method: 'PUT',
                     headers,
                     body: JSON.stringify(doctorData),
@@ -221,6 +221,7 @@ const DoctorPage = () => {
                         doctor={doctor}
                         onRemove={() => handleRemove(doctor.id)}
                         onSave={saveNewDoctor}
+                        clinicId={user?.clinicIds?.[0]}
                     />
                 ))}
                 {newDoctor && (
@@ -230,6 +231,7 @@ const DoctorPage = () => {
                         isNewDoctor
                         onSave={saveNewDoctor}
                         onRemove={handleRemove}
+                        clinicId={user?.clinicIds?.[0]}
                     />
                 )}
                 <Box mt={2} display="flex" justifyContent="flex-end">

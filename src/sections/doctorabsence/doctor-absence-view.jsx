@@ -205,7 +205,7 @@ const DoctorAbsencePage = () => {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    doctorId: parseInt(newRow.doctorId, 10),
+                    doctorId: newRow.doctorId,
                     doctorName: newRow.doctorName,
                     absenceDate: formattedAbsenceDate,
                     absenceStartTime: formattedAbsenceStartTime,

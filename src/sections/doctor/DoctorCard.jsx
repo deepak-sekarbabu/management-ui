@@ -19,7 +19,7 @@ import {
 import DoctorPhoneNumbers from './DoctorPhoneNumbers';
 import DoctorAvailability from './DoctorAvailability';
 
-const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }) => {
+const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, clinicId }) => {
     const [isEditing, setIsEditing] = useState(isNewDoctor);
     const [formState, setFormState] = useState({ ...doctor, validationErrors: {} });
     const [isDetailsExpanded, setIsDetailsExpanded] = useState(isNewDoctor);
@@ -118,9 +118,10 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
 
         // Call the onSave function passed from the parent component
         if (onSave) {
-            onSave(formState);
+            // Pass clinicId and doctorId for correct API usage
+            onSave(formState, clinicId);
         }
-    }, [formState, onSave, validateDoctorData]);
+    }, [formState, onSave, validateDoctorData, clinicId]);
 
     const handleCancel = useCallback(() => {
         console.log(`Cancelling edit for doctor: ${doctor.doctorName}`);
@@ -173,6 +174,15 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
         },
         [doctor.doctorName]
     );
+
+    // Ensure consultationTime is always a number in doctorAvailability
+    const normalizedDoctorAvailability = (doctor.doctorAvailability || []).map((item) => ({
+        ...item,
+        consultationTime:
+            typeof item.consultationTime === 'string'
+                ? Number(item.consultationTime)
+                : item.consultationTime,
+    }));
 
     return (
         <Card sx={{ mt: 2 }}>
@@ -350,7 +360,13 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
                                     isEditing={isEditing}
                                 />
                                 <DoctorAvailability
-                                    availability={formState.doctorAvailability}
+                                    availability={formState.doctorAvailability.map((item) => ({
+                                        ...item,
+                                        consultationTime:
+                                            typeof item.consultationTime === 'string'
+                                                ? Number(item.consultationTime)
+                                                : item.consultationTime,
+                                    }))}
                                     onAvailabilityChange={handleAvailabilityChange}
                                     isEditing={isEditing}
                                 />
@@ -402,7 +418,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove }
                                     isEditing={false} // Explicitly set to false for view mode
                                 />
                                 <DoctorAvailability
-                                    availability={doctor.doctorAvailability}
+                                    availability={normalizedDoctorAvailability}
                                     onAvailabilityChange={() => {}} // Add empty handler for view mode
                                     isEditing={false} // Explicitly set to false for view mode
                                 />
@@ -462,6 +478,7 @@ DoctorCard.propTypes = {
     isNewDoctor: PropTypes.bool,
     onSave: PropTypes.func,
     onRemove: PropTypes.func,
+    clinicId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
 
 export default DoctorCard;
