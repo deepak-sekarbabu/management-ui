@@ -133,8 +133,13 @@ const DoctorPage = () => {
                 setNewDoctor(null);
                 setDoctors(doctors.filter((doctor) => doctor.id !== doctorId));
             }
+            const token = localStorage.getItem('token');
             const response = await fetch(`api/doctor/${doctorId}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
             });
 
             if (!response.ok) {
