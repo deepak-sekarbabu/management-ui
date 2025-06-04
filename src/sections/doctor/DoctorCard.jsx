@@ -21,7 +21,33 @@ import DoctorPhoneNumbers from './DoctorPhoneNumbers';
 
 const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, clinicId }) => {
     const [isEditing, setIsEditing] = useState(isNewDoctor);
-    const [formState, setFormState] = useState({ ...doctor, validationErrors: {} });
+    const [formState, setFormState] = useState({
+        ...doctor,
+        languagesSpoken: Array.isArray(doctor.languagesSpoken)
+            ? doctor.languagesSpoken.map(String)
+            : [],
+        qualifications: Array.isArray(doctor.qualifications)
+            ? doctor.qualifications.map(String)
+            : [],
+        validationErrors: {},
+    });
+
+    // Keep formState updated when doctor prop changes
+    useEffect(() => {
+        if (!isEditing) {
+            setFormState(prevState => ({
+                ...doctor,
+                languagesSpoken: Array.isArray(doctor.languagesSpoken)
+                    ? doctor.languagesSpoken.map(String)
+                    : [],
+                qualifications: Array.isArray(doctor.qualifications)
+                    ? doctor.qualifications.map(String)
+                    : [],
+                validationErrors: prevState.validationErrors,
+            }));
+        }
+    }, [doctor, isEditing]);
+
     const [isDetailsExpanded, setIsDetailsExpanded] = useState(isNewDoctor);
     const [avatar, setAvatar] = useState(
         `/assets/images/avatars/avatar_${Math.floor(Math.random() * 25) + 1}.jpg`
@@ -95,31 +121,46 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
 
     const handleEdit = useCallback(() => {
         console.log(`Editing doctor: ${doctor.doctorName}`);
+        // When entering edit mode, ensure languagesSpoken and qualifications are initialized as arrays
+        setFormState(prevState => ({
+            ...prevState,
+            languagesSpoken: Array.isArray(doctor.languagesSpoken) ? doctor.languagesSpoken.map(String) : [],
+            qualifications: Array.isArray(doctor.qualifications) ? doctor.qualifications.map(String) : []
+        }));
         setIsEditing(true);
-    }, [doctor.doctorName]);
+    }, [doctor.doctorName, doctor.languagesSpoken, doctor.qualifications]);
 
     const handleRemove = useCallback(() => {
-        console.log('Removing doctor with ID:', doctor.id);
+        console.log('Removing doctor with clinicId and doctorId:', doctor.clinicId, doctor.doctorId);
         console.log(`Removing doctor: ${doctor.doctorName}`);
         if (onRemove) {
-            onRemove(doctor.id);
+            // Pass clinicId and doctorId for correct API usage
+            onRemove(doctor.clinicId, doctor.doctorId);
         }
-    }, [onRemove, doctor.id, doctor.doctorName]);
-
-    const handleSave = useCallback(() => {
+    }, [onRemove, doctor.clinicId, doctor.doctorId, doctor.doctorName]);    const handleSave = useCallback(() => {
         // Validate the edited doctor data
         const errors = validateDoctorData(formState);
         if (Object.keys(errors).length > 0) {
             setFormState((prevState) => ({ ...prevState, validationErrors: errors }));
             return;
         }
-        console.log('Saving doctor:', formState);
+
+        // Always send languagesSpoken and qualifications as arrays (even if empty)
+        const dataToSave = {
+            ...formState,
+            languagesSpoken: Array.isArray(formState.languagesSpoken) ? formState.languagesSpoken.map(String) : [],
+            qualifications: Array.isArray(formState.qualifications) ? formState.qualifications.map(String) : [],
+            // Remove validationErrors from the data being saved
+            validationErrors: undefined
+        };
+
+        console.log('Saving doctor with fixed arrays:', dataToSave);
         setIsEditing(false);
 
         // Call the onSave function passed from the parent component
         if (onSave) {
             // Pass clinicId and doctorId for correct API usage
-            onSave(formState, clinicId);
+            onSave(dataToSave, clinicId);
         }
     }, [formState, onSave, validateDoctorData, clinicId]);
 
@@ -142,11 +183,16 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
 
     const handleInputChange = useCallback(
         (field, value) => {
-            const errors = validateDoctorData({ ...formState, [field]: value });
+            let newValue = value;
+            // Always store as array of strings for these fields
+            if (field === 'languagesSpoken' || field === 'qualifications') {
+                newValue = Array.isArray(value) ? value.map(String) : [];
+            }
+            const errors = validateDoctorData({ ...formState, [field]: newValue });
             console.log(`handleInputChange: Before update ${field}:`, formState[field]);
             const newState = {
                 ...formState,
-                [field]: value,
+                [field]: newValue,
                 validationErrors: errors,
             };
             console.log(`handleInputChange: After update ${field}:`, newState[field]);
@@ -178,6 +224,22 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
         },
         [doctor.doctorName]
     );
+
+    // Add this new function to handle adding values on blur
+    const handleAutocompleteBlur = useCallback((field, inputValue) => {
+        if (inputValue && inputValue.trim() !== '') {
+            // Get current values
+            const currentValues = formState[field] || [];
+            // Only add if it's not already in the array
+            if (!currentValues.includes(inputValue.trim())) {
+                handleInputChange(field, [...currentValues, inputValue.trim()]);
+            }
+        }
+    }, [formState, handleInputChange]);
+
+    // Use a ref to track the current input value for each Autocomplete
+    const languagesInputRef = React.useRef('');
+    const qualificationsInputRef = React.useRef('');
 
     // Ensure consultationTime is always a number in doctorAvailability
     const normalizedDoctorAvailability = (doctor.doctorAvailability || []).map((item) => ({
@@ -303,23 +365,38 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     inputProps={{
                                         type: 'number', // This ensures that only numbers can be entered
                                     }}
-                                />
-                                <Autocomplete
+                                />                                <Autocomplete
                                     multiple
                                     freeSolo
                                     options={[]}
                                     value={formState.languagesSpoken || []}
                                     onChange={(e, value) =>
-                                        handleInputChange('languagesSpoken', value)
+                                        handleInputChange(
+                                            'languagesSpoken',
+                                            Array.isArray(value) ? value.map(String) : []
+                                        )
                                     }
+                                    onInputChange={(event, newInputValue) => {
+                                        languagesInputRef.current = newInputValue;
+                                    }}
+                                    onBlur={() => {
+                                        handleAutocompleteBlur('languagesSpoken', languagesInputRef.current);
+                                        languagesInputRef.current = '';
+                                    }}
                                     renderTags={(value, getTagProps) =>
-                                        value.map((option, index) => (
-                                            <Chip
-                                                variant="outlined"
-                                                label={option}
-                                                {...getTagProps({ index })}
-                                            />
-                                        ))
+                                        value.map((option, index) => {
+                                            const tagProps = getTagProps({ index });
+                                            // Extract key from tagProps to avoid spreading key prop
+                                            const { key, ...chipProps } = tagProps;
+                                            return (
+                                                <Chip
+                                                    key={key}
+                                                    variant="outlined"
+                                                    label={option}
+                                                    {...chipProps}
+                                                />
+                                            );
+                                        })
                                     }
                                     renderInput={(params) => (
                                         <TextField
@@ -330,23 +407,38 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                         />
                                     )}
                                     sx={{ mt: 2 }}
-                                />
-                                <Autocomplete
+                                />                                <Autocomplete
                                     multiple
                                     freeSolo
                                     options={[]}
                                     value={formState.qualifications || []}
                                     onChange={(e, value) =>
-                                        handleInputChange('qualifications', value)
+                                        handleInputChange(
+                                            'qualifications',
+                                            Array.isArray(value) ? value.map(String) : []
+                                        )
                                     }
+                                    onInputChange={(event, newInputValue) => {
+                                        qualificationsInputRef.current = newInputValue;
+                                    }}
+                                    onBlur={() => {
+                                        handleAutocompleteBlur('qualifications', qualificationsInputRef.current);
+                                        qualificationsInputRef.current = '';
+                                    }}
                                     renderTags={(value, getTagProps) =>
-                                        value.map((option, index) => (
-                                            <Chip
-                                                variant="outlined"
-                                                label={option}
-                                                {...getTagProps({ index })}
-                                            />
-                                        ))
+                                        value.map((option, index) => {
+                                            const tagProps = getTagProps({ index });
+                                            // Extract key from tagProps to avoid spreading key prop
+                                            const { key, ...chipProps } = tagProps;
+                                            return (
+                                                <Chip
+                                                    key={key}
+                                                    variant="outlined"
+                                                    label={option}
+                                                    {...chipProps}
+                                                />
+                                            );
+                                        })
                                     }
                                     renderInput={(params) => (
                                         <TextField
@@ -411,10 +503,10 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     Consultation Fee Queue: ₹{doctor.doctorConsultationFeeOther}
                                 </Typography>
                                 <Typography variant="body1" color="textSecondary">
-                                    Languages Spoken: {(doctor.languagesSpoken || []).join(', ')}
+                                    Languages Spoken: {(Array.isArray(doctor.languagesSpoken) && doctor.languagesSpoken.length > 0) ? doctor.languagesSpoken.join(', ') : ''}
                                 </Typography>
                                 <Typography variant="body1" color="textSecondary">
-                                    Qualifications: {(doctor.qualifications || []).join(', ')}
+                                    Qualifications: {(Array.isArray(doctor.qualifications) && doctor.qualifications.length > 0) ? doctor.qualifications.join(', ') : ''}
                                 </Typography>
                                 <DoctorPhoneNumbers
                                     phoneNumbers={doctor.phoneNumbers}
@@ -455,6 +547,7 @@ DoctorCard.propTypes = {
         id: PropTypes.any.isRequired,
         doctorName: PropTypes.string.isRequired,
         doctorId: PropTypes.string.isRequired,
+        clinicId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
         doctorSpeciality: PropTypes.string.isRequired,
         doctorExperience: PropTypes.number.isRequired,
         doctorConsultationFee: PropTypes.number.isRequired,

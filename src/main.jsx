@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 // Import StagewiseToolbar for development mode
-import { StagewiseToolbar } from '@stagewise/toolbar-react';
+// import { StagewiseToolbar } from '@stagewise/toolbar-react';
 
 import App from './app';
 
 // Basic configuration object
-const stagewiseConfig = {
-    plugins: [],
-};
+// const stagewiseConfig = {
+//     plugins: [],
+// };
 
 // ----------------------------------------------------------------------
 
@@ -33,10 +33,10 @@ root.render(
 
 // Initialize StagewiseToolbar in development mode in a separate root
 
-if (process.env.NODE_ENV === 'development') {
+/* if (process.env.NODE_ENV === 'development') {
     const stagewiseRootElement = document.createElement('div');
     document.body.appendChild(stagewiseRootElement); // Append to body or another appropriate container
 
     const stagewiseRoot = ReactDOM.createRoot(stagewiseRootElement);
     stagewiseRoot.render(<StagewiseToolbar config={stagewiseConfig} />);
-}
+} */

@@ -126,15 +126,17 @@ const DoctorPage = () => {
         setNewDoctor(newDoctorEntry);
     };
 
-    const handleRemove = async (doctorId) => {
-        console.log('Removing doctor Data:', doctorId);
+    const handleRemove = async (clinicId, doctorId) => {
+        console.log('Removing doctor Data:', clinicId, doctorId);
         try {
+            // Remove new doctor (UUID)
             if (typeof doctorId === 'string' && doctorId.includes('-')) {
                 setNewDoctor(null);
-                setDoctors(doctors.filter((doctor) => doctor.id !== doctorId));
+                setDoctors(doctors.filter((doctor) => doctor.doctorId !== doctorId));
+                return;
             }
             const token = localStorage.getItem('token');
-            const response = await fetch(`api/doctor/${doctorId}`, {
+            const response = await fetch(`api/doctor/${clinicId}/${doctorId}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -147,7 +149,7 @@ const DoctorPage = () => {
             }
             console.log('Doctor removed successfully');
             setNewDoctor(null);
-            setDoctors(doctors.filter((doctor) => doctor.id !== doctorId));
+            setDoctors(doctors.filter((doctor) => doctor.doctorId !== doctorId));
         } catch (removeError) {
             console.error('Error removing doctor:', removeError);
         }
@@ -165,17 +167,15 @@ const DoctorPage = () => {
                 Authorization: `Bearer ${token}`,
             };
 
-            // Ensure qualifications is an array and handle null/undefined cases
             const doctorData = {
                 ...newDoctorData,
                 qualifications: Array.isArray(newDoctorData.qualifications)
                     ? newDoctorData.qualifications
                     : [],
-                // Ensure languagesSpoken is an array and handle null/undefined cases
                 languagesSpoken: Array.isArray(newDoctorData.languagesSpoken)
                     ? newDoctorData.languagesSpoken
                     : [],
-                clinicId: user?.clinicIds?.[0], // Add clinicId from user's token 
+                clinicId: user?.clinicIds?.[0],
                 phoneNumbers: Array.isArray(newDoctorData.phoneNumbers)
                     ? newDoctorData.phoneNumbers.map((phone) => ({
                           phoneNumber: typeof phone === 'string' ? phone : phone.phoneNumber,
@@ -223,7 +223,7 @@ const DoctorPage = () => {
                     <DoctorCard
                         key={doctor.id}
                         doctor={doctor}
-                        onRemove={() => handleRemove(doctor.id)}
+                        onRemove={() => handleRemove(user?.clinicIds?.[0], doctor.doctorId)}
                         onSave={saveNewDoctor}
                         clinicId={user?.clinicIds?.[0]}
                     />
@@ -234,7 +234,7 @@ const DoctorPage = () => {
                         doctor={newDoctor}
                         isNewDoctor
                         onSave={saveNewDoctor}
-                        onRemove={handleRemove}
+                        onRemove={() => handleRemove(user?.clinicIds?.[0], newDoctor.doctorId)}
                         clinicId={user?.clinicIds?.[0]}
                     />
                 )}
