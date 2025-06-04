@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { Box, Card, Stack, Button, Container, Typography, CircularProgress } from '@mui/material';
 
@@ -171,7 +171,11 @@ const DoctorPage = () => {
                 qualifications: Array.isArray(newDoctorData.qualifications)
                     ? newDoctorData.qualifications
                     : [],
-                clinicId: user?.clinicIds?.[0] || 1, // Add clinicId from user's token or default to 1
+                // Ensure languagesSpoken is an array and handle null/undefined cases
+                languagesSpoken: Array.isArray(newDoctorData.languagesSpoken)
+                    ? newDoctorData.languagesSpoken
+                    : [],
+                clinicId: user?.clinicIds?.[0], // Add clinicId from user's token 
                 phoneNumbers: Array.isArray(newDoctorData.phoneNumbers)
                     ? newDoctorData.phoneNumbers.map((phone) => ({
                           phoneNumber: typeof phone === 'string' ? phone : phone.phoneNumber,
