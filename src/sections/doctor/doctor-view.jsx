@@ -1,7 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect, useCallback } from 'react';
 
-import { Box, Card, Stack, Button, Container, Typography, CircularProgress } from '@mui/material';
+import {
+    Box,
+    Card,
+    Stack,
+    Alert,
+    Button,
+    Snackbar,
+    Container,
+    Typography,
+    CircularProgress,
+} from '@mui/material';
 
 import { useAuth } from 'src/components/AuthProvider';
 
@@ -13,6 +23,28 @@ const DoctorPage = () => {
     const [newDoctor, setNewDoctor] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [errorOpen, setErrorOpen] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [successOpen, setSuccessOpen] = useState(false);
+
+    const handleCloseError = () => {
+        setErrorOpen(false);
+    };
+
+    const handleCloseSuccess = () => {
+        setSuccessOpen(false);
+    };
+
+    const showError = (message) => {
+        setErrorMessage(message);
+        setErrorOpen(true);
+    };
+
+    const showSuccess = (message) => {
+        setSuccessMessage(message);
+        setSuccessOpen(true);
+    };
 
     // Fetch data from the specified URL
     const fetchData = useCallback(async (clinicId) => {
@@ -133,6 +165,7 @@ const DoctorPage = () => {
             if (typeof doctorId === 'string' && doctorId.includes('-')) {
                 setNewDoctor(null);
                 setDoctors(doctors.filter((doctor) => doctor.doctorId !== doctorId));
+                showSuccess('Doctor removed successfully');
                 return;
             }
             const token = localStorage.getItem('token');
@@ -142,16 +175,33 @@ const DoctorPage = () => {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-            });
+            });            if (!response.ok) {
+                let errorDetail = `HTTP error status: ${response.status}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData.message) {
+                        errorDetail = errorData.message;
+                    }
+                } catch (parseError) {
+                    // If response is not valid JSON, use status text
+                    errorDetail = response.statusText || errorDetail;
+                }
 
-            if (!response.ok) {
-                throw new Error(`HTTP error status: ${response.status}`);
+                // Handle specific error codes
+                if (response.status === 409) {
+                    errorDetail = 'Cannot delete doctor: Doctor has existing appointments';
+                }
+
+                throw new Error(errorDetail);
             }
+
             console.log('Doctor removed successfully');
             setNewDoctor(null);
             setDoctors(doctors.filter((doctor) => doctor.doctorId !== doctorId));
+            showSuccess('Doctor removed successfully');
         } catch (removeError) {
             console.error('Error removing doctor:', removeError);
+            showError(`Error removing doctor: ${removeError.message}`);
         }
     };
 
@@ -184,7 +234,10 @@ const DoctorPage = () => {
             };
 
             let response;
-            if (typeof newDoctorData.id === 'string' && newDoctorData.id.includes('-')) {
+            const isNewDoctor =
+                typeof newDoctorData.id === 'string' && newDoctorData.id.includes('-');
+
+            if (isNewDoctor) {
                 // New doctor (UUID)
                 // eslint-disable-next-line no-unused-vars
                 const { id: _id, ...dataWithoutId } = doctorData;
@@ -203,15 +256,41 @@ const DoctorPage = () => {
                     headers,
                     body: JSON.stringify(doctorData),
                 });
+            }            if (!response.ok) {
+                let errorDetail = `HTTP error status: ${response.status}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData.message) {
+                        errorDetail = errorData.message;
+                    }
+                } catch (parseError) {
+                    // If response is not valid JSON, use status text
+                    errorDetail = response.statusText || errorDetail;
+                }
+
+                // Handle specific error status codes
+                if (response.status === 409) {
+                    if (isNewDoctor) {
+                        errorDetail = 'Doctor with this ID already exists';
+                    } else {
+                        errorDetail = 'Conflict updating doctor information';
+                    }
+                } else if (response.status === 400) {
+                    errorDetail = 'Invalid doctor information. Please check all required fields.';
+                } else if (response.status === 404) {
+                    errorDetail = 'Doctor or clinic not found';
+                }
+
+                throw new Error(errorDetail);
             }
-            if (!response.ok) {
-                throw new Error(`HTTP error status: ${response.status}`);
-            }
+
             console.log('Doctor saved successfully');
             await loadData();
             setNewDoctor(null);
+            showSuccess(isNewDoctor ? 'Doctor added successfully' : 'Doctor updated successfully');
         } catch (saveError) {
             console.error('Error saving doctor:', saveError);
+            showError(`Error: ${saveError.message}`);
         }
     };
 
@@ -244,6 +323,55 @@ const DoctorPage = () => {
                     </Button>
                 </Box>
             </Box>
+            {/* Error Snackbar */}
+            <Snackbar
+                open={errorOpen}
+                autoHideDuration={6000}
+                onClose={handleCloseError}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={handleCloseError}
+                    severity="error"
+                    variant="filled"
+                    sx={{
+                        width: '100%',
+                        boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14)',
+                        fontWeight: 500,
+                        fontSize: '0.9rem',
+                        '& .MuiAlert-icon': {
+                            fontSize: '1.5rem',
+                        },
+                    }}
+                >
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+
+            {/* Success Snackbar */}
+            <Snackbar
+                open={successOpen}
+                autoHideDuration={4000}
+                onClose={handleCloseSuccess}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={handleCloseSuccess}
+                    severity="success"
+                    variant="filled"
+                    sx={{
+                        width: '100%',
+                        boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14)',
+                        fontWeight: 500,
+                        fontSize: '0.9rem',
+                        '& .MuiAlert-icon': {
+                            fontSize: '1.5rem',
+                        },
+                    }}
+                >
+                    {successMessage}
+                </Alert>
+            </Snackbar>
         </Card>
     );
 };
