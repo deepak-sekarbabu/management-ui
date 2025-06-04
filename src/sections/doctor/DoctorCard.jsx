@@ -16,8 +16,8 @@ import {
     FormControlLabel,
 } from '@mui/material';
 
-import DoctorPhoneNumbers from './DoctorPhoneNumbers';
 import DoctorAvailability from './DoctorAvailability';
+import DoctorPhoneNumbers from './DoctorPhoneNumbers';
 
 const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, clinicId }) => {
     const [isEditing, setIsEditing] = useState(isNewDoctor);
@@ -143,12 +143,16 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
     const handleInputChange = useCallback(
         (field, value) => {
             const errors = validateDoctorData({ ...formState, [field]: value });
-            setFormState((prevState) => ({
-                ...prevState,
+            console.log(`handleInputChange: Before update ${field}:`, formState[field]);
+            const newState = {
+                ...formState,
                 [field]: value,
                 validationErrors: errors,
-            }));
+            };
+            console.log(`handleInputChange: After update ${field}:`, newState[field]);
+            setFormState(newState);
             console.log(`Updated ${field} for doctor: ${doctor.doctorName}`);
+            console.log(`Field: ${field}, Value:`, value);
         },
         [formState, doctor.doctorName, validateDoctorData]
     );
