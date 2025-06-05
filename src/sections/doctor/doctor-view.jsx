@@ -175,7 +175,8 @@ const DoctorPage = () => {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-            });            if (!response.ok) {
+            });
+            if (!response.ok) {
                 let errorDetail = `HTTP error status: ${response.status}`;
                 try {
                     const errorData = await response.json();
@@ -256,7 +257,8 @@ const DoctorPage = () => {
                     headers,
                     body: JSON.stringify(doctorData),
                 });
-            }            if (!response.ok) {
+            }
+            if (!response.ok) {
                 let errorDetail = `HTTP error status: ${response.status}`;
                 try {
                     const errorData = await response.json();
@@ -323,12 +325,13 @@ const DoctorPage = () => {
                     </Button>
                 </Box>
             </Box>
-            {/* Error Snackbar */}
+            {/* Error Snackbar */}{' '}
             <Snackbar
                 open={errorOpen}
                 autoHideDuration={6000}
                 onClose={handleCloseError}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                sx={{ zIndex: (theme) => theme.zIndex.appBar + 1000 }}
             >
                 <Alert
                     onClose={handleCloseError}
@@ -347,13 +350,13 @@ const DoctorPage = () => {
                     {errorMessage}
                 </Alert>
             </Snackbar>
-
-            {/* Success Snackbar */}
+            {/* Success Snackbar */}{' '}
             <Snackbar
                 open={successOpen}
                 autoHideDuration={4000}
                 onClose={handleCloseSuccess}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                sx={{ zIndex: (theme) => theme.zIndex.appBar + 1000 }}
             >
                 <Alert
                     onClose={handleCloseSuccess}
