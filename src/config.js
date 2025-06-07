@@ -1,6 +1,6 @@
 const config = {
     api: {
-        baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
+        baseUrl: import.meta.env.VITE_API_BASE_URL,
         endpoints: {
             auth: {
                 login: import.meta.env.VITE_API_AUTH_PATH || '/auth/login',
