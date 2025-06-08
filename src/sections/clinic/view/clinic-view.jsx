@@ -5,8 +5,10 @@ import {
     Box,
     Card,
     Stack,
+    Alert,
     Button,
     Divider,
+    Snackbar,
     Container,
     Typography,
     CardHeader,
@@ -27,6 +29,23 @@ const ClinicPage = () => {
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [isLoading, setLoading] = useState(true);
     const { user } = useAuth();
+    const [errorOpen, setErrorOpen] = useState(false);
+    const [successOpen, setSuccessOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+
+    const handleCloseError = () => setErrorOpen(false);
+    const handleCloseSuccess = () => setSuccessOpen(false);
+
+    const showError = (message) => {
+        setErrorMessage(message);
+        setErrorOpen(true);
+    };
+
+    const showSuccess = (message) => {
+        setSuccessMessage(message);
+        setSuccessOpen(true);
+    };
 
     useEffect(() => {
         const fetchClinicData = async () => {
@@ -44,6 +63,7 @@ const ClinicPage = () => {
                 setEditedClinicData(response.data);
             } catch (error) {
                 console.error('Error fetching clinic data:', error);
+                showError('Failed to fetch clinic data.');
             } finally {
                 setLoading(false);
             }
@@ -97,8 +117,10 @@ const ClinicPage = () => {
             setClinicData(editedClinicData);
             setEditMode(false);
             setHasUnsavedChanges(false);
+            showSuccess('Clinic information saved successfully!');
         } catch (error) {
             console.error('Error updating clinic data:', error);
+            showError('Failed to save clinic information.');
         }
     };
 
@@ -167,6 +189,54 @@ const ClinicPage = () => {
                     </Box>
                 </Box>
             )}
+            <Snackbar
+                open={errorOpen}
+                autoHideDuration={6000}
+                onClose={handleCloseError}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                sx={{ zIndex: (theme) => theme.zIndex.modal + 100, marginTop: '64px' }}
+            >
+                <Alert
+                    onClose={handleCloseError}
+                    severity="error"
+                    variant="filled"
+                    sx={{
+                        width: '100%',
+                        boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14)',
+                        fontWeight: 500,
+                        fontSize: '0.9rem',
+                        '& .MuiAlert-icon': {
+                            fontSize: '1.5rem',
+                        },
+                    }}
+                >
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar
+                open={successOpen}
+                autoHideDuration={4000}
+                onClose={handleCloseSuccess}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                sx={{ zIndex: (theme) => theme.zIndex.modal + 100, marginTop: '64px' }}
+            >
+                <Alert
+                    onClose={handleCloseSuccess}
+                    severity="success"
+                    variant="filled"
+                    sx={{
+                        width: '100%',
+                        boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14)',
+                        fontWeight: 500,
+                        fontSize: '0.9rem',
+                        '& .MuiAlert-icon': {
+                            fontSize: '1.5rem',
+                        },
+                    }}
+                >
+                    {successMessage}
+                </Alert>
+            </Snackbar>
         </Card>
     );
 };

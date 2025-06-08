@@ -330,8 +330,8 @@ const DoctorPage = () => {
                 open={errorOpen}
                 autoHideDuration={6000}
                 onClose={handleCloseError}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                sx={{ zIndex: (theme) => theme.zIndex.appBar + 1000 }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                sx={{ zIndex: (theme) => theme.zIndex.modal + 100, marginTop: '64px' }}
             >
                 <Alert
                     onClose={handleCloseError}
@@ -355,8 +355,8 @@ const DoctorPage = () => {
                 open={successOpen}
                 autoHideDuration={4000}
                 onClose={handleCloseSuccess}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                sx={{ zIndex: (theme) => theme.zIndex.appBar + 1000 }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                sx={{ zIndex: (theme) => theme.zIndex.modal + 100, marginTop: '64px' }}
             >
                 <Alert
                     onClose={handleCloseSuccess}

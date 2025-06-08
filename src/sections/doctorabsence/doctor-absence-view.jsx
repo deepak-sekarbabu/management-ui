@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-import Alert from '@mui/material/Alert';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker, TimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import {
     Box,
     Card,
+    Alert,
     Stack,
     Table,
     Paper,
     Select,
     Button,
+    Snackbar,
     MenuItem,
     TableRow,
     TableBody,
@@ -37,10 +38,25 @@ const DoctorAbsencePage = () => {
         optionalMessage: '',
     });
     const [isAdding, setIsAdding] = useState(false);
-    const [showErrorAlert, setShowErrorAlert] = useState(false);
-    const [showErrorAlertSaving, setShowErrorAlertSaving] = useState(false);
     const [doctorData, setDoctorData] = useState([]);
     const [isLoading, setLoading] = useState(true);
+    const [errorOpen, setErrorOpen] = useState(false);
+    const [successOpen, setSuccessOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+
+    const handleCloseError = () => setErrorOpen(false);
+    const handleCloseSuccess = () => setSuccessOpen(false);
+
+    const showError = (message) => {
+        setErrorMessage(message);
+        setErrorOpen(true);
+    };
+
+    const showSuccess = (message) => {
+        setSuccessMessage(message);
+        setSuccessOpen(true);
+    };
 
     const fetchDoctorData = useCallback(async () => {
         try {
@@ -68,7 +84,7 @@ const DoctorAbsencePage = () => {
             setDoctorData(data);
         } catch (error) {
             console.error('Error fetching doctor data:', error);
-            setShowErrorAlert(true);
+            showError('Failed to fetch doctor data.');
         } finally {
             setLoading(false);
         }
@@ -103,7 +119,7 @@ const DoctorAbsencePage = () => {
             setDoctorAbsence(data);
         } catch (error) {
             console.error('Error fetching doctor absence data:', error);
-            setShowErrorAlert(true);
+            showError('Failed to fetch doctor absence data.');
         } finally {
             setLoading(false);
         }
@@ -138,9 +154,10 @@ const DoctorAbsencePage = () => {
             setDoctorAbsence((prevDoctorAbsence) =>
                 prevDoctorAbsence.filter((absence) => absence.id !== id)
             );
+            showSuccess('Absence record deleted successfully!');
         } catch (error) {
             console.error('Error deleting the record:', error);
-            setShowErrorAlertSaving(true);
+            showError('Failed to delete absence record.');
         }
     };
 
@@ -153,10 +170,10 @@ const DoctorAbsencePage = () => {
         const isFormValid = newRow.doctorId !== '' && newRow.doctorName !== '';
 
         if (!isFormValid) {
-            setShowErrorAlert(true);
+            showError('Please fill in all required fields.');
             return;
         }
-        setShowErrorAlert(false);
+        // setShowErrorAlert(false); // No longer needed as showError handles this logic
 
         try {
             const token = localStorage.getItem('token');
@@ -231,9 +248,10 @@ const DoctorAbsencePage = () => {
                 optionalMessage: '',
             });
             setIsAdding(false);
+            showSuccess('Absence record saved successfully!');
         } catch (error) {
             console.error('Error saving the record:', error);
-            setShowErrorAlertSaving(true);
+            showError('Failed to save absence record.');
         }
     };
 
@@ -248,7 +266,6 @@ const DoctorAbsencePage = () => {
             optionalMessage: '',
         });
         setIsAdding(false);
-        setShowErrorAlert(false);
     };
 
     const handleDoctorIdChange = (event) => {
@@ -263,14 +280,6 @@ const DoctorAbsencePage = () => {
 
     return (
         <Card>
-            {showErrorAlert && (
-                <Alert severity="error">
-                    Please fix the validation errors in the page before saving
-                </Alert>
-            )}
-            {showErrorAlertSaving && (
-                <Alert severity="error">Error when saving Doctor Absence Information</Alert>
-            )}
             {isLoading ? (
                 <Container>
                     {' '}
@@ -452,6 +461,54 @@ const DoctorAbsencePage = () => {
                     </Box>
                 </Box>
             )}
+            <Snackbar
+                open={errorOpen}
+                autoHideDuration={6000}
+                onClose={handleCloseError}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                sx={{ zIndex: (theme) => theme.zIndex.modal + 100, marginTop: '64px' }}
+            >
+                <Alert
+                    onClose={handleCloseError}
+                    severity="error"
+                    variant="filled"
+                    sx={{
+                        width: '100%',
+                        boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14)',
+                        fontWeight: 500,
+                        fontSize: '0.9rem',
+                        '& .MuiAlert-icon': {
+                            fontSize: '1.5rem',
+                        },
+                    }}
+                >
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar
+                open={successOpen}
+                autoHideDuration={4000}
+                onClose={handleCloseSuccess}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                sx={{ zIndex: (theme) => theme.zIndex.modal + 100, marginTop: '64px' }}
+            >
+                <Alert
+                    onClose={handleCloseSuccess}
+                    severity="success"
+                    variant="filled"
+                    sx={{
+                        width: '100%',
+                        boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14)',
+                        fontWeight: 500,
+                        fontSize: '0.9rem',
+                        '& .MuiAlert-icon': {
+                            fontSize: '1.5rem',
+                        },
+                    }}
+                >
+                    {successMessage}
+                </Alert>
+            </Snackbar>
         </Card>
     );
 };
