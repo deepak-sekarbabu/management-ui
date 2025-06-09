@@ -8,13 +8,16 @@ import {
     Stack,
     Button,
     Divider,
+    Collapse,
     Snackbar,
     Container,
     CardHeader,
+    IconButton,
     Typography,
     CircularProgress,
 } from '@mui/material';
 
+import Iconify from 'src/components/iconify';
 import { useAuth } from 'src/components/AuthProvider';
 
 import ClinicDetails from './clinic-details';
@@ -34,6 +37,7 @@ const ClinicPage = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [loadError, setLoadError] = useState(null);
+    const [expandedClinic, setExpandedClinic] = useState(null);
 
     const handleCloseError = () => setErrorOpen(false);
     const handleCloseSuccess = () => setSuccessOpen(false);
@@ -46,6 +50,10 @@ const ClinicPage = () => {
     const showSuccess = (message) => {
         setSuccessMessage(message);
         setSuccessOpen(true);
+    };
+
+    const handleExpandClick = (clinicId) => {
+        setExpandedClinic(expandedClinic === clinicId ? null : clinicId);
     };
 
     const fetchData = useCallback(async (clinicId) => {
@@ -205,36 +213,61 @@ const ClinicPage = () => {
                 <Box p={3}>
                     {clinics.map((clinic) => (
                         <Box key={clinic.clinicId} mb={4}>
-                            <Stack spacing={2}>
+                            <Stack
+                                direction="row"
+                                alignItems="center"
+                                justifyContent="space-between"
+                            >
                                 <Typography variant="h5">{clinic.clinicName}</Typography>
-                                <Typography color="textSecondary">
-                                    {clinic.clinicAddress}
-                                </Typography>
-                                <Typography color="textSecondary">
-                                    Pin Code: {clinic.clinicPinCode}
-                                </Typography>
-                                <Typography color="textSecondary">
-                                    Email: {clinic.clinicEmail}
-                                </Typography>
-                                <Typography color="textSecondary">
-                                    Website: {clinic.clinicWebsite}
-                                </Typography>
-                                <Typography color="textSecondary">
-                                    Timings: {clinic.clinicTimings}
-                                </Typography>
-                                <Typography color="textSecondary">
-                                    Amenities: {clinic.clinicAmenities}
-                                </Typography>
-                                <Typography color="textSecondary">
-                                    Phone Numbers:{' '}
-                                    {clinic.clinicPhoneNumbers.map((p) => p.phoneNumber).join(', ')}
-                                </Typography>
+                                <IconButton
+                                    onClick={() => handleExpandClick(clinic.clinicId)}
+                                    sx={{
+                                        transform:
+                                            expandedClinic === clinic.clinicId
+                                                ? 'rotate(180deg)'
+                                                : 'rotate(0deg)',
+                                        transition: 'transform 0.3s',
+                                    }}
+                                >
+                                    <Iconify icon="eva:arrow-down-fill" />
+                                </IconButton>
                             </Stack>
-                            <Box mt={3} display="flex" justifyContent="center">
-                                <Button variant="outlined" onClick={() => handleEdit(clinic)}>
-                                    Edit
-                                </Button>
-                            </Box>
+                            <Collapse in={expandedClinic === clinic.clinicId}>
+                                <Stack spacing={2} sx={{ mt: 2 }}>
+                                    <Typography color="textSecondary">
+                                        {clinic.clinicAddress}
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        Pin Code: {clinic.clinicPinCode}
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        Email: {clinic.clinicEmail}
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        Website: {clinic.clinicWebsite}
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        Timings: {clinic.clinicTimings}
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        Amenities: {clinic.clinicAmenities}
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        Phone Numbers:{' '}
+                                        {clinic.clinicPhoneNumbers
+                                            .map((p) => p.phoneNumber)
+                                            .join(', ')}
+                                    </Typography>
+                                    <Box mt={3} display="flex" justifyContent="center">
+                                        <Button
+                                            variant="outlined"
+                                            onClick={() => handleEdit(clinic)}
+                                        >
+                                            Edit
+                                        </Button>
+                                    </Box>
+                                </Stack>
+                            </Collapse>
                         </Box>
                     ))}
                 </Box>
