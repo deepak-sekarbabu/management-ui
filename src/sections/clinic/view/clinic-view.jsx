@@ -1,17 +1,17 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import {
     Box,
     Card,
-    Stack,
     Alert,
+    Stack,
     Button,
     Divider,
     Snackbar,
     Container,
-    Typography,
     CardHeader,
+    Typography,
     CircularProgress,
 } from '@mui/material';
 
@@ -23,7 +23,7 @@ const GET_CLINIC_INFO = '/api/clinic/';
 const UPDATE_CLINIC_INFO = '/api/clinic/';
 
 const ClinicPage = () => {
-    const [clinicData, setClinicData] = useState(null);
+    const [clinics, setClinics] = useState([]);
     const [isEditable, setEditMode] = useState(false);
     const [editedClinicData, setEditedClinicData] = useState({});
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -33,6 +33,7 @@ const ClinicPage = () => {
     const [successOpen, setSuccessOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [loadError, setLoadError] = useState(null);
 
     const handleCloseError = () => setErrorOpen(false);
     const handleCloseSuccess = () => setSuccessOpen(false);
@@ -47,30 +48,54 @@ const ClinicPage = () => {
         setSuccessOpen(true);
     };
 
+    const fetchData = useCallback(async (clinicId) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            const response = await fetch(`${GET_CLINIC_INFO}${clinicId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (fetchError) {
+            console.error('Error fetching clinic data:', fetchError);
+            throw fetchError;
+        }
+    }, []);
+
+    const loadData = useCallback(async () => {
+        if (!user?.clinicIds?.length) {
+            console.error('No clinic IDs found for user');
+            setLoadError('No clinic assigned to this user');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const clinicPromises = user.clinicIds.map((clinicId) => fetchData(clinicId));
+            const clinicData = await Promise.all(clinicPromises);
+            setClinics(clinicData);
+            setLoadError(null);
+        } catch (error) {
+            console.error('Error loading clinic data:', error);
+            setLoadError('Failed to load clinic information');
+        } finally {
+            setLoading(false);
+        }
+    }, [fetchData, user?.clinicIds]);
+
     useEffect(() => {
-        const fetchClinicData = async () => {
-            if (!user?.clinicIds?.length) {
-                console.error('No clinic IDs found for user');
-                setLoading(false);
-                return;
-            }
-
-            try {
-                // Use the first clinic ID from the user's clinicIds array
-                const clinicId = user.clinicIds[0];
-                const response = await axios.get(`${GET_CLINIC_INFO}${clinicId}`);
-                setClinicData(response.data);
-                setEditedClinicData(response.data);
-            } catch (error) {
-                console.error('Error fetching clinic data:', error);
-                showError('Failed to fetch clinic data.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchClinicData();
-    }, [user]);
+        loadData();
+    }, [loadData]);
 
     if (isLoading) {
         return (
@@ -90,36 +115,55 @@ const ClinicPage = () => {
         );
     }
 
-    const handleEdit = () => setEditMode(true);
+    if (loadError) {
+        return (
+            <Container>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                    <Typography variant="h2">Clinic Information</Typography>
+                </Stack>
+                <Alert severity="error" sx={{ mt: 2 }}>
+                    {loadError}
+                </Alert>
+            </Container>
+        );
+    }
+
+    const handleEdit = (clinic) => {
+        setEditedClinicData(clinic);
+        setEditMode(true);
+    };
+
     const handleCancel = async () => {
         if (hasUnsavedChanges) {
             window.location.reload();
         } else {
             try {
-                const response = await axios.get(`${GET_CLINIC_INFO}1`);
+                const response = await axios.get(`${GET_CLINIC_INFO}${editedClinicData.clinicId}`);
                 setEditedClinicData(response.data);
                 setEditMode(false);
                 setHasUnsavedChanges(false);
-            } catch (error) {
-                console.error('Error fetching clinic data:', error);
+            } catch (fetchError) {
+                console.error('Error fetching clinic data:', fetchError);
             }
         }
     };
 
     const handleSave = async () => {
-        console.log(editedClinicData);
         try {
-            if (!user?.clinicIds?.length) {
-                throw new Error('No clinic IDs found for user');
+            if (!editedClinicData.clinicId) {
+                throw new Error('No clinic ID found');
             }
-            const clinicId = user.clinicIds[0];
-            await axios.put(`${UPDATE_CLINIC_INFO}${clinicId}`, editedClinicData);
-            setClinicData(editedClinicData);
+            await axios.put(`${UPDATE_CLINIC_INFO}${editedClinicData.clinicId}`, editedClinicData);
+            setClinics(
+                clinics.map((clinic) =>
+                    clinic.clinicId === editedClinicData.clinicId ? editedClinicData : clinic
+                )
+            );
             setEditMode(false);
             setHasUnsavedChanges(false);
             showSuccess('Clinic information saved successfully!');
-        } catch (error) {
-            console.error('Error updating clinic data:', error);
+        } catch (saveError) {
+            console.error('Error updating clinic data:', saveError);
             showError('Failed to save clinic information.');
         }
     };
@@ -159,34 +203,40 @@ const ClinicPage = () => {
                 </>
             ) : (
                 <Box p={3}>
-                    <Stack spacing={2}>
-                        <Typography variant="h5">{clinicData.clinicName}</Typography>
-                        <Typography color="textSecondary">{clinicData.clinicAddress}</Typography>
-                        <Typography color="textSecondary">
-                            Pin Code: {clinicData.clinicPinCode}
-                        </Typography>
-                        <Typography color="textSecondary">
-                            Email: {clinicData.clinicEmail}
-                        </Typography>
-                        <Typography color="textSecondary">
-                            Website: {clinicData.clinicWebsite}
-                        </Typography>
-                        <Typography color="textSecondary">
-                            Timings: {clinicData.clinicTimings}
-                        </Typography>
-                        <Typography color="textSecondary">
-                            Amenities: {clinicData.clinicAmenities}
-                        </Typography>
-                        <Typography color="textSecondary">
-                            Phone Numbers:{' '}
-                            {clinicData.clinicPhoneNumbers.map((p) => p.phoneNumber).join(', ')}
-                        </Typography>
-                    </Stack>
-                    <Box mt={3} display="flex" justifyContent="center">
-                        <Button variant="outlined" onClick={handleEdit}>
-                            Edit
-                        </Button>
-                    </Box>
+                    {clinics.map((clinic) => (
+                        <Box key={clinic.clinicId} mb={4}>
+                            <Stack spacing={2}>
+                                <Typography variant="h5">{clinic.clinicName}</Typography>
+                                <Typography color="textSecondary">
+                                    {clinic.clinicAddress}
+                                </Typography>
+                                <Typography color="textSecondary">
+                                    Pin Code: {clinic.clinicPinCode}
+                                </Typography>
+                                <Typography color="textSecondary">
+                                    Email: {clinic.clinicEmail}
+                                </Typography>
+                                <Typography color="textSecondary">
+                                    Website: {clinic.clinicWebsite}
+                                </Typography>
+                                <Typography color="textSecondary">
+                                    Timings: {clinic.clinicTimings}
+                                </Typography>
+                                <Typography color="textSecondary">
+                                    Amenities: {clinic.clinicAmenities}
+                                </Typography>
+                                <Typography color="textSecondary">
+                                    Phone Numbers:{' '}
+                                    {clinic.clinicPhoneNumbers.map((p) => p.phoneNumber).join(', ')}
+                                </Typography>
+                            </Stack>
+                            <Box mt={3} display="flex" justifyContent="center">
+                                <Button variant="outlined" onClick={() => handleEdit(clinic)}>
+                                    Edit
+                                </Button>
+                            </Box>
+                        </Box>
+                    ))}
                 </Box>
             )}
             <Snackbar
