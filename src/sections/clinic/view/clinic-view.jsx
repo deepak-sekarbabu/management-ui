@@ -11,7 +11,6 @@ import {
     Collapse,
     Snackbar,
     Container,
-    CardHeader,
     IconButton,
     Typography,
     CircularProgress,
@@ -183,7 +182,9 @@ const ClinicPage = () => {
 
     return (
         <Card>
-            <CardHeader title="Clinic Information" sx={{ pb: 0 }} />
+            <Typography variant="h2" gutterBottom>
+                Clinic Information
+            </Typography>
             <Divider />
             {isEditable ? (
                 <>
@@ -218,7 +219,18 @@ const ClinicPage = () => {
                                 alignItems="center"
                                 justifyContent="space-between"
                             >
-                                <Typography variant="h5">{clinic.clinicName}</Typography>
+                                <Typography
+                                    variant="h5"
+                                    onClick={() => handleExpandClick(clinic.clinicId)}
+                                    sx={{
+                                        cursor: 'pointer',
+                                        '&:hover': {
+                                            color: 'primary.main',
+                                        },
+                                    }}
+                                >
+                                    {clinic.clinicName}
+                                </Typography>
                                 <IconButton
                                     onClick={() => handleExpandClick(clinic.clinicId)}
                                     sx={{
