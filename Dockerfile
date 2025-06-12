@@ -1,23 +1,42 @@
-# Use an official Node.js runtime as a parent image
-FROM node:18-alpine
+# Build stage
+FROM node:20-alpine AS builder
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if available)
+# Copy package files
 COPY package*.json ./
 
-# Install application dependencies
-RUN npm install
+# Install dependencies
+RUN npm ci
 
-# Copy the rest of the application source code
+# Copy source code
 COPY . .
+
+# Copy environment file
+COPY .env.production .env
 
 # Build the application
 RUN npm run build
 
-# Inform Docker that the container listens on port 3030 (vite preview default)
+# Production stage
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy built assets from builder
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/.env ./
+
+# Install only production dependencies
+RUN npm ci --only=production
+
+# Set NODE_ENV
+ENV NODE_ENV=production
+
+# Expose port
 EXPOSE 3030
 
-# Command to run the application
-CMD ["npm", "run", "start", "--", "--host"]
+# Start the application
+CMD ["npx", "serve", "dist", "-l", "3030"]
