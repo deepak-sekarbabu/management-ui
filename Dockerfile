@@ -13,9 +13,6 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Copy environment file
-COPY .env.production .env
-
 # Build the application
 RUN npm run build
 
@@ -27,7 +24,6 @@ WORKDIR /app
 # Copy built assets from builder
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/.env ./
 
 # Install only production dependencies
 RUN npm ci --only=production
