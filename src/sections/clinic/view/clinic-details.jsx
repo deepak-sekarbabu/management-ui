@@ -1,9 +1,14 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import { Card, Stack, TextField, CardContent } from '@mui/material';
 
+/**
+ * ClinicDetails Component
+ * Displays and manages editable clinic information form
+ */
 function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
+    // State management
     const [formValues, setFormValues] = useState(clinic);
     const [phoneNumberErrors, setPhoneNumberErrors] = useState([]);
     const [emailError, setEmailError] = useState(false);
@@ -11,94 +16,108 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
     const [timingsError, setTimingsError] = useState(false);
     const [amenitiesError, setAmenitiesError] = useState(false);
 
-    const handleChangePhoneNumber = (e, index) => {
-        const { value } = e.target;
-        const updatedPhoneNumbers = [...formValues.clinicPhoneNumbers];
-        const isValid = validatePhoneNumber(value);
-        updatedPhoneNumbers[index] = { ...updatedPhoneNumbers[index], phoneNumber: value };
-        setFormValues({ ...formValues, clinicPhoneNumbers: updatedPhoneNumbers });
-        onFormValuesChange({ ...formValues, clinicPhoneNumbers: updatedPhoneNumbers });
-        setPhoneNumberErrors((prevErrors) => {
-            const newErrors = [...prevErrors];
-            newErrors[index] = !isValid;
-            return newErrors;
-        });
-    };
-
-    const validatePhoneNumber = (phoneNumber) => {
+    // Validation functions
+    const validatePhoneNumber = useCallback((phoneNumber) => {
         const phoneRegex = /^\+91\d{10}$/;
         return phoneRegex.test(phoneNumber);
-    };
+    }, []);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        let updatedValue = value;
-
-        // Validate input fields
-        switch (name) {
-            case 'clinicName':
-                updatedValue = value.slice(0, 150);
-                break;
-            case 'clinicAddress':
-                updatedValue = value.slice(0, 200);
-                break;
-            case 'clinicPinCode':
-                updatedValue = value.slice(0, 10);
-                break;
-            case 'clinicEmail':
-                updatedValue = value.slice(0, 120);
-                setEmailError(updatedValue.length > 120);
-                break;
-            case 'clinicTimings':
-                updatedValue = value.slice(0, 150);
-                setTimingsError(updatedValue.length > 149);
-                break;
-            case 'clinicWebsite':
-                updatedValue = value.slice(0, 150);
-                setWebsiteError(updatedValue.length > 149);
-                break;
-            case 'clinicAmenities':
-                updatedValue = value.slice(0, 150);
-                setAmenitiesError(updatedValue.length > 149);
-                break;
-            default:
-                break;
-        }
-
-        setFormValues({ ...formValues, [name]: updatedValue });
-        onFormValuesChange({ ...formValues, [name]: updatedValue });
-    };
-
-    const isValidEmail = (email) => {
+    const isValidEmail = useCallback((email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
-    };
+    }, []);
 
-    let emailHelperText = '';
-    if (!isValidEmail(formValues.clinicEmail)) {
-        emailHelperText = 'Invalid email address';
-    } else if (emailError) {
-        emailHelperText = 'Clinic Email should not exceed 120 characters';
-    }
+    // Update form values when clinic prop changes
+    useEffect(() => {
+        setFormValues(clinic);
+    }, [clinic]);
 
-    let websiteHelperText = '';
-    if (websiteError) {
-        websiteHelperText = 'Clinic Website should not exceed 149 characters';
-    }
+    // Event handlers
+    const handleChangePhoneNumber = useCallback(
+        (e, index) => {
+            const { value } = e.target;
+            const updatedPhoneNumbers = [...formValues.clinicPhoneNumbers];
+            const isValid = validatePhoneNumber(value);
+            updatedPhoneNumbers[index] = { ...updatedPhoneNumbers[index], phoneNumber: value };
+            setFormValues((prev) => ({ ...prev, clinicPhoneNumbers: updatedPhoneNumbers }));
+            onFormValuesChange({ ...formValues, clinicPhoneNumbers: updatedPhoneNumbers });
+            setPhoneNumberErrors((prevErrors) => {
+                const newErrors = [...prevErrors];
+                newErrors[index] = !isValid;
+                return newErrors;
+            });
+        },
+        [formValues, onFormValuesChange, validatePhoneNumber]
+    );
 
-    let timingsHelperText = '';
-    if (timingsError) {
-        timingsHelperText = 'Clinic Timings should not exceed 149 characters';
-    }
+    const handleChange = useCallback(
+        (e) => {
+            const { name, value } = e.target;
+            let updatedValue = value;
 
-    let amenitiesHelperText = '';
-    if (amenitiesError) {
-        amenitiesHelperText = 'Clinic Amenities should not exceed 149 characters';
-    }
+            // Validate input fields
+            switch (name) {
+                case 'clinicName':
+                    updatedValue = value.slice(0, 150);
+                    break;
+                case 'clinicAddress':
+                    updatedValue = value.slice(0, 200);
+                    break;
+                case 'clinicPinCode':
+                    updatedValue = value.slice(0, 10);
+                    break;
+                case 'clinicEmail':
+                    updatedValue = value.slice(0, 120);
+                    setEmailError(updatedValue.length > 120);
+                    break;
+                case 'clinicTimings':
+                    updatedValue = value.slice(0, 150);
+                    setTimingsError(updatedValue.length > 149);
+                    break;
+                case 'clinicWebsite':
+                    updatedValue = value.slice(0, 150);
+                    setWebsiteError(updatedValue.length > 149);
+                    break;
+                case 'clinicAmenities':
+                    updatedValue = value.slice(0, 150);
+                    setAmenitiesError(updatedValue.length > 149);
+                    break;
+                default:
+                    break;
+            }
 
-    return (
-        <Card>
-            <CardContent>
+            setFormValues((prev) => ({ ...prev, [name]: updatedValue }));
+            onFormValuesChange({ ...formValues, [name]: updatedValue });
+        },
+        [formValues, onFormValuesChange]
+    );
+
+    // Helper function to get email helper text
+    const getEmailHelperText = useCallback(() => {
+        if (!isValidEmail(formValues.clinicEmail)) {
+            return 'Invalid email address';
+        }
+        if (emailError) {
+            return 'Clinic Email should not exceed 120 characters';
+        }
+        return '';
+    }, [formValues.clinicEmail, emailError, isValidEmail]);
+
+    // Memoized helper text
+    const helperTexts = useMemo(
+        () => ({
+            email: getEmailHelperText(),
+            website: websiteError ? 'Clinic Website should not exceed 149 characters' : '',
+            timings: timingsError ? 'Clinic Timings should not exceed 149 characters' : '',
+            amenities: amenitiesError ? 'Clinic Amenities should not exceed 149 characters' : '',
+        }),
+        [getEmailHelperText, websiteError, timingsError, amenitiesError]
+    );
+
+    // Memoized form fields
+    const formFields = useMemo(
+        () => (
+            <Stack spacing={2}>
                 <TextField
                     name="clinicName"
                     label="Clinic Name"
@@ -113,6 +132,10 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                             ? 'Clinic Name should not exceed 149 characters'
                             : ''
                     }
+                    inputProps={{
+                        'aria-label': 'Clinic name',
+                        maxLength: 150,
+                    }}
                 />
 
                 <TextField
@@ -129,6 +152,10 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                             ? 'Clinic Address should not exceed 199 characters'
                             : ''
                     }
+                    inputProps={{
+                        'aria-label': 'Clinic address',
+                        maxLength: 200,
+                    }}
                 />
 
                 <TextField
@@ -145,6 +172,11 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                             ? 'Clinic Pin Code should contain only numbers'
                             : ''
                     }
+                    inputProps={{
+                        'aria-label': 'Clinic pin code',
+                        maxLength: 10,
+                        pattern: '\\d*',
+                    }}
                 />
 
                 <Stack mt={2} spacing={2}>
@@ -162,6 +194,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                                     maxLength: 13,
                                     pattern: '^\\+91\\d{10}$',
                                     title: 'Phone number should start with +91 and have 10 digits',
+                                    'aria-label': `Phone number ${index + 1}`,
                                 },
                             }}
                             error={phoneNumberErrors[index]}
@@ -183,7 +216,12 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     fullWidth
                     margin="normal"
                     error={!isValidEmail(formValues.clinicEmail) || emailError}
-                    helperText={emailHelperText}
+                    helperText={helperTexts.email}
+                    inputProps={{
+                        'aria-label': 'Clinic email',
+                        maxLength: 120,
+                        type: 'email',
+                    }}
                 />
 
                 <TextField
@@ -195,7 +233,12 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     fullWidth
                     margin="normal"
                     error={websiteError}
-                    helperText={websiteHelperText}
+                    helperText={helperTexts.website}
+                    inputProps={{
+                        'aria-label': 'Clinic website',
+                        maxLength: 150,
+                        type: 'url',
+                    }}
                 />
 
                 <TextField
@@ -207,7 +250,11 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     fullWidth
                     margin="normal"
                     error={timingsError}
-                    helperText={timingsHelperText}
+                    helperText={helperTexts.timings}
+                    inputProps={{
+                        'aria-label': 'Clinic timings',
+                        maxLength: 150,
+                    }}
                 />
 
                 <TextField
@@ -219,9 +266,32 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     fullWidth
                     margin="normal"
                     error={amenitiesError}
-                    helperText={amenitiesHelperText}
+                    helperText={helperTexts.amenities}
+                    inputProps={{
+                        'aria-label': 'Clinic amenities',
+                        maxLength: 150,
+                    }}
                 />
-            </CardContent>
+            </Stack>
+        ),
+        [
+            formValues,
+            isEditable,
+            handleChange,
+            handleChangePhoneNumber,
+            phoneNumberErrors,
+            helperTexts,
+            isValidEmail,
+            emailError,
+            websiteError,
+            timingsError,
+            amenitiesError,
+        ]
+    );
+
+    return (
+        <Card>
+            <CardContent>{formFields}</CardContent>
         </Card>
     );
 }
