@@ -2,6 +2,8 @@
 
 A comprehensive React-based management interface built with Material-UI, designed to provide a modern and responsive dashboard experience.
 
+---
+
 ## Features
 
 - 🎨 Modern and responsive Material Design interface
@@ -13,34 +15,34 @@ A comprehensive React-based management interface built with Material-UI, designe
 - 📋 Data table management
 - 🎯 Role-based access control
 
+---
+
 ## Tech Stack
 
 ### Core
-
-- React 18 - Frontend library
-- Material-UI (MUI) v5 - UI component library
-- Vite - Build tool and development server
-- Emotion - CSS-in-JS styling solution
+- **React 18** - Frontend library
+- **Material-UI (MUI) v5** - UI component library
+- **Vite** - Build tool and development server
+- **Emotion** - CSS-in-JS styling solution
 
 ### Data Visualization & Management
-
-- ApexCharts - Interactive charts and graphs
-- Axios - HTTP client for API requests
-- date-fns & dayjs - Date manipulation utilities
+- **ApexCharts** - Interactive charts and graphs
+- **Axios** - HTTP client for API requests
+- **date-fns & dayjs** - Date manipulation utilities
 
 ### State Management & Routing
-
-- Redux Toolkit - State management
-- React Router v6 - Navigation and routing
+- **Redux Toolkit** - State management
+- **React Router v6** - Navigation and routing
 
 ### Development Tools
+- **TypeScript** - Type checking and code quality
+- **ESLint** - Code linting
+- **Prettier** - Code formatting
+- **Husky** - Git hooks
+- **Jest** - Unit testing
+- **React Testing Library** - Component testing
 
-- TypeScript - Type checking and code quality
-- ESLint - Code linting
-- Prettier - Code formatting
-- Husky - Git hooks
-- Jest - Unit testing
-- React Testing Library - Component testing
+---
 
 ## Environment Variables
 
@@ -71,65 +73,67 @@ cp .env.example .env
 - `VITE_DEFAULT_PAGE_SIZE`: Default number of items per page (default: `10`)
 - `VITE_MAX_PAGE_SIZE`: Maximum number of items per page (default: `100`)
 
+---
+
 ## Getting Started
 
 ### Prerequisites
-
-- Node.js (v16 or higher)
-- npm (v7 or higher) or yarn (v1.22 or higher)
-- Git
+- **Node.js** (v16 or higher)
+- **npm** (v7 or higher) or **yarn** (v1.22 or higher)
+- **Git**
 
 ### Installation
 
-1. Clone the repository
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/management-ui.git
+   cd management-ui
+   ```
 
-```bash
-git clone https://github.com/your-username/management-ui.git
-cd management-ui
+2. Install dependencies:
+   ```bash
+   yarn install
+   # or
+   npm install
+   ```
 
+3. Set up environment variables:
+   ```bash
+   cp .env.example .env
+   ```
 
-Install dependencies
+4. Start the development server:
+   ```bash
+   yarn dev
+   ```
 
-yarn install
-# or
-npm install
+---
 
+## Available Scripts
 
-bash
-Set up environment variables
+### Development
+- `yarn dev`: Start the development server
+- `yarn dev:host`: Start the development server with host access
 
-cp .env.example .env
+### Building
+- `yarn build`: Build for production
+- `yarn preview`: Preview the production build
 
+### Code Quality
+- `yarn lint`: Run ESLint
+- `yarn lint:fix`: Fix ESLint errors
+- `yarn prettier`: Format code
 
-```
+### Testing
+- `yarn test`: Run all tests
+- `yarn test:watch`: Run tests in watch mode
+- `yarn test:coverage`: Run tests with a coverage report
 
-Edit the .env file with your configuration
+---
 
-Available Scripts
+## Project Structure
 
-```
-# Development
-yarn dev          # Start development server
-yarn dev:host     # Start development server with host access
-
-# Building
-yarn build        # Build for production
-yarn preview      # Preview production build
-
-# Code Quality
-yarn lint         # Run ESLint
-yarn lint:fix     # Fix ESLint errors
-yarn prettier     # Format code
-yarn type-check   # Run TypeScript type checking
-
-# Testing
-yarn test         # Run tests
-yarn test:watch   # Run tests in watch mode
-yarn test:coverage # Run tests with coverage report
-```
-
-```
-Project Structure
+```plaintext
 src/
 ├── assets/        # Static assets (images, fonts, etc.)
 ├── components/    # Reusable UI components
@@ -144,116 +148,46 @@ src/
 └── utils/         # Utility functions
 ```
 
-```
-Environment Variables
-VITE_API_BASE_URL=your_api_base_url
-VITE_AUTH_TOKEN_KEY=your_auth_token_key
-VITE_ENV=development
-```
-
-```
-Browser Support
-
-Chrome (latest)
-
-Firefox (latest)
-
-Safari (latest)
-
-Edge (latest)
-```
-
-Deployment
-Build for Production
-yarn build
-
-```
-The build artifacts will be stored in the dist/ directory.
-
-Deploy to Production
-Configure your deployment platform (e.g., AWS, Vercel, Netlify)
-
-Set up environment variables
-
-Deploy the contents of the dist/ directory
-
-Contributing
-Fork the repository
-
-Create your feature branch ( git checkout -b feature/amazing-feature)
-
-Commit your changes ( git commit -m 'Add some amazing feature')
-
-Push to the branch ( git push origin feature/amazing-feature)
-
-Open a Pull Request
-```
+---
 
 ## Coding Standards
 
-Follow the ESLint configuration
+- Follow the ESLint configuration.
+- Write meaningful commit messages.
+- Update documentation for significant changes.
+- Add tests for new features.
 
-Write meaningful commit messages
+---
 
-Update documentation for significant changes
+## Performance Optimization
 
-Add tests for new features
+- Use `React.memo()` for expensive computations.
+- Implement code splitting with `React.lazy()`.
+- Optimize images and assets.
+- Use windowing for long lists.
 
-Testing
+---
 
-# Run all tests
+## Troubleshooting
 
-yarn test
+### Common Issues and Solutions
 
-# Run tests with coverage
+#### Build Fails
+- Clear `node_modules` and `package-lock.json`.
+- Run `yarn install` again.
+- Check for Node.js version compatibility.
 
-yarn test:coverage
+#### Development Server Issues
+- Clear browser cache.
+- Check for port conflicts.
+- Verify environment variables.
 
-# Run tests in watch mode
-
-yarn test:watch
-
-bash
-Performance Optimization
-Use React.memo() for expensive computations
-
-Implement code splitting with React.lazy()
-
-Optimize images and assets
-
-Use windowing for long lists
-
-Troubleshooting
-Common issues and their solutions:
-
-Build fails
-
-Clear node_modules and package-lock.json
-
-Run yarn install again
-
-Check for Node.js version compatibility
-
-Development server issues
-
-Clear browser cache
-
-Check for port conflicts
-
-Verify environment variables
+---
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the Propietary License. 
 
-## Acknowledgments
+---
 
-Material-UI team for the excellent component library
 
-React team for the amazing framework
-
-All contributors who have helped with the project
-
-## Support
-
-For support, email <support@yourproject.com> or create an issue in the repository.
