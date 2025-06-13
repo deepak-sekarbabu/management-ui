@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 
+import { styled } from '@mui/material/styles';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker, TimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import {
@@ -67,22 +69,53 @@ const NotificationSnackbar = ({ open, message, severity, onClose }) => (
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         sx={{ zIndex: (theme) => theme.zIndex.modal + 100, marginTop: '64px' }}
     >
-        <Alert
-            onClose={onClose}
-            severity={severity}
-            variant="filled"
-            sx={{
-                width: '100%',
-                boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14)',
-                fontWeight: 500,
-                fontSize: '0.9rem',
-                '& .MuiAlert-icon': {
-                    fontSize: '1.5rem',
-                },
-            }}
+        <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.3 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
         >
-            {message}
-        </Alert>
+            <Alert
+                onClose={onClose}
+                severity={severity}
+                variant="filled"
+                sx={{
+                    width: '100%',
+                    boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14)',
+                    fontWeight: 500,
+                    fontSize: '0.9rem',
+                    '& .MuiAlert-icon': {
+                        fontSize: '1.5rem',
+                    },
+                    '& .MuiAlert-message': {
+                        display: 'flex',
+                        alignItems: 'center',
+                    },
+                    '& .MuiAlert-action': {
+                        alignItems: 'center',
+                    },
+                    animation:
+                        severity === 'error'
+                            ? 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both'
+                            : 'none',
+                    '@keyframes shake': {
+                        '10%, 90%': {
+                            transform: 'translate3d(-1px, 0, 0)',
+                        },
+                        '20%, 80%': {
+                            transform: 'translate3d(2px, 0, 0)',
+                        },
+                        '30%, 50%, 70%': {
+                            transform: 'translate3d(-4px, 0, 0)',
+                        },
+                        '40%, 60%': {
+                            transform: 'translate3d(4px, 0, 0)',
+                        },
+                    },
+                }}
+            >
+                {message}
+            </Alert>
+        </motion.div>
     </Snackbar>
 );
 
@@ -108,9 +141,55 @@ const AbsenceTableHeader = () => (
     </TableHead>
 );
 
+// Update the styled components for animations
+const AnimatedTableContainer = styled(motion.create(TableContainer))(({ theme }) => ({
+    overflowX: 'auto',
+    '& .MuiTableCell-root': {
+        whiteSpace: 'nowrap',
+        minWidth: '120px',
+        transition: 'all 0.3s ease',
+        [theme.breakpoints.down('sm')]: {
+            padding: theme.spacing(1),
+            minWidth: '100px',
+        },
+    },
+}));
+
+const AnimatedTableRow = styled(motion.create(TableRow))(({ theme }) => ({
+    '&:hover': {
+        backgroundColor: theme.palette.action.hover,
+        transform: 'scale(1.01)',
+        transition: 'all 0.3s ease',
+    },
+}));
+
+// Add styled components for form fields
+const StyledTextField = styled(TextField)(({ theme }) => ({
+    '& .MuiOutlinedInput-root': {
+        transition: 'all 0.3s ease',
+        '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+        },
+    },
+}));
+
+const StyledSelect = styled(Select)(({ theme }) => ({
+    transition: 'all 0.3s ease',
+    '&:hover': {
+        transform: 'translateY(-2px)',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    },
+}));
+
 // Reusable table row component for existing absences
 const AbsenceTableRow = ({ absence, onRemove }) => (
-    <TableRow>
+    <AnimatedTableRow
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.3 }}
+    >
         <TableCell>{absence.doctorId}</TableCell>
         <TableCell>{absence.doctorName}</TableCell>
         <TableCell>{absence.absenceDate}</TableCell>
@@ -123,11 +202,18 @@ const AbsenceTableRow = ({ absence, onRemove }) => (
                 color="error"
                 onClick={() => onRemove(absence.id)}
                 aria-label={`Remove absence record for ${absence.doctorName}`}
+                sx={{
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                        transform: 'scale(1.05)',
+                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                    },
+                }}
             >
                 Remove
             </Button>
         </TableCell>
-    </TableRow>
+    </AnimatedTableRow>
 );
 
 AbsenceTableRow.propTypes = {
@@ -344,7 +430,12 @@ const DoctorAbsencePage = () => {
     // Loading state
     if (isLoading) {
         return (
-            <Card>
+            <Card
+                component={motion.div}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+            >
                 <Container>
                     <Stack
                         direction="row"
@@ -354,57 +445,78 @@ const DoctorAbsencePage = () => {
                     >
                         <Typography variant="h2">Doctor Absence Information</Typography>
                     </Stack>
-                    <CircularProgress
-                        style={{
-                            position: 'fixed',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                        }}
-                    />
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        minHeight="400px"
+                    >
+                        <motion.div
+                            animate={{
+                                scale: [1, 1.2, 1],
+                                rotate: [0, 180, 360],
+                            }}
+                            transition={{
+                                duration: 2,
+                                repeat: Infinity,
+                                ease: 'easeInOut',
+                            }}
+                        >
+                            <CircularProgress size={60} />
+                        </motion.div>
+                    </Box>
                 </Container>
             </Card>
         );
     }
 
     return (
-        <Card>
+        <Card
+            component={motion.div}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
             <Box p={isMobile ? 1 : 2}>
                 <Typography
                     variant="h2"
                     sx={{
                         marginBottom: '20px',
                         fontSize: isMobile ? '1.5rem' : '2rem',
+                        transition: 'all 0.3s ease',
                     }}
                 >
                     Doctor Absence Information
                 </Typography>
 
-                <TableContainer
+                <AnimatedTableContainer
                     component={Paper}
-                    sx={{
-                        overflowX: 'auto',
-                        '& .MuiTableCell-root': {
-                            whiteSpace: 'nowrap',
-                            minWidth: isMobile ? '120px' : 'auto',
-                        },
-                    }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
                 >
                     <Table aria-label="doctor absence table">
                         <AbsenceTableHeader />
                         <TableBody>
-                            {doctorAbsence.map((absence) => (
-                                <AbsenceTableRow
-                                    key={absence.id}
-                                    absence={absence}
-                                    onRemove={handleRemove}
-                                />
-                            ))}
+                            <AnimatePresence>
+                                {doctorAbsence.map((absence) => (
+                                    <AbsenceTableRow
+                                        key={absence.id}
+                                        absence={absence}
+                                        onRemove={handleRemove}
+                                    />
+                                ))}
+                            </AnimatePresence>
 
                             {isAdding && (
-                                <TableRow>
+                                <AnimatedTableRow
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.3 }}
+                                >
                                     <TableCell>
-                                        <Select
+                                        <StyledSelect
                                             value={newRow.doctorId}
                                             onChange={(e) => {
                                                 const selectedDoctor = doctorData.find(
@@ -422,6 +534,7 @@ const DoctorAbsencePage = () => {
                                                 value === '' ? 'Select Doctor ID' : value
                                             }
                                             aria-label="Select Doctor"
+                                            fullWidth
                                         >
                                             {doctorData.map((doctor) => (
                                                 <MenuItem
@@ -431,13 +544,14 @@ const DoctorAbsencePage = () => {
                                                     {doctor.doctorId}
                                                 </MenuItem>
                                             ))}
-                                        </Select>
+                                        </StyledSelect>
                                     </TableCell>
                                     <TableCell>
-                                        <TextField
+                                        <StyledTextField
                                             value={newRow.doctorName}
                                             disabled
                                             aria-label="Doctor Name"
+                                            fullWidth
                                         />
                                     </TableCell>
                                     <TableCell>
@@ -453,6 +567,16 @@ const DoctorAbsencePage = () => {
                                                     textField: {
                                                         fullWidth: true,
                                                         size: isMobile ? 'small' : 'medium',
+                                                        sx: {
+                                                            '& .MuiOutlinedInput-root': {
+                                                                transition: 'all 0.3s ease',
+                                                                '&:hover': {
+                                                                    transform: 'translateY(-2px)',
+                                                                    boxShadow:
+                                                                        '0 4px 8px rgba(0,0,0,0.1)',
+                                                                },
+                                                            },
+                                                        },
                                                     },
                                                 }}
                                             />
@@ -473,6 +597,16 @@ const DoctorAbsencePage = () => {
                                                     textField: {
                                                         fullWidth: true,
                                                         size: isMobile ? 'small' : 'medium',
+                                                        sx: {
+                                                            '& .MuiOutlinedInput-root': {
+                                                                transition: 'all 0.3s ease',
+                                                                '&:hover': {
+                                                                    transform: 'translateY(-2px)',
+                                                                    boxShadow:
+                                                                        '0 4px 8px rgba(0,0,0,0.1)',
+                                                                },
+                                                            },
+                                                        },
                                                     },
                                                 }}
                                             />
@@ -500,13 +634,23 @@ const DoctorAbsencePage = () => {
                                                     textField: {
                                                         fullWidth: true,
                                                         size: isMobile ? 'small' : 'medium',
+                                                        sx: {
+                                                            '& .MuiOutlinedInput-root': {
+                                                                transition: 'all 0.3s ease',
+                                                                '&:hover': {
+                                                                    transform: 'translateY(-2px)',
+                                                                    boxShadow:
+                                                                        '0 4px 8px rgba(0,0,0,0.1)',
+                                                                },
+                                                            },
+                                                        },
                                                     },
                                                 }}
                                             />
                                         </LocalizationProvider>
                                     </TableCell>
                                     <TableCell>
-                                        <TextField
+                                        <StyledTextField
                                             value={newRow.optionalMessage}
                                             onChange={(e) =>
                                                 setNewRow({
@@ -526,6 +670,13 @@ const DoctorAbsencePage = () => {
                                                 color="success"
                                                 onClick={handleSave}
                                                 aria-label="Save absence record"
+                                                sx={{
+                                                    transition: 'all 0.3s ease',
+                                                    '&:hover': {
+                                                        transform: 'scale(1.05)',
+                                                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                                                    },
+                                                }}
                                             >
                                                 Save
                                             </Button>
@@ -544,16 +695,23 @@ const DoctorAbsencePage = () => {
                                                     setIsAdding(false);
                                                 }}
                                                 aria-label="Cancel adding absence record"
+                                                sx={{
+                                                    transition: 'all 0.3s ease',
+                                                    '&:hover': {
+                                                        transform: 'scale(1.05)',
+                                                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                                                    },
+                                                }}
                                             >
                                                 Cancel
                                             </Button>
                                         </Stack>
                                     </TableCell>
-                                </TableRow>
+                                </AnimatedTableRow>
                             )}
                         </TableBody>
                     </Table>
-                </TableContainer>
+                </AnimatedTableContainer>
 
                 <Box
                     mt={2}
@@ -564,6 +722,7 @@ const DoctorAbsencePage = () => {
                         bottom: 0,
                         backgroundColor: 'background.paper',
                         padding: '16px 0',
+                        transition: 'all 0.3s ease',
                     }}
                 >
                     <Button
@@ -571,6 +730,13 @@ const DoctorAbsencePage = () => {
                         color="primary"
                         onClick={() => setIsAdding(true)}
                         aria-label="Add new absence record"
+                        sx={{
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                                transform: 'scale(1.05)',
+                                boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                            },
+                        }}
                     >
                         Add
                     </Button>
