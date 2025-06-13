@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 
+import { keyframes } from '@mui/system';
+import { styled } from '@mui/material/styles';
 import {
     Box,
     Card,
@@ -24,6 +26,64 @@ import ClinicDetails from './clinic-details';
 // API endpoints
 const GET_CLINIC_INFO = '/api/clinic/';
 const UPDATE_CLINIC_INFO = '/api/clinic/';
+
+// Styled components
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const StyledCard = styled(Card)(({ theme }) => ({
+    animation: `${fadeIn} 0.5s ease-out`,
+    transition: 'all 0.3s ease-in-out',
+    '&:hover': {
+        boxShadow: theme.shadows[8],
+    },
+    [theme.breakpoints.down('sm')]: {
+        margin: theme.spacing(1),
+    },
+    [theme.breakpoints.up('sm')]: {
+        margin: theme.spacing(2),
+    },
+}));
+
+const ClinicContainer = styled(Box)(({ theme }) => ({
+    padding: theme.spacing(3),
+    [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(2),
+    },
+}));
+
+const ClinicHeader = styled(Stack)(({ theme }) => ({
+    marginBottom: theme.spacing(4),
+    [theme.breakpoints.down('sm')]: {
+        marginBottom: theme.spacing(2),
+    },
+}));
+
+const ClinicInfo = styled(Box)(({ theme }) => ({
+    transition: 'all 0.3s ease-in-out',
+    '&:hover': {
+        backgroundColor: theme.palette.action.hover,
+    },
+    padding: theme.spacing(2),
+    borderRadius: theme.shape.borderRadius,
+    marginBottom: theme.spacing(2),
+}));
+
+const ActionButton = styled(Button)(({ theme }) => ({
+    transition: 'all 0.3s ease-in-out',
+    '&:hover': {
+        transform: 'translateY(-2px)',
+        boxShadow: theme.shadows[4],
+    },
+}));
 
 /**
  * ClinicPage Component
@@ -161,11 +221,10 @@ const ClinicPage = () => {
     // Memoized clinic list for better performance
     const clinicList = useMemo(
         () => (
-            <Box p={3}>
+            <ClinicContainer>
                 {clinics.map((clinic) => (
-                    <Box
+                    <ClinicInfo
                         key={clinic.clinicId}
-                        mb={4}
                         role="region"
                         aria-label={`Clinic information for ${clinic.clinicName}`}
                     >
@@ -176,6 +235,7 @@ const ClinicPage = () => {
                                 onClick={() => handleExpandClick(clinic.clinicId)}
                                 sx={{
                                     cursor: 'pointer',
+                                    transition: 'color 0.3s ease-in-out',
                                     '&:hover': {
                                         color: 'primary.main',
                                     },
@@ -205,7 +265,7 @@ const ClinicPage = () => {
                                         expandedClinic === clinic.clinicId
                                             ? 'rotate(180deg)'
                                             : 'rotate(0deg)',
-                                    transition: 'transform 0.3s',
+                                    transition: 'transform 0.3s ease-in-out',
                                 }}
                             >
                                 <Iconify icon="eva:arrow-down-fill" />
@@ -214,6 +274,9 @@ const ClinicPage = () => {
                         <Collapse
                             in={expandedClinic === clinic.clinicId}
                             id={`clinic-details-${clinic.clinicId}`}
+                            sx={{
+                                transition: 'all 0.3s ease-in-out',
+                            }}
                         >
                             <Stack spacing={2} sx={{ mt: 2 }}>
                                 <Typography color="textSecondary">
@@ -239,19 +302,19 @@ const ClinicPage = () => {
                                     {clinic.clinicPhoneNumbers.map((p) => p.phoneNumber).join(', ')}
                                 </Typography>
                                 <Box mt={3} display="flex" justifyContent="center">
-                                    <Button
+                                    <ActionButton
                                         variant="outlined"
                                         onClick={() => handleEdit(clinic)}
                                         aria-label={`Edit ${clinic.clinicName} information`}
                                     >
                                         Edit
-                                    </Button>
+                                    </ActionButton>
                                 </Box>
                             </Stack>
                         </Collapse>
-                    </Box>
+                    </ClinicInfo>
                 ))}
-            </Box>
+            </ClinicContainer>
         ),
         [clinics, expandedClinic, handleExpandClick, handleEdit]
     );
@@ -301,10 +364,12 @@ const ClinicPage = () => {
     }
 
     return (
-        <Card>
-            <Typography variant="h2" component="h1" gutterBottom sx={{ px: 3, pt: 3 }}>
-                Clinic Information
-            </Typography>
+        <StyledCard>
+            <ClinicHeader direction="row" alignItems="center" justifyContent="space-between">
+                <Typography variant="h2" component="h1" gutterBottom>
+                    Clinic Information
+                </Typography>
+            </ClinicHeader>
             <Divider />
             {isEditable ? (
                 <>
@@ -321,20 +386,20 @@ const ClinicPage = () => {
                             spacing={2}
                             mb={5}
                         >
-                            <Button
+                            <ActionButton
                                 variant="contained"
                                 onClick={handleSave}
                                 aria-label="Save clinic information"
                             >
                                 Save
-                            </Button>
-                            <Button
+                            </ActionButton>
+                            <ActionButton
                                 variant="outlined"
                                 onClick={handleCancel}
                                 aria-label="Cancel editing"
                             >
                                 Cancel
-                            </Button>
+                            </ActionButton>
                         </Stack>
                     </Box>
                 </>
@@ -393,7 +458,7 @@ const ClinicPage = () => {
                     {successMessage}
                 </Alert>
             </Snackbar>
-        </Card>
+        </StyledCard>
     );
 };
 

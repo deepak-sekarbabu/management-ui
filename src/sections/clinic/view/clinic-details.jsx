@@ -1,7 +1,67 @@
 import PropTypes from 'prop-types';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 
+import { keyframes } from '@mui/system';
+import { styled } from '@mui/material/styles';
 import { Card, Stack, TextField, CardContent } from '@mui/material';
+
+// Styled components
+const slideIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
+
+const StyledCard = styled(Card)(({ theme }) => ({
+    animation: `${slideIn} 0.5s ease-out`,
+    transition: 'all 0.3s ease-in-out',
+    '&:hover': {
+        boxShadow: theme.shadows[8],
+    },
+    [theme.breakpoints.down('sm')]: {
+        margin: theme.spacing(1),
+    },
+    [theme.breakpoints.up('sm')]: {
+        margin: theme.spacing(2),
+    },
+}));
+
+const StyledCardContent = styled(CardContent)(({ theme }) => ({
+    padding: theme.spacing(3),
+    [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(2),
+    },
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+    transition: 'all 0.3s ease-in-out',
+    '& .MuiOutlinedInput-root': {
+        transition: 'all 0.3s ease-in-out',
+        '&:hover': {
+            '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.palette.primary.main,
+            },
+        },
+    },
+    '& .MuiInputLabel-root': {
+        transition: 'all 0.3s ease-in-out',
+    },
+    '&:focus-within': {
+        transform: 'translateY(-2px)',
+    },
+}));
+
+const FormStack = styled(Stack)(({ theme }) => ({
+    gap: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+        gap: theme.spacing(1.5),
+    },
+}));
 
 /**
  * ClinicDetails Component
@@ -117,8 +177,8 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
     // Memoized form fields
     const formFields = useMemo(
         () => (
-            <Stack spacing={2}>
-                <TextField
+            <FormStack>
+                <StyledTextField
                     name="clinicName"
                     label="Clinic Name"
                     value={formValues.clinicName}
@@ -138,7 +198,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     }}
                 />
 
-                <TextField
+                <StyledTextField
                     name="clinicAddress"
                     label="Clinic Address"
                     value={formValues.clinicAddress}
@@ -158,7 +218,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     }}
                 />
 
-                <TextField
+                <StyledTextField
                     name="clinicPinCode"
                     label="Clinic Pin Code"
                     value={formValues.clinicPinCode}
@@ -179,9 +239,9 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     }}
                 />
 
-                <Stack mt={2} spacing={2}>
+                <FormStack mt={2}>
                     {formValues.clinicPhoneNumbers.map((phone, index) => (
-                        <TextField
+                        <StyledTextField
                             key={index}
                             name={`clinicPhoneNumbers[${index}].phoneNumber`}
                             value={phone.phoneNumber}
@@ -205,9 +265,9 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                             }
                         />
                     ))}
-                </Stack>
+                </FormStack>
 
-                <TextField
+                <StyledTextField
                     name="clinicEmail"
                     label="Clinic Email"
                     value={formValues.clinicEmail}
@@ -224,7 +284,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     }}
                 />
 
-                <TextField
+                <StyledTextField
                     name="clinicWebsite"
                     label="Clinic Website"
                     value={formValues.clinicWebsite}
@@ -241,7 +301,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     }}
                 />
 
-                <TextField
+                <StyledTextField
                     name="clinicTimings"
                     label="Clinic Timings"
                     value={formValues.clinicTimings}
@@ -257,7 +317,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     }}
                 />
 
-                <TextField
+                <StyledTextField
                     name="clinicAmenities"
                     label="Clinic Amenities"
                     value={formValues.clinicAmenities}
@@ -272,7 +332,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                         maxLength: 150,
                     }}
                 />
-            </Stack>
+            </FormStack>
         ),
         [
             formValues,
@@ -290,9 +350,9 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
     );
 
     return (
-        <Card>
-            <CardContent>{formFields}</CardContent>
-        </Card>
+        <StyledCard>
+            <StyledCardContent>{formFields}</StyledCardContent>
+        </StyledCard>
     );
 }
 
