@@ -14,8 +14,18 @@ RUN if [ -f package-lock.json ]; then \
       npm install; \
     fi
 
-# Copy source code
+# Copy source code and env file
 COPY . .
+
+# Set environment variables for build
+ENV VITE_API_BASE_URL=https://management-ui-pdj4.onrender.com
+ENV VITE_APP_NAME=Management UI
+ENV VITE_APP_ENV=production
+ENV VITE_APP_VERSION=1.0.0
+ENV VITE_ENABLE_ANALYTICS=false
+ENV VITE_ENABLE_LOGGING=true
+ENV VITE_DEFAULT_PAGE_SIZE=10
+ENV VITE_MAX_PAGE_SIZE=100
 
 # Build the application
 RUN npm run build
