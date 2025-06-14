@@ -35,8 +35,9 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy built assets from builder
+# Copy built assets and server files from builder
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/server.js ./
 COPY --from=builder /app/package*.json ./
 
 # Install only production dependencies
@@ -48,5 +49,5 @@ ENV NODE_ENV=production
 # Expose port
 EXPOSE 3030
 
-# Start the application
-CMD ["npx", "serve", "dist", "-l", "3030"]
+# Start the application using our custom server
+CMD ["npm", "start"]
