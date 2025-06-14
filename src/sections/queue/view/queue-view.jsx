@@ -7,8 +7,8 @@ import Table from '@mui/material/Table';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
 import InputLabel from '@mui/material/InputLabel';
+import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
@@ -16,8 +16,8 @@ import Scrollbar from 'src/components/scrollbar';
 
 import QueueNoData from '../queue-no-data';
 import QueueTableRow from '../queue-table-row';
-import QueueTableHead from '../queue-table-head';
 import QueueEmptyRows from '../queue-empty-rows';
+import QueueTableHead from '../queue-table-head';
 import QueueTableToolbar from '../queue-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
@@ -175,7 +175,12 @@ export default function QueuePage() {
     return (
         <Card>
             <Stack p={2} direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-                <Typography variant="h2" justifyContent="flex">
+                <Typography
+                    variant="h2"
+                    component="h1"
+                    gutterBottom
+                    sx={{ pl: 3, pt: 2, color: 'primary.main', fontWeight: 'bold' }}
+                >
                     Queue Information
                 </Typography>
                 <Stack direction="row" alignItems="center" justifyContent="flex-end">

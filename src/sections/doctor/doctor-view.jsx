@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import {
     Box,
     Card,
-    Stack,
     Alert,
+    Stack,
     Button,
     Snackbar,
     Container,
@@ -132,7 +132,7 @@ const DoctorPage = () => {
                         variant="h2"
                         component="h1"
                         gutterBottom
-                        sx={{ textAlign: 'center' }}
+                        sx={{ pl: 3, pt: 2, color: 'primary.main', fontWeight: 'bold' }}
                     >
                         Doctor Information
                     </Typography>
@@ -352,7 +352,7 @@ const DoctorPage = () => {
                     variant="h2"
                     component="h1"
                     gutterBottom
-                    sx={{ textAlign: { xs: 'center', sm: 'left' } }}
+                    sx={{ pl: 3, pt: 2, color: 'primary.main', fontWeight: 'bold' }}
                 >
                     Doctor Information
                 </Typography>

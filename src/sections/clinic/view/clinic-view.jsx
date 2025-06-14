@@ -406,7 +406,12 @@ const ClinicPage = () => {
     return (
         <StyledCard>
             <ClinicHeader direction="row" alignItems="center" justifyContent="space-between">
-                <Typography variant="h2" component="h1" gutterBottom sx={{ pl: 3, pt: 2 }}>
+                <Typography
+                    variant="h2"
+                    component="h1"
+                    gutterBottom
+                    sx={{ pl: 3, pt: 2, color: 'primary.main', fontWeight: 'bold' }}
+                >
                     Clinic Information
                 </Typography>
             </ClinicHeader>

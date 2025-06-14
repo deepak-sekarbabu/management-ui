@@ -18,6 +18,8 @@
         "vite:build": "vite build"
     },
     "dependencies": {
+        "@stagewise-plugins/react": "^0.4.7",
+        "@stagewise/toolbar-react": "^0.4.7",
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
         "@faker-js/faker": "^9.8.0",
@@ -45,6 +47,8 @@
         "uuid": "^11.1.0"
     },
     "devDependencies": {
+        "@stagewise-plugins/react": "^0.4.7",
+        "@stagewise/toolbar-react": "^0.4.7",
         "@vitejs/plugin-react-swc": "^3.10.0",
         "eslint": "^8.51.0",
         "eslint-config-airbnb": "^19.0.4",
