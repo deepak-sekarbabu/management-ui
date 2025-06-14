@@ -12,9 +12,11 @@ import {
     Divider,
     Collapse,
     Snackbar,
+    useTheme,
     Container,
     IconButton,
     Typography,
+    useMediaQuery,
     CircularProgress,
 } from '@mui/material';
 
@@ -27,7 +29,7 @@ import ClinicDetails from './clinic-details';
 const GET_CLINIC_INFO = '/api/clinic/';
 const UPDATE_CLINIC_INFO = '/api/clinic/';
 
-// Styled components
+// Styled components with improved responsive design
 const fadeIn = keyframes`
   from {
     opacity: 0;
@@ -39,57 +41,76 @@ const fadeIn = keyframes`
   }
 `;
 
-const StyledCard = styled(Card)(({ theme }) => ({
+const StyledCard = styled(Card)(({ theme: muiTheme }) => ({
     animation: `${fadeIn} 0.5s ease-out`,
     transition: 'all 0.3s ease-in-out',
     '&:hover': {
-        boxShadow: theme.shadows[8],
+        boxShadow: muiTheme.shadows[8],
     },
-    [theme.breakpoints.down('sm')]: {
-        margin: theme.spacing(1),
+    [muiTheme.breakpoints.down('sm')]: {
+        margin: muiTheme.spacing(1),
     },
-    [theme.breakpoints.up('sm')]: {
-        margin: theme.spacing(2),
-    },
-}));
-
-const ClinicContainer = styled(Box)(({ theme }) => ({
-    padding: theme.spacing(3),
-    [theme.breakpoints.down('sm')]: {
-        padding: theme.spacing(2),
+    [muiTheme.breakpoints.up('sm')]: {
+        margin: muiTheme.spacing(2),
     },
 }));
 
-const ClinicHeader = styled(Stack)(({ theme }) => ({
-    marginBottom: theme.spacing(4),
-    [theme.breakpoints.down('sm')]: {
-        marginBottom: theme.spacing(2),
+const ClinicContainer = styled(Box)(({ theme: muiTheme }) => ({
+    padding: muiTheme.spacing(3),
+    [muiTheme.breakpoints.down('sm')]: {
+        padding: muiTheme.spacing(2),
     },
 }));
 
-const ClinicInfo = styled(Box)(({ theme }) => ({
+const ClinicHeader = styled(Stack)(({ theme: muiTheme }) => ({
+    marginBottom: muiTheme.spacing(4),
+    [muiTheme.breakpoints.down('sm')]: {
+        marginBottom: muiTheme.spacing(2),
+    },
+}));
+
+const ClinicInfo = styled(Box)(({ theme: muiTheme }) => ({
     transition: 'all 0.3s ease-in-out',
     '&:hover': {
-        backgroundColor: theme.palette.action.hover,
+        backgroundColor: muiTheme.palette.action.hover,
     },
-    padding: theme.spacing(2),
-    borderRadius: theme.shape.borderRadius,
-    marginBottom: theme.spacing(2),
+    padding: muiTheme.spacing(2),
+    borderRadius: muiTheme.shape.borderRadius,
+    marginBottom: muiTheme.spacing(2),
+    // Improved focus styles for accessibility
+    '&:focus-within': {
+        outline: `2px solid ${muiTheme.palette.primary.main}`,
+        outlineOffset: '2px',
+    },
 }));
 
-const ActionButton = styled(Button)(({ theme }) => ({
+const ActionButton = styled(Button)(({ theme: muiTheme }) => ({
     transition: 'all 0.3s ease-in-out',
     '&:hover': {
         transform: 'translateY(-2px)',
-        boxShadow: theme.shadows[4],
+        boxShadow: muiTheme.shadows[4],
+    },
+    // Improved focus styles for accessibility
+    '&:focus-visible': {
+        outline: `2px solid ${muiTheme.palette.primary.main}`,
+        outlineOffset: '2px',
     },
 }));
 
 /**
  * ClinicPage Component
  * Displays and manages clinic information with edit capabilities
+ * Features:
+ * - Responsive design for all screen sizes
+ * - Keyboard navigation support
+ * - ARIA labels for accessibility
+ * - Error handling and loading states
+ * - Form validation
  */
 const ClinicPage = () => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
     // State management
     const [clinics, setClinics] = useState([]);
     const [isEditable, setEditMode] = useState(false);
@@ -125,7 +146,7 @@ const ClinicPage = () => {
         [expandedClinic]
     );
 
-    // API call functions
+    // API call functions with improved error handling
     const fetchData = useCallback(async (clinicId) => {
         try {
             const token = localStorage.getItem('token');
@@ -146,7 +167,7 @@ const ClinicPage = () => {
             return await response.json();
         } catch (fetchError) {
             console.error('Error fetching clinic data:', fetchError);
-            throw fetchError;
+            throw new Error(`Failed to fetch clinic data: ${fetchError.message}`);
         }
     }, []);
 
@@ -165,13 +186,13 @@ const ClinicPage = () => {
             setLoadError(null);
         } catch (error) {
             console.error('Error loading clinic data:', error);
-            setLoadError('Failed to load clinic information');
+            setLoadError(error.message || 'Failed to load clinic information');
         } finally {
             setLoading(false);
         }
     }, [fetchData, user?.clinicIds]);
 
-    // Edit handlers
+    // Edit handlers with improved error handling
     const handleEdit = useCallback((clinic) => {
         setEditedClinicData(clinic);
         setEditMode(true);
@@ -179,17 +200,21 @@ const ClinicPage = () => {
 
     const handleCancel = useCallback(async () => {
         if (hasUnsavedChanges) {
-            window.location.reload();
-        } else {
-            try {
-                const response = await axios.get(`${GET_CLINIC_INFO}${editedClinicData.clinicId}`);
-                setEditedClinicData(response.data);
-                setEditMode(false);
-                setHasUnsavedChanges(false);
-            } catch (fetchError) {
-                console.error('Error fetching clinic data:', fetchError);
-                showError('Failed to refresh clinic data');
+            // Show confirmation dialog before reloading
+            if (window.confirm('You have unsaved changes. Are you sure you want to cancel?')) {
+                window.location.reload();
             }
+            return;
+        }
+
+        try {
+            const response = await axios.get(`${GET_CLINIC_INFO}${editedClinicData.clinicId}`);
+            setEditedClinicData(response.data);
+            setEditMode(false);
+            setHasUnsavedChanges(false);
+        } catch (fetchError) {
+            console.error('Error fetching clinic data:', fetchError);
+            showError('Failed to refresh clinic data');
         }
     }, [hasUnsavedChanges, editedClinicData.clinicId, showError]);
 
@@ -209,7 +234,7 @@ const ClinicPage = () => {
             showSuccess('Clinic information saved successfully!');
         } catch (saveError) {
             console.error('Error updating clinic data:', saveError);
-            showError('Failed to save clinic information.');
+            showError(saveError.response?.data?.message || 'Failed to save clinic information.');
         }
     }, [editedClinicData, clinics, showSuccess, showError]);
 
@@ -228,7 +253,12 @@ const ClinicPage = () => {
                         role="region"
                         aria-label={`Clinic information for ${clinic.clinicName}`}
                     >
-                        <Stack direction="row" alignItems="center" justifyContent="space-between">
+                        <Stack
+                            direction={isMobile ? 'column' : 'row'}
+                            alignItems={isMobile ? 'flex-start' : 'center'}
+                            justifyContent="space-between"
+                            spacing={isMobile ? 1 : 0}
+                        >
                             <Typography
                                 variant="h5"
                                 component="h2"
@@ -316,7 +346,7 @@ const ClinicPage = () => {
                 ))}
             </ClinicContainer>
         ),
-        [clinics, expandedClinic, handleExpandClick, handleEdit]
+        [clinics, expandedClinic, handleExpandClick, handleEdit, isMobile]
     );
 
     // Load data on component mount
@@ -324,7 +354,7 @@ const ClinicPage = () => {
         loadData();
     }, [loadData]);
 
-    // Loading state
+    // Loading state with improved accessibility
     if (isLoading) {
         return (
             <Container>
@@ -347,7 +377,7 @@ const ClinicPage = () => {
         );
     }
 
-    // Error state
+    // Error state with improved accessibility
     if (loadError) {
         return (
             <Container>
@@ -356,7 +386,17 @@ const ClinicPage = () => {
                         Clinic Information
                     </Typography>
                 </Stack>
-                <Alert severity="error" sx={{ mt: 2 }} role="alert" aria-live="assertive">
+                <Alert
+                    severity="error"
+                    sx={{ mt: 2 }}
+                    role="alert"
+                    aria-live="assertive"
+                    action={
+                        <Button color="inherit" size="small" onClick={loadData}>
+                            Retry
+                        </Button>
+                    }
+                >
                     {loadError}
                 </Alert>
             </Container>
@@ -390,6 +430,7 @@ const ClinicPage = () => {
                                 variant="contained"
                                 onClick={handleSave}
                                 aria-label="Save clinic information"
+                                disabled={!hasUnsavedChanges}
                             >
                                 Save
                             </ActionButton>
@@ -411,7 +452,7 @@ const ClinicPage = () => {
                 autoHideDuration={6000}
                 onClose={handleCloseError}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                sx={{ zIndex: (theme) => theme.zIndex.modal + 100, marginTop: '64px' }}
+                sx={{ zIndex: (muiTheme) => muiTheme.zIndex.modal + 100, marginTop: '64px' }}
             >
                 <Alert
                     onClose={handleCloseError}
@@ -437,7 +478,7 @@ const ClinicPage = () => {
                 autoHideDuration={4000}
                 onClose={handleCloseSuccess}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                sx={{ zIndex: (theme) => theme.zIndex.modal + 100, marginTop: '64px' }}
+                sx={{ zIndex: (muiTheme) => muiTheme.zIndex.modal + 100, marginTop: '64px' }}
             >
                 <Alert
                     onClose={handleCloseSuccess}

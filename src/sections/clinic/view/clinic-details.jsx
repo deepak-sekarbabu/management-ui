@@ -5,7 +5,7 @@ import { keyframes } from '@mui/system';
 import { styled } from '@mui/material/styles';
 import { Card, Stack, TextField, CardContent } from '@mui/material';
 
-// Styled components
+// Styled components with improved animations and transitions
 const slideIn = keyframes`
   from {
     opacity: 0;
@@ -47,6 +47,12 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
                 borderColor: theme.palette.primary.main,
             },
         },
+        // Improved focus styles for accessibility
+        '&.Mui-focused': {
+            '& .MuiOutlinedInput-notchedOutline': {
+                borderWidth: '2px',
+            },
+        },
     },
     '& .MuiInputLabel-root': {
         transition: 'all 0.3s ease-in-out',
@@ -66,6 +72,12 @@ const FormStack = styled(Stack)(({ theme }) => ({
 /**
  * ClinicDetails Component
  * Displays and manages editable clinic information form
+ * Features:
+ * - Form validation with error messages
+ * - Responsive design
+ * - Keyboard navigation support
+ * - ARIA labels for accessibility
+ * - Input field constraints
  */
 function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
     // State management
@@ -85,6 +97,12 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
     const isValidEmail = useCallback((email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
+    }, []);
+
+    const isValidWebsite = useCallback((website) => {
+        if (!website) return true;
+        const websiteRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+        return websiteRegex.test(website);
     }, []);
 
     // Update form values when clinic prop changes
@@ -128,7 +146,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     break;
                 case 'clinicEmail':
                     updatedValue = value.slice(0, 120);
-                    setEmailError(updatedValue.length > 120);
+                    setEmailError(!isValidEmail(updatedValue));
                     break;
                 case 'clinicTimings':
                     updatedValue = value.slice(0, 150);
@@ -136,7 +154,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                     break;
                 case 'clinicWebsite':
                     updatedValue = value.slice(0, 150);
-                    setWebsiteError(updatedValue.length > 149);
+                    setWebsiteError(!isValidWebsite(updatedValue));
                     break;
                 case 'clinicAmenities':
                     updatedValue = value.slice(0, 150);
@@ -149,7 +167,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
             setFormValues((prev) => ({ ...prev, [name]: updatedValue }));
             onFormValuesChange({ ...formValues, [name]: updatedValue });
         },
-        [formValues, onFormValuesChange]
+        [formValues, onFormValuesChange, isValidEmail, isValidWebsite]
     );
 
     // Helper function to get email helper text
@@ -167,7 +185,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
     const helperTexts = useMemo(
         () => ({
             email: getEmailHelperText(),
-            website: websiteError ? 'Clinic Website should not exceed 149 characters' : '',
+            website: websiteError ? 'Invalid website URL format' : '',
             timings: timingsError ? 'Clinic Timings should not exceed 149 characters' : '',
             amenities: amenitiesError ? 'Clinic Amenities should not exceed 149 characters' : '',
         }),
@@ -196,6 +214,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                         'aria-label': 'Clinic name',
                         maxLength: 150,
                     }}
+                    required
                 />
 
                 <StyledTextField
@@ -216,6 +235,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                         'aria-label': 'Clinic address',
                         maxLength: 200,
                     }}
+                    required
                 />
 
                 <StyledTextField
@@ -237,6 +257,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                         maxLength: 10,
                         pattern: '\\d*',
                     }}
+                    required
                 />
 
                 <FormStack mt={2}>
@@ -263,6 +284,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                                     ? 'Phone number should start with +91 and have 10 digits'
                                     : ''
                             }
+                            required
                         />
                     ))}
                 </FormStack>
@@ -282,6 +304,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                         maxLength: 120,
                         type: 'email',
                     }}
+                    required
                 />
 
                 <StyledTextField
@@ -315,6 +338,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                         'aria-label': 'Clinic timings',
                         maxLength: 150,
                     }}
+                    required
                 />
 
                 <StyledTextField
@@ -351,7 +375,11 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
 
     return (
         <StyledCard>
-            <StyledCardContent>{formFields}</StyledCardContent>
+            <StyledCardContent>
+                <form noValidate autoComplete="off" aria-label="Clinic details form">
+                    {formFields}
+                </form>
+            </StyledCardContent>
         </StyledCard>
     );
 }
