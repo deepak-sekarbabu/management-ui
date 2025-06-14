@@ -1,25 +1,25 @@
 import axios from 'axios';
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import Card from '@mui/material/Card';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import TableBody from '@mui/material/TableBody';
-import InputLabel from '@mui/material/InputLabel';
-import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
+import Typography from '@mui/material/Typography';
 
 import Scrollbar from 'src/components/scrollbar';
 
-import QueueNoData from '../queue-no-data';
-import QueueTableRow from '../queue-table-row';
 import QueueEmptyRows from '../queue-empty-rows';
+import QueueNoData from '../queue-no-data';
 import QueueTableHead from '../queue-table-head';
+import QueueTableRow from '../queue-table-row';
 import QueueTableToolbar from '../queue-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
+import { applyFilter, emptyRows, getComparator } from '../utils';
 
 // Define the API URL
 const QUEUE_INFO = '/api/queue/details';
