@@ -15,7 +15,6 @@ import {
     Autocomplete,
     FormControlLabel,
 } from '@mui/material';
-// import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; // Example, if using an icon for expand
 
 import DoctorAvailability from './DoctorAvailability';
 import DoctorPhoneNumbers from './DoctorPhoneNumbers';

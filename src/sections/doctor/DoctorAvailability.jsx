@@ -2,7 +2,6 @@ import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect, useCallback } from 'react';
 
-import DeleteIcon from '@mui/icons-material/Delete';
 // MUI date pickers and adapter
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -19,11 +18,10 @@ import {
     TableCell,
     TableHead,
     TextField,
-    IconButton, // For delete icon button
     FormControl,
     TableContainer,
     FormHelperText,
-} from '@mui/material'; // Icon for delete button
+} from '@mui/material';
 
 // Component to manage doctor's availability schedule
 const DoctorAvailability = ({
@@ -378,15 +376,15 @@ const DoctorAvailability = ({
                                             )}
                                         </TableCell>
                                         <TableCell align="center" sx={{ verticalAlign: 'middle' }}>
-                                            {' '}
-                                            {/* Align button middle */}
-                                            <IconButton
+                                            <Button
                                                 onClick={() => handleDeleteRow(index)}
                                                 aria-label={`Delete availability row ${index + 1}`}
                                                 color="error"
+                                                size="small"
+                                                variant="outlined"
                                             >
-                                                <DeleteIcon />
-                                            </IconButton>
+                                                Delete
+                                            </Button>
                                         </TableCell>
                                     </>
                                 ) : (
