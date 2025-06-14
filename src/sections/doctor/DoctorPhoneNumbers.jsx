@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useState, useCallback } from 'react'; // Added useCallback
 
 // MUI components for list and text display/input
-import { List, ListItem, TextField, Typography, ListItemText, Box } from '@mui/material';
+import { Box, List, ListItem, TextField, Typography, ListItemText } from '@mui/material';
 
 // Component to display and edit a list of phone numbers
 const DoctorPhoneNumbers = ({
@@ -83,7 +83,7 @@ const DoctorPhoneNumbers = ({
                             }}
                             // Display error state and helper text if there's an error for this index.
                             error={!!errors[index]}
-                            helperText={errors[index] || ' '} {/* Show space to maintain layout even if no error */}
+                            helperText={errors[index] || ' '}
                             inputProps={{
                                 maxLength: 13, // HTML5 attribute to limit input length
                                 type: 'tel', // Use type="tel" for semantic phone number input
@@ -148,7 +148,6 @@ DoctorPhoneNumbers.propTypes = {
 DoctorPhoneNumbers.defaultProps = {
     onPhoneNumberChange: () => {}, // No-op function if not provided
     isEditing: false, // Default to view mode
-    phoneNumbers: [], // Default to an empty array if not provided
 };
 
 export default DoctorPhoneNumbers;
