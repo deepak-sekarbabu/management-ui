@@ -22,6 +22,7 @@
         "@emotion/styled": "^11.14.0",
         "@faker-js/faker": "^9.8.0",
         "@iconify/react": "^6.0.0",
+        "@mui/icons-material": "^5.17.1",
         "@mui/lab": "^5.0.0-alpha.176",
         "@mui/material": "^5.17.1",
         "@mui/system": "^7.1.1",
