@@ -128,7 +128,12 @@ const DoctorPage = () => {
                     minHeight="80vh" // Use minHeight for better responsiveness than fixed height
                 >
                     {/* Page Title */}
-                    <Typography variant="h2" component="h1" gutterBottom sx={{ textAlign: 'center' }}>
+                    <Typography
+                        variant="h2"
+                        component="h1"
+                        gutterBottom
+                        sx={{ textAlign: 'center' }}
+                    >
                         Doctor Information
                     </Typography>
                     {/* Conditional rendering for error message during loading */}
@@ -307,13 +312,16 @@ const DoctorPage = () => {
                 }
 
                 // Handle specific error status codes with more user-friendly messages
-                if (response.status === 409) { // Conflict
+                if (response.status === 409) {
+                    // Conflict
                     errorDetail = isNewDoctorOperation
                         ? 'Doctor with this ID or conflicting information already exists.'
                         : 'Conflict updating doctor information. Please check details.';
-                } else if (response.status === 400) { // Bad Request
+                } else if (response.status === 400) {
+                    // Bad Request
                     errorDetail = 'Invalid doctor information. Please check all required fields.';
-                } else if (response.status === 404) { // Not Found
+                } else if (response.status === 404) {
+                    // Not Found
                     errorDetail = 'Doctor or clinic not found. Please refresh and try again.';
                 }
                 throw new Error(errorDetail); // Throw error
@@ -333,13 +341,21 @@ const DoctorPage = () => {
 
     // Main render logic for the page
     return (
-        <Card sx={{ borderRadius: 2, boxShadow: 3 }}> {/* Added some subtle styling to the main card */}
-            <Box p={{ xs: 1, sm: 2 }}> {/* Responsive padding */}
+        <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
+            {' '}
+            {/* Added some subtle styling to the main card */}
+            <Box p={{ xs: 1, sm: 2 }}>
+                {' '}
+                {/* Responsive padding */}
                 {/* Page Title */}
-                <Typography variant="h2" component="h1" gutterBottom sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
+                <Typography
+                    variant="h2"
+                    component="h1"
+                    gutterBottom
+                    sx={{ textAlign: { xs: 'center', sm: 'left' } }}
+                >
                     Doctor Information
                 </Typography>
-
                 {/* Render existing doctors */}
                 {doctors.map((doctor) => (
                     <DoctorCard
@@ -350,7 +366,6 @@ const DoctorPage = () => {
                         clinicId={user?.clinicIds?.[0]}
                     />
                 ))}
-
                 {/* Render the form for a new doctor if newDoctor state is not null */}
                 {newDoctor && (
                     <DoctorCard
@@ -362,7 +377,6 @@ const DoctorPage = () => {
                         clinicId={user?.clinicIds?.[0]}
                     />
                 )}
-
                 {/* Container for the "Add Doctor" button with responsive alignment */}
                 <Box
                     mt={2}
@@ -381,7 +395,6 @@ const DoctorPage = () => {
                     </Button>
                 </Box>
             </Box>
-
             {/* Error Snackbar for displaying error messages */}
             {/* MUI Snackbars are generally accessible:
                 - They don't trap focus.
@@ -419,7 +432,6 @@ const DoctorPage = () => {
                     {errorMessage}
                 </Alert>
             </Snackbar>
-
             {/* Success Snackbar for displaying success messages */}
             <Snackbar
                 open={successOpen}

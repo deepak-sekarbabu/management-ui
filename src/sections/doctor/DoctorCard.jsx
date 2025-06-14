@@ -10,11 +10,10 @@ import {
     Button,
     TextField,
     RadioGroup,
-    Typography,
+    Typography, // For potential future use if needed for icons
     CardContent,
     Autocomplete,
     FormControlLabel,
-    IconButton, // For potential future use if needed for icons
 } from '@mui/material';
 // import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; // Example, if using an icon for expand
 
@@ -116,7 +115,6 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
             errors.doctorExperience = 'Doctor experience cannot be negative.';
         }
 
-
         // Validate Consultation Fee (Appointment): required, number.
         if (
             doctorData.doctorConsultationFee === null ||
@@ -205,7 +203,6 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
         };
         // Remove validationErrors from the data being saved (it's client-side state)
         delete dataToSave.validationErrors;
-
 
         setIsEditing(false); // Switch back to view mode on successful save
         if (onSave) {
@@ -323,7 +320,6 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
         [handleExpandDetails]
     );
 
-
     // Rendering Logic:
     // The component renders a Material-UI `Card`.
     // The card header (Avatar and Doctor Name) is clickable to expand/collapse details.
@@ -332,7 +328,9 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
     // `DoctorPhoneNumbers` and `DoctorAvailability` are child components for managing those specific fields.
 
     return (
-        <Card sx={{ mt: 2, boxShadow: 3, borderRadius: 2 }}> {/* Added subtle shadow and border radius */}
+        <Card sx={{ mt: 2, boxShadow: 3, borderRadius: 2 }}>
+            {' '}
+            {/* Added subtle shadow and border radius */}
             <CardContent>
                 {/* Card Header: Avatar and Doctor Name. Clickable to expand/collapse details. */}
                 {/* Keyboard Accessibility: role="button", tabIndex="0", onKeyDown, aria-expanded, aria-controls */}
@@ -350,15 +348,18 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                         cursor: 'pointer',
                         padding: 1, // Added some padding
                         borderRadius: 1, // Rounded corners for the clickable area
-                        '&:focus-visible': { // Enhanced focus styling
+                        '&:focus-visible': {
+                            // Enhanced focus styling
                             outline: '2px solid primary.main',
                             outlineOffset: '2px',
-                        }
+                        },
                     }}
                 >
-                    <Avatar alt={doctor.doctorName} src={avatar} sx={{ width: 56, height: 56 }} /> {/* Slightly larger avatar */}
+                    <Avatar alt={doctor.doctorName} src={avatar} sx={{ width: 56, height: 56 }} />{' '}
+                    {/* Slightly larger avatar */}
                     <Typography variant="h5" component="h2" sx={{ ml: 2, flexGrow: 1 }}>
-                        {formState.doctorName || doctor.doctorName || 'New Doctor'} {/* Display name from formState or prop */}
+                        {formState.doctorName || doctor.doctorName || 'New Doctor'}{' '}
+                        {/* Display name from formState or prop */}
                     </Typography>
                     {/* Optional: Add an icon to indicate expand/collapse state */}
                     {/* <IconButton size="small">
@@ -381,7 +382,9 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                 <TextField
                                     label="Doctor Name"
                                     value={formState.doctorName || ''}
-                                    onChange={(e) => handleInputChange('doctorName', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorName', e.target.value)
+                                    }
                                     error={!!formState.validationErrors.doctorName}
                                     helperText={formState.validationErrors.doctorName}
                                     fullWidth // Responsive width
@@ -406,15 +409,25 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     value={formState.gender || 'Male'} // Default to Male if not set
                                     onChange={(e) => handleInputChange('gender', e.target.value)}
                                 >
-                                    <FormControlLabel value="Male" control={<Radio />} label="Male" />
-                                    <FormControlLabel value="Female" control={<Radio />} label="Female" />
+                                    <FormControlLabel
+                                        value="Male"
+                                        control={<Radio />}
+                                        label="Male"
+                                    />
+                                    <FormControlLabel
+                                        value="Female"
+                                        control={<Radio />}
+                                        label="Female"
+                                    />
                                     {/* Consider adding "Other" if applicable */}
                                 </RadioGroup>
                                 <TextField
                                     label="Email"
                                     type="email" // Use type="email" for basic browser validation
                                     value={formState.doctorEmail || ''}
-                                    onChange={(e) => handleInputChange('doctorEmail', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorEmail', e.target.value)
+                                    }
                                     error={!!formState.validationErrors.doctorEmail} // Assuming you add email validation
                                     helperText={formState.validationErrors.doctorEmail}
                                     fullWidth
@@ -422,7 +435,9 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                 <TextField
                                     label="Doctor Specialty"
                                     value={formState.doctorSpeciality || ''}
-                                    onChange={(e) => handleInputChange('doctorSpeciality', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorSpeciality', e.target.value)
+                                    }
                                     error={!!formState.validationErrors.doctorSpeciality}
                                     helperText={formState.validationErrors.doctorSpeciality}
                                     fullWidth
@@ -431,7 +446,9 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                 <TextField
                                     label="Doctor Experience (years)"
                                     value={formState.doctorExperience || ''}
-                                    onChange={(e) => handleInputChange('doctorExperience', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorExperience', e.target.value)
+                                    }
                                     error={!!formState.validationErrors.doctorExperience}
                                     helperText={formState.validationErrors.doctorExperience}
                                     type="number" // Use type="number"
@@ -446,7 +463,9 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                 <TextField
                                     label="Consultation Fee - Appointment (₹)"
                                     value={formState.doctorConsultationFee || ''}
-                                    onChange={(e) => handleInputChange('doctorConsultationFee', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange('doctorConsultationFee', e.target.value)
+                                    }
                                     error={!!formState.validationErrors.doctorConsultationFee}
                                     helperText={formState.validationErrors.doctorConsultationFee}
                                     type="number"
@@ -457,9 +476,16 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                 <TextField
                                     label="Consultation Fee - Queue (₹)"
                                     value={formState.doctorConsultationFeeOther || ''}
-                                    onChange={(e) => handleInputChange('doctorConsultationFeeOther', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            'doctorConsultationFeeOther',
+                                            e.target.value
+                                        )
+                                    }
                                     error={!!formState.validationErrors.doctorConsultationFeeOther}
-                                    helperText={formState.validationErrors.doctorConsultationFeeOther}
+                                    helperText={
+                                        formState.validationErrors.doctorConsultationFeeOther
+                                    }
                                     type="number"
                                     fullWidth
                                     required
@@ -471,21 +497,39 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     freeSolo // Allows adding new, custom values
                                     options={[]} // No predefined options, users add their own
                                     value={formState.languagesSpoken || []} // Controlled component value
-                                    onChange={(event, value) => handleInputChange('languagesSpoken', value)}
+                                    onChange={(event, value) =>
+                                        handleInputChange('languagesSpoken', value)
+                                    }
                                     onInputChange={(event, newInputValue) => {
                                         languagesInputRef.current = newInputValue; // Track current input for blur handling
                                     }}
-                                    onBlur={() => { // Add typed value on blur
-                                        handleAutocompleteBlur('languagesSpoken', languagesInputRef.current);
+                                    onBlur={() => {
+                                        // Add typed value on blur
+                                        handleAutocompleteBlur(
+                                            'languagesSpoken',
+                                            languagesInputRef.current
+                                        );
                                         languagesInputRef.current = ''; // Clear ref
                                     }}
-                                    renderTags={(value, getTagProps) => // Custom rendering for selected tags (chips)
+                                    renderTags={(
+                                        value,
+                                        getTagProps // Custom rendering for selected tags (chips)
+                                    ) =>
                                         value.map((option, index) => {
                                             const { key, ...chipProps } = getTagProps({ index });
-                                            return <Chip key={key} variant="outlined" label={option} {...chipProps} />;
+                                            return (
+                                                <Chip
+                                                    key={key}
+                                                    variant="outlined"
+                                                    label={option}
+                                                    {...chipProps}
+                                                />
+                                            );
                                         })
                                     }
-                                    renderInput={(params) => ( // Renders the input field
+                                    renderInput={(
+                                        params // Renders the input field
+                                    ) => (
                                         <TextField
                                             {...params}
                                             variant="outlined"
@@ -502,18 +546,30 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     freeSolo
                                     options={[]}
                                     value={formState.qualifications || []}
-                                    onChange={(event, value) => handleInputChange('qualifications', value)}
+                                    onChange={(event, value) =>
+                                        handleInputChange('qualifications', value)
+                                    }
                                     onInputChange={(event, newInputValue) => {
                                         qualificationsInputRef.current = newInputValue;
                                     }}
                                     onBlur={() => {
-                                        handleAutocompleteBlur('qualifications', qualificationsInputRef.current);
+                                        handleAutocompleteBlur(
+                                            'qualifications',
+                                            qualificationsInputRef.current
+                                        );
                                         qualificationsInputRef.current = '';
                                     }}
                                     renderTags={(value, getTagProps) =>
                                         value.map((option, index) => {
                                             const { key, ...chipProps } = getTagProps({ index });
-                                            return <Chip key={key} variant="outlined" label={option} {...chipProps} />;
+                                            return (
+                                                <Chip
+                                                    key={key}
+                                                    variant="outlined"
+                                                    label={option}
+                                                    {...chipProps}
+                                                />
+                                            );
                                         })
                                     }
                                     renderInput={(params) => (
@@ -536,10 +592,12 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                 {/* Component for managing availability */}
                                 <DoctorAvailability
                                     // Ensure availability data is properly structured and consultationTime is a number
-                                    availability={(formState.doctorAvailability || []).map(item => ({
-                                        ...item,
-                                        consultationTime: Number(item.consultationTime) || 0,
-                                    }))}
+                                    availability={(formState.doctorAvailability || []).map(
+                                        (item) => ({
+                                            ...item,
+                                            consultationTime: Number(item.consultationTime) || 0,
+                                        })
+                                    )}
                                     onAvailabilityChange={handleAvailabilityChange}
                                     isEditing={isEditing}
                                 />
@@ -589,20 +647,24 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     <strong>Experience:</strong> {doctor.doctorExperience} years
                                 </Typography>
                                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                                    <strong>Consultation Fee (Appointment):</strong> ₹{doctor.doctorConsultationFee}
+                                    <strong>Consultation Fee (Appointment):</strong> ₹
+                                    {doctor.doctorConsultationFee}
                                 </Typography>
                                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                                    <strong>Consultation Fee (Queue):</strong> ₹{doctor.doctorConsultationFeeOther}
+                                    <strong>Consultation Fee (Queue):</strong> ₹
+                                    {doctor.doctorConsultationFeeOther}
                                 </Typography>
                                 <Typography variant="body1" color="text.secondary" gutterBottom>
                                     <strong>Languages Spoken:</strong>{' '}
-                                    {Array.isArray(doctor.languagesSpoken) && doctor.languagesSpoken.length > 0
+                                    {Array.isArray(doctor.languagesSpoken) &&
+                                    doctor.languagesSpoken.length > 0
                                         ? doctor.languagesSpoken.join(', ')
                                         : 'N/A'}
                                 </Typography>
                                 <Typography variant="body1" color="text.secondary" gutterBottom>
                                     <strong>Qualifications:</strong>{' '}
-                                    {Array.isArray(doctor.qualifications) && doctor.qualifications.length > 0
+                                    {Array.isArray(doctor.qualifications) &&
+                                    doctor.qualifications.length > 0
                                         ? doctor.qualifications.join(', ')
                                         : 'N/A'}
                                 </Typography>
