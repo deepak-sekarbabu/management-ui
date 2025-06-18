@@ -393,6 +393,175 @@ const AbsenceForm = memo(({ doctorData, newRow, setNewRow, onSave, onCancel, isM
     const handleKeyDown = (e, action) =>
         e.key === 'Enter' || e.key === ' ' ? (e.preventDefault(), action()) : undefined;
 
+    if (isMobile) {
+        // Render as a card for mobile
+        return (
+            <Paper sx={{ mb: 2, p: 2, borderRadius: 2, boxShadow: 2 }}>
+                <Stack spacing={2}>
+                    <StyledSelect
+                        value={newRow.doctorId}
+                        onChange={(e) => {
+                            const selectedDoctor = doctorData.find(
+                                (doctor) => doctor.doctorId === e.target.value
+                            );
+                            setNewRow({
+                                ...newRow,
+                                doctorId: e.target.value,
+                                doctorName: selectedDoctor?.doctorName || '',
+                            });
+                        }}
+                        error={!newRow.doctorId}
+                        displayEmpty
+                        renderValue={(value) => (value === '' ? 'Select Doctor ID' : value)}
+                        aria-label="Select Doctor"
+                        aria-required="true"
+                        inputProps={{ 'aria-label': 'Select Doctor ID' }}
+                        fullWidth
+                    >
+                        {doctorData.map((doctor) => (
+                            <MenuItem key={doctor.doctorId} value={doctor.doctorId}>
+                                {doctor.doctorId}
+                            </MenuItem>
+                        ))}
+                    </StyledSelect>
+                    <StyledTextField
+                        value={newRow.doctorName}
+                        disabled
+                        aria-label="Doctor Name"
+                        fullWidth
+                        InputProps={{
+                            readOnly: true,
+                            'aria-readonly': true,
+                        }}
+                    />
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <DatePicker
+                            label="Absence Date"
+                            value={newRow.absenceDate}
+                            onChange={(date) => setNewRow({ ...newRow, absenceDate: date })}
+                            format="dd/MM/yyyy"
+                            slotProps={{
+                                textField: {
+                                    fullWidth: true,
+                                    size: 'small',
+                                    error: !newRow.absenceDate,
+                                    required: true,
+                                    inputProps: {
+                                        'aria-label': 'Absence Date',
+                                        'aria-required': 'true',
+                                    },
+                                },
+                            }}
+                        />
+                    </LocalizationProvider>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <TimePicker
+                            label="Absence Start Time"
+                            value={newRow.absenceStartTime}
+                            onChange={(newValue) =>
+                                setNewRow({
+                                    ...newRow,
+                                    absenceStartTime: newValue,
+                                })
+                            }
+                            slotProps={{
+                                textField: {
+                                    fullWidth: true,
+                                    size: 'small',
+                                    error: !newRow.absenceStartTime,
+                                    required: true,
+                                    inputProps: {
+                                        'aria-label': 'Absence Start Time',
+                                        'aria-required': 'true',
+                                    },
+                                },
+                            }}
+                        />
+                    </LocalizationProvider>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <TimePicker
+                            label="Absence End Time"
+                            value={newRow.absenceEndTime}
+                            onChange={(newValue) =>
+                                setNewRow({
+                                    ...newRow,
+                                    absenceEndTime: newValue,
+                                })
+                            }
+                            shouldDisableTime={(timeValue, clockType) => {
+                                if (clockType === 'minutes') return false;
+                                return !!(
+                                    newRow.absenceStartTime && newRow.absenceStartTime > timeValue
+                                );
+                            }}
+                            slotProps={{
+                                textField: {
+                                    fullWidth: true,
+                                    size: 'small',
+                                    error: !newRow.absenceEndTime,
+                                    required: true,
+                                    inputProps: {
+                                        'aria-label': 'Absence End Time',
+                                        'aria-required': 'true',
+                                    },
+                                },
+                            }}
+                        />
+                    </LocalizationProvider>
+                    <StyledTextField
+                        value={newRow.optionalMessage}
+                        onChange={(e) =>
+                            setNewRow({
+                                ...newRow,
+                                optionalMessage: e.target.value,
+                            })
+                        }
+                        size="small"
+                        fullWidth
+                        aria-label="Optional Message"
+                        placeholder="Enter optional message"
+                        inputProps={{
+                            'aria-label': 'Optional Message',
+                        }}
+                    />
+                    <Stack direction="row" spacing={1} justifyContent="flex-end">
+                        <Tooltip
+                            title={
+                                isFormValid() ? 'Save record' : 'Please fill all required fields'
+                            }
+                        >
+                            <span>
+                                <StyledButton
+                                    variant="outlined"
+                                    color="success"
+                                    onClick={onSave}
+                                    onKeyDown={(e) => handleKeyDown(e, onSave)}
+                                    disabled={!isFormValid()}
+                                    aria-label="Save absence record"
+                                    tabIndex={0}
+                                    size="small"
+                                >
+                                    Save
+                                </StyledButton>
+                            </span>
+                        </Tooltip>
+                        <StyledButton
+                            variant="outlined"
+                            color="error"
+                            onClick={onCancel}
+                            onKeyDown={(e) => handleKeyDown(e, onCancel)}
+                            aria-label="Cancel adding absence record"
+                            tabIndex={0}
+                            size="small"
+                        >
+                            Cancel
+                        </StyledButton>
+                    </Stack>
+                </Stack>
+            </Paper>
+        );
+    }
+
     return (
         <AnimatedTableRow
             initial={{ opacity: 0, y: 20 }}
@@ -611,6 +780,74 @@ AbsenceForm.propTypes = {
     onSave: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
     isMobile: PropTypes.bool.isRequired,
+};
+
+/**
+ * Reusable card component for displaying doctor absence information
+ *
+ * This component presents doctor absence records in a card format,
+ * optimized for mobile viewing. It displays essential information
+ * and provides an action button to remove the absence record.
+ *
+ * @param {Object} props Component props
+ * @param {Object} props.absence The absence record data
+ * @param {Function} props.onRemove Function to call when removing the record
+ * @returns {JSX.Element} Doctor absence card component
+ */
+const DoctorAbsenceCard = memo(({ absence, onRemove }) => (
+    <Paper
+        sx={{
+            mb: 2,
+            p: 2,
+            borderRadius: 2,
+            boxShadow: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+        }}
+        role="region"
+        aria-label={`Absence for ${absence.doctorName}`}
+    >
+        <Typography variant="subtitle1" fontWeight="bold">
+            {absence.doctorName} ({absence.doctorId})
+        </Typography>
+        <Typography variant="body2">
+            <b>Date:</b> {absence.absenceDate}
+        </Typography>
+        <Typography variant="body2">
+            <b>Start:</b> {absence.absenceStartTime} <b>End:</b> {absence.absenceEndTime}
+        </Typography>
+        {absence.optionalMessage && (
+            <Typography variant="body2" color="text.secondary">
+                <b>Note:</b> {absence.optionalMessage}
+            </Typography>
+        )}
+        <Box mt={1} display="flex" justifyContent="flex-end">
+            <StyledButton
+                variant="outlined"
+                color="error"
+                onClick={() => onRemove(absence.id)}
+                aria-label={`Remove absence record for ${absence.doctorName}`}
+                tabIndex={0}
+                size="small"
+            >
+                Remove
+            </StyledButton>
+        </Box>
+    </Paper>
+));
+DoctorAbsenceCard.displayName = 'DoctorAbsenceCard';
+DoctorAbsenceCard.propTypes = {
+    absence: PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+        doctorId: PropTypes.string.isRequired,
+        doctorName: PropTypes.string.isRequired,
+        absenceDate: PropTypes.string.isRequired,
+        absenceStartTime: PropTypes.string.isRequired,
+        absenceEndTime: PropTypes.string.isRequired,
+        optionalMessage: PropTypes.string,
+    }).isRequired,
+    onRemove: PropTypes.func.isRequired,
 };
 
 /**
@@ -900,12 +1137,6 @@ const DoctorAbsencePage = () => {
         return renderLoadingState();
     }
 
-    /**
-     * Main render function for the doctor absence page
-     * Displays the table of absence records and form for adding new records
-     * with responsive design and accessibility features
-     * @returns {JSX.Element} Rendered component
-     */
     return (
         <Card
             component={motion.div}
@@ -919,7 +1150,7 @@ const DoctorAbsencePage = () => {
                 borderRadius: 2,
                 overflow: 'hidden',
                 [theme.breakpoints.down('sm')]: {
-                    padding: 1,
+                    p: 0.5,
                 },
             }}
         >
@@ -927,9 +1158,8 @@ const DoctorAbsencePage = () => {
                 <Typography
                     variant="h2"
                     sx={{
-                        marginBottom: '20px',
-                        fontSize: isMobile ? '1.5rem' : '2rem',
-                        transition: 'all 0.3s ease',
+                        mb: 2,
+                        fontSize: isMobile ? '1.3rem' : '2rem',
                         fontWeight: 'bold',
                         color: 'primary.main',
                     }}
@@ -937,27 +1167,17 @@ const DoctorAbsencePage = () => {
                     Doctor Absence Information
                 </Typography>
 
-                <AnimatedTableContainer
-                    component={Paper}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    elevation={2}
-                >
-                    <Table aria-label="Doctor absence information table">
-                        <AbsenceTableHeader />
-                        <TableBody>
-                            <AnimatePresence>
-                                {doctorAbsence.map((absence) => (
-                                    <AbsenceTableRow
-                                        key={absence.id}
-                                        absence={absence}
-                                        onRemove={handleRemove}
-                                    />
-                                ))}
-                            </AnimatePresence>
-
-                            {isAdding && (
+                {isMobile ? (
+                    <Box>
+                        {doctorAbsence.map((absence) => (
+                            <DoctorAbsenceCard
+                                key={absence.id}
+                                absence={absence}
+                                onRemove={handleRemove}
+                            />
+                        ))}
+                        {isAdding && (
+                            <Box mb={2}>
                                 <AbsenceForm
                                     doctorData={doctorData}
                                     newRow={newRow}
@@ -976,23 +1196,65 @@ const DoctorAbsencePage = () => {
                                     }}
                                     isMobile={isMobile}
                                 />
-                            )}
-                        </TableBody>
-                    </Table>
-                </AnimatedTableContainer>
+                            </Box>
+                        )}
+                    </Box>
+                ) : (
+                    <AnimatedTableContainer
+                        component={Paper}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                        elevation={2}
+                    >
+                        <Table aria-label="Doctor absence information table">
+                            <AbsenceTableHeader />
+                            <TableBody>
+                                <AnimatePresence>
+                                    {doctorAbsence.map((absence) => (
+                                        <AbsenceTableRow
+                                            key={absence.id}
+                                            absence={absence}
+                                            onRemove={handleRemove}
+                                        />
+                                    ))}
+                                </AnimatePresence>
+                                {isAdding && (
+                                    <AbsenceForm
+                                        doctorData={doctorData}
+                                        newRow={newRow}
+                                        setNewRow={setNewRow}
+                                        onSave={handleSave}
+                                        onCancel={() => {
+                                            setNewRow({
+                                                doctorId: '',
+                                                doctorName: '',
+                                                absenceDate: null,
+                                                absenceStartTime: null,
+                                                absenceEndTime: null,
+                                                optionalMessage: '',
+                                            });
+                                            setIsAdding(false);
+                                        }}
+                                        isMobile={isMobile}
+                                    />
+                                )}
+                            </TableBody>
+                        </Table>
+                    </AnimatedTableContainer>
+                )}
 
                 <Box
                     mt={2}
                     display="flex"
                     justifyContent="flex-end"
                     sx={{
-                        position: 'sticky',
+                        position: isMobile ? 'static' : 'sticky',
                         bottom: 0,
                         backgroundColor: 'background.paper',
-                        padding: '16px 0',
-                        transition: 'all 0.3s ease',
+                        p: isMobile ? 1 : '16px 0',
                         zIndex: 1,
-                        boxShadow: '0 -2px 10px rgba(0,0,0,0.05)',
+                        boxShadow: isMobile ? 'none' : '0 -2px 10px rgba(0,0,0,0.05)',
                     }}
                 >
                     <Tooltip title="Add new doctor absence record">
@@ -1008,6 +1270,7 @@ const DoctorAbsencePage = () => {
                                 </span>
                             }
                             tabIndex={0}
+                            size={isMobile ? 'small' : 'medium'}
                         >
                             Add
                         </StyledButton>
