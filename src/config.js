@@ -3,8 +3,8 @@ const config = {
         baseUrl: import.meta.env.VITE_API_BASE_URL,
         endpoints: {
             auth: {
-                login: import.meta.env.VITE_API_AUTH_PATH || '/auth/login',
-                validate: import.meta.env.VITE_API_VALIDATE_PATH || '/auth/validate',
+                login: '/auth/login',
+                validate: '/auth/validate',
             },
         },
     },

@@ -11,6 +11,25 @@ app.use(express.static('dist'));
 
 // Proxy API requests
 app.use(
+    '/auth',
+    createProxyMiddleware({
+        target: apiBaseUrl,
+        changeOrigin: true,
+        secure: true,
+        onError: (err, req, res) => {
+            console.error('Auth Proxy Error:', err);
+            res.status(500).send('Proxy Error');
+        },
+        onProxyReq: (proxyReq, req, res) => {
+            console.log('Proxying Auth:', req.method, req.url);
+        },
+        onProxyRes: (proxyRes, req, res) => {
+            console.log('Received Auth:', proxyRes.statusCode, req.url);
+        },
+    })
+);
+
+app.use(
     '/api',
     createProxyMiddleware({
         target: apiBaseUrl,

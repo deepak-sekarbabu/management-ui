@@ -27,8 +27,9 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         const storedToken = localStorage.getItem('token');
         if (storedToken) {
+            axios.defaults.headers.common.Authorization = `Bearer ${storedToken}`;
             axios
-                .post(`${config.api.baseUrl}${config.api.endpoints.auth.validate}`, {
+                .post(config.api.endpoints.auth.validate, {
                     token: storedToken,
                 })
                 .then((res) => {
@@ -39,7 +40,6 @@ export function AuthProvider({ children }) {
                             clinicIds: res.data.clinicIds,
                         });
                         setToken(storedToken);
-                        axios.defaults.headers.common.Authorization = `Bearer ${storedToken}`;
                     } else {
                         handleLogout();
                     }
@@ -58,23 +58,17 @@ export function AuthProvider({ children }) {
         async (username, password) => {
             setLoading(true);
             try {
-                const res = await axios.post(
-                    `${config.api.baseUrl}${config.api.endpoints.auth.login}`,
-                    {
-                        username,
-                        password,
-                    }
-                );
-                const receivedToken = res.data.token;
+                const res = await axios.post(config.api.endpoints.auth.login, {
+                    username,
+                    password,
+                });
+                const receivedToken = res.data.accessToken;
                 localStorage.setItem('token', receivedToken);
                 axios.defaults.headers.common.Authorization = `Bearer ${receivedToken}`;
                 // Validate token and get user info
-                const validationRes = await axios.post(
-                    `${config.api.baseUrl}${config.api.endpoints.auth.validate}`,
-                    {
-                        token: receivedToken,
-                    }
-                );
+                const validationRes = await axios.post(config.api.endpoints.auth.validate, {
+                    token: receivedToken,
+                });
                 if (validationRes.data.valid) {
                     setUser({
                         username: validationRes.data.username,
