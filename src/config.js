@@ -5,6 +5,7 @@ const config = {
             auth: {
                 login: '/auth/login',
                 validate: '/auth/validate',
+                logout: '/auth/logout',
             },
         },
     },

@@ -14,13 +14,24 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true);
 
     // Logout function
-    const handleLogout = useCallback(() => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userInfo');
-        setUser(null);
-        setToken(null);
-        delete axios.defaults.headers.common.Authorization;
-        navigate('/login', { replace: true });
+    const handleLogout = useCallback(async () => {
+        try {
+            const storedToken = localStorage.getItem('token');
+            if (storedToken) {
+                await axios.post(config.api.endpoints.auth.logout, null, {
+                    headers: { Authorization: `Bearer ${storedToken}` },
+                });
+            }
+        } catch (error) {
+            console.error('Logout failed:', error);
+        } finally {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userInfo');
+            setUser(null);
+            setToken(null);
+            delete axios.defaults.headers.common.Authorization;
+            navigate('/login', { replace: true });
+        }
     }, [navigate]);
 
     // Validate token and load user info on mount
