@@ -71,7 +71,7 @@ export default function Nav({ openNav, onCloseNav }) {
                     // If user has no role, don't show the item
                     if (!user?.role) return false;
                     // Check if user's role is in the allowed roles for this item
-                    return item.roles.includes(user.role.toLowerCase());
+                    return item.roles.includes(user.role.replace('ROLE_', '').toLowerCase());
                 })
                 .map((item) => (
                     <NavItem key={item.title} item={item} />
