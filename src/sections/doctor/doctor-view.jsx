@@ -7,10 +7,15 @@ import {
     Alert,
     Stack,
     Button,
+    Dialog,
     Snackbar,
     Container,
     Typography,
+    DialogTitle,
+    DialogActions,
+    DialogContent,
     CircularProgress,
+    DialogContentText,
 } from '@mui/material';
 
 import { useAuth } from 'src/components/AuthProvider';
@@ -29,6 +34,8 @@ const DoctorPage = () => {
     const [errorOpen, setErrorOpen] = useState(false); // Controls the visibility of the error Snackbar
     const [successMessage, setSuccessMessage] = useState(''); // Specific success message for the Snackbar
     const [successOpen, setSuccessOpen] = useState(false); // Controls the visibility of the success Snackbar
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+    const [pendingRemove, setPendingRemove] = useState(null); // { clinicId, doctorId }
 
     // Closes the error Snackbar
     const handleCloseError = (event, reason) => {
@@ -186,20 +193,25 @@ const DoctorPage = () => {
         setNewDoctor(newDoctorEntry); // Update state to show the new doctor form/card
     };
 
-    // Handles the removal of a doctor
+    // Handles the removal of a doctor (with confirmation)
     const handleRemove = async (clinicId, doctorId) => {
-        console.log('Attempting to remove doctor. Clinic ID:', clinicId, 'Doctor ID:', doctorId);
+        setPendingRemove({ clinicId, doctorId });
+        setConfirmDialogOpen(true);
+    };
+
+    const confirmRemove = async () => {
+        if (!pendingRemove) return;
+        setConfirmDialogOpen(false);
+        const { clinicId, doctorId } = pendingRemove;
+        setPendingRemove(null);
         try {
             // If doctorId is a UUID (string with hyphens), it's a new, unsaved doctor
             if (typeof doctorId === 'string' && doctorId.includes('-')) {
                 setNewDoctor(null); // Clear the new doctor form
-                // Filter out the doctor from the local state (if it was somehow added)
                 setDoctors(doctors.filter((doctor) => doctor.doctorId !== doctorId));
-                showSuccess('New doctor form discarded.'); // Show success message
+                showSuccess('New doctor form discarded.');
                 return;
             }
-
-            // Proceed with API call for existing doctor
             const token = localStorage.getItem('token');
             const response = await fetch(`api/doctor/${clinicId}/${doctorId}`, {
                 method: 'DELETE',
@@ -208,36 +220,32 @@ const DoctorPage = () => {
                     'Content-Type': 'application/json',
                 },
             });
-
             if (!response.ok) {
                 let errorDetail = `HTTP error status: ${response.status}`;
                 try {
-                    // Attempt to parse error message from response body
                     const errorData = await response.json();
                     if (errorData.message) {
                         errorDetail = errorData.message;
                     }
                 } catch (parseError) {
-                    // If response is not valid JSON, use status text or default error
                     errorDetail = response.statusText || errorDetail;
                 }
-
-                // Handle specific error codes, like conflict (409)
                 if (response.status === 409) {
                     errorDetail = 'Cannot delete doctor: Doctor has existing appointments.';
                 }
-                throw new Error(errorDetail); // Throw error to be caught by catch block
+                throw new Error(errorDetail);
             }
-
-            console.log('Doctor removed successfully via API');
-            setNewDoctor(null); // Ensure no new doctor form is active
-            // Update local state to reflect removal
+            setNewDoctor(null);
             setDoctors(doctors.filter((doctor) => doctor.doctorId !== doctorId));
-            showSuccess('Doctor removed successfully.'); // Show success message
+            showSuccess('Doctor removed successfully.');
         } catch (removeError) {
-            console.error('Error removing doctor:', removeError);
-            showError(`Error removing doctor: ${removeError.message}`); // Show error in Snackbar
+            showError(`Error removing doctor: ${removeError.message}`);
         }
+    };
+
+    const cancelRemove = () => {
+        setConfirmDialogOpen(false);
+        setPendingRemove(null);
     };
 
     // Saves a new or existing doctor's information
@@ -462,6 +470,22 @@ const DoctorPage = () => {
                     {successMessage}
                 </Alert>
             </Snackbar>
+            <Dialog open={confirmDialogOpen} onClose={cancelRemove}>
+                <DialogTitle>Confirm Removal</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to remove this doctor? This action cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={cancelRemove} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={confirmRemove} color="error" autoFocus>
+                        Remove
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Card>
     );
 };
