@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
 import Select from '@mui/material/Select';
-import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
-import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
 import TableSortLabel from '@mui/material/TableSortLabel';
 
 import { visuallyHidden } from './utils';
@@ -72,6 +72,7 @@ export default function QueueTableHead({
                                 <MenuItem value="MORNING">Morning</MenuItem>
                                 <MenuItem value="AFTERNOON">Afternoon</MenuItem>
                                 <MenuItem value="EVENING">Evening</MenuItem>
+                                <MenuItem value="NIGHT">Night</MenuItem>
                             </Select>
                         )}
                         {headCell.id === 'patientReached' && (
