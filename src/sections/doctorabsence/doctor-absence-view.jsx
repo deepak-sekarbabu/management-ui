@@ -1244,37 +1244,19 @@ const DoctorAbsencePage = () => {
                     </AnimatedTableContainer>
                 )}
 
-                <Box
-                    mt={2}
-                    display="flex"
-                    justifyContent="flex-end"
-                    sx={{
-                        position: isMobile ? 'static' : 'sticky',
-                        bottom: 0,
-                        backgroundColor: 'background.paper',
-                        p: isMobile ? 1 : '16px 0',
-                        zIndex: 1,
-                        boxShadow: isMobile ? 'none' : '0 -2px 10px rgba(0,0,0,0.05)',
-                    }}
-                >
-                    <Tooltip title="Add new doctor absence record">
-                        <StyledButton
-                            variant="contained"
-                            color="primary"
-                            onClick={() => setIsAdding(true)}
-                            aria-label="Add new absence record"
-                            disabled={isAdding}
-                            startIcon={
-                                <span role="img" aria-label="add">
-                                    ➕
-                                </span>
-                            }
-                            tabIndex={0}
-                            size={isMobile ? 'small' : 'medium'}
-                        >
-                            Add
-                        </StyledButton>
-                    </Tooltip>
+                <Box mt={2} display="flex" justifyContent={{ xs: 'center', sm: 'flex-end' }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => setIsAdding(true)}
+                        aria-label="Add Doctor Absence"
+                        disabled={isAdding}
+                        sx={{ minWidth: { xs: '80%', sm: 'auto' } }}
+                        tabIndex={0}
+                        size={isMobile ? 'small' : 'medium'}
+                    >
+                        Add Doctor Absence
+                    </Button>
                 </Box>
             </Box>
 
