@@ -257,7 +257,12 @@ export default function QueuePage() {
                                         minWidth: 120,
                                         align: 'center',
                                     },
-                                    { id: '', minWidth: 60, align: 'right' },
+                                    {
+                                        id: 'actions',
+                                        label: 'Actions',
+                                        minWidth: 120,
+                                        align: 'center',
+                                    },
                                 ]}
                                 shiftTimeFilter={shiftTimeFilter}
                                 setShiftTimeFilter={setShiftTimeFilter}

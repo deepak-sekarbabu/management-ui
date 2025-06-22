@@ -1,19 +1,16 @@
 import axios from 'axios';
-import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import Popover from '@mui/material/Popover';
+import Tooltip from '@mui/material/Tooltip';
 import Checkbox from '@mui/material/Checkbox';
-import MenuItem from '@mui/material/MenuItem';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 const PATIENT_REACHED = '/api/queue/patientReached/';
@@ -35,22 +32,10 @@ export default function QueueTableRow({
     handleClick,
     onQueueUpdate,
 }) {
-    const [open, setOpen] = useState(null);
-
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
-    };
-
-    const handleCloseMenu = async () => {
-        console.log('handleCloseMenu');
-        setOpen(null);
-    };
-
     const handlePatientReachedMenu = async (event) => {
         try {
             console.log(id);
             await axios.put(PATIENT_REACHED + id);
-            setOpen(null);
             if (onQueueUpdate) {
                 onQueueUpdate(); // Invoke the callback to reload the queue data
             }
@@ -63,7 +48,6 @@ export default function QueueTableRow({
         try {
             console.log(id);
             await axios.put(PATIENT_CANCELLED + id);
-            setOpen(null);
             if (onQueueUpdate) {
                 onQueueUpdate(); // Invoke the callback to reload the queue data
             }
@@ -76,7 +60,6 @@ export default function QueueTableRow({
         try {
             console.log(id);
             await axios.put(PATIENT_VISIT_DONE + id);
-            setOpen(null);
             if (onQueueUpdate) {
                 onQueueUpdate(); // Invoke the callback to reload the queue data
             }
@@ -89,7 +72,6 @@ export default function QueueTableRow({
         try {
             console.log(id);
             await axios.put(PATIENT_SKIP + id);
-            setOpen(null);
             if (onQueueUpdate) {
                 onQueueUpdate(); // Invoke the callback to reload the queue data
             }
@@ -99,73 +81,71 @@ export default function QueueTableRow({
     };
 
     return (
-        <>
-            <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-                <TableCell padding="checkbox">
-                    <Checkbox disableRipple checked={selected} onChange={handleClick} />
-                </TableCell>
+        <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
+            <TableCell padding="checkbox">
+                <Checkbox disableRipple checked={selected} onChange={handleClick} />
+            </TableCell>
 
-                <TableCell component="th" scope="row" padding="none" sx={{ minWidth: 180 }}>
-                    <Stack direction="row" alignItems="center" spacing={2}>
-                        <Avatar alt={patientName} src={avatarUrl} />
-                        <Typography variant="subtitle2" noWrap>
-                            {patientName}
-                        </Typography>
-                    </Stack>
-                </TableCell>
-                <TableCell sx={{ minWidth: 160 }}>{doctorName}</TableCell>
-                <TableCell align="center" sx={{ minWidth: 120 }}>
-                    {shiftTime}
-                </TableCell>
-                <TableCell align="center" sx={{ minWidth: 100 }}>
-                    {queueNo}
-                </TableCell>
-                <TableCell align="center" sx={{ minWidth: 180 }}>
-                    {patientPhoneNumber}
-                </TableCell>
-                <TableCell align="center" sx={{ minWidth: 140 }}>
-                    <Label color={(patientReached === 'false' && 'error') || 'success'}>
-                        {patientReached === 'true' ? 'Yes' : 'No'}
-                    </Label>
-                </TableCell>
-                <TableCell align="center" sx={{ minWidth: 120 }}>
-                    {time}
-                </TableCell>
-                <TableCell sx={{ display: 'none' }}>{id}</TableCell>
-                <TableCell align="right" sx={{ minWidth: 60 }}>
-                    <IconButton onClick={handleOpenMenu} aria-label="open actions menu">
-                        <Iconify icon="eva:more-vertical-fill" />
-                    </IconButton>
-                </TableCell>
-            </TableRow>
-
-            <Popover
-                open={!!open}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: { width: 140 },
-                }}
-            >
-                <MenuItem onClick={handlePatientReachedMenu} sx={{ color: 'orange' }}>
-                    Patient Reached
-                </MenuItem>
-
-                <MenuItem onClick={handleSkipPatient} sx={{ color: 'error.main' }}>
-                    Skip Patient
-                </MenuItem>
-
-                <MenuItem onClick={handleCancelPatient} sx={{ color: 'error.main' }}>
-                    Cancel
-                </MenuItem>
-
-                <MenuItem onClick={handlePatientVisitDone} sx={{ color: 'green' }}>
-                    Visit Done
-                </MenuItem>
-            </Popover>
-        </>
+            <TableCell component="th" scope="row" padding="none" sx={{ minWidth: 180 }}>
+                <Stack direction="row" alignItems="center" spacing={2}>
+                    <Avatar alt={patientName} src={avatarUrl} />
+                    <Typography variant="subtitle2" noWrap>
+                        {patientName}
+                    </Typography>
+                </Stack>
+            </TableCell>
+            <TableCell sx={{ minWidth: 160 }}>{doctorName}</TableCell>
+            <TableCell align="center" sx={{ minWidth: 120 }}>
+                {shiftTime}
+            </TableCell>
+            <TableCell align="center" sx={{ minWidth: 100 }}>
+                {queueNo}
+            </TableCell>
+            <TableCell align="center" sx={{ minWidth: 180 }}>
+                {patientPhoneNumber}
+            </TableCell>
+            <TableCell align="center" sx={{ minWidth: 140 }}>
+                <Label color={(patientReached === 'false' && 'error') || 'success'}>
+                    {patientReached === 'true' ? 'Yes' : 'No'}
+                </Label>
+            </TableCell>
+            <TableCell align="center" sx={{ minWidth: 120 }}>
+                {time}
+            </TableCell>
+            <TableCell sx={{ display: 'none' }}>{id}</TableCell>
+            <TableCell align="right" sx={{ minWidth: 200 }}>
+                <Stack direction="row" spacing={1} justifyContent="flex-end">
+                    <Tooltip title="Mark patient as arrived">
+                        <IconButton onClick={handlePatientReachedMenu} aria-label="Patient Reached">
+                            <span role="img" aria-label="Patient Reached">
+                                ✅
+                            </span>
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Move patient down the queue">
+                        <IconButton onClick={handleSkipPatient} aria-label="Skip Patient">
+                            <span role="img" aria-label="Skip Patient">
+                                ⏭️
+                            </span>
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Remove patient from queue">
+                        <IconButton onClick={handleCancelPatient} aria-label="Cancel">
+                            <span role="img" aria-label="Cancel">
+                                ❌
+                            </span>
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Mark visit as completed">
+                        <IconButton onClick={handlePatientVisitDone} aria-label="Visit Done">
+                            <span role="img" aria-label="Visit Done">
+                                🏁
+                            </span>
+                        </IconButton>
+                    </Tooltip>
+                </Stack>
+            </TableCell>
+        </TableRow>
     );
 }
 
