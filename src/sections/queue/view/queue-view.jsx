@@ -225,22 +225,39 @@ export default function QueuePage() {
                                 onRequestSort={handleSort}
                                 onSelectAllClick={handleSelectAllClick}
                                 headLabel={[
-                                    { id: 'patientName', label: 'Patient Name' },
-                                    { id: 'doctorName', label: 'Doctor Name' },
-                                    { id: 'shiftTime', label: 'Shift Time' },
-                                    { id: 'queueNo', label: 'Queue No' },
+                                    { id: 'patientName', label: 'Patient Name', minWidth: 180 },
+                                    { id: 'doctorName', label: 'Doctor Name', minWidth: 160 },
+                                    {
+                                        id: 'shiftTime',
+                                        label: 'Shift Time',
+                                        minWidth: 120,
+                                        align: 'center',
+                                    },
+                                    {
+                                        id: 'queueNo',
+                                        label: 'Queue No',
+                                        minWidth: 100,
+                                        align: 'center',
+                                    },
                                     {
                                         id: 'patientPhoneNumber',
                                         label: 'Patient Phone Number',
+                                        minWidth: 180,
                                         align: 'center',
                                     },
                                     {
                                         id: 'patientReached',
                                         label: 'Patient Reached',
+                                        minWidth: 140,
                                         align: 'center',
                                     },
-                                    { id: 'time', label: 'Queue Time' },
-                                    { id: '' },
+                                    {
+                                        id: 'time',
+                                        label: 'Queue Time',
+                                        minWidth: 120,
+                                        align: 'center',
+                                    },
+                                    { id: '', minWidth: 60, align: 'right' },
                                 ]}
                                 shiftTimeFilter={shiftTimeFilter}
                                 setShiftTimeFilter={setShiftTimeFilter}

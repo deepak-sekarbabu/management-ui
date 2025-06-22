@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
-import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
+import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -105,7 +105,7 @@ export default function QueueTableRow({
                     <Checkbox disableRipple checked={selected} onChange={handleClick} />
                 </TableCell>
 
-                <TableCell component="th" scope="row" padding="none">
+                <TableCell component="th" scope="row" padding="none" sx={{ minWidth: 180 }}>
                     <Stack direction="row" alignItems="center" spacing={2}>
                         <Avatar alt={patientName} src={avatarUrl} />
                         <Typography variant="subtitle2" noWrap>
@@ -113,18 +113,26 @@ export default function QueueTableRow({
                         </Typography>
                     </Stack>
                 </TableCell>
-                <TableCell>{doctorName}</TableCell>
-                <TableCell>{shiftTime}</TableCell>
-                <TableCell>{queueNo}</TableCell>
-                <TableCell>{patientPhoneNumber}</TableCell>
-                <TableCell>
+                <TableCell sx={{ minWidth: 160 }}>{doctorName}</TableCell>
+                <TableCell align="center" sx={{ minWidth: 120 }}>
+                    {shiftTime}
+                </TableCell>
+                <TableCell align="center" sx={{ minWidth: 100 }}>
+                    {queueNo}
+                </TableCell>
+                <TableCell align="center" sx={{ minWidth: 180 }}>
+                    {patientPhoneNumber}
+                </TableCell>
+                <TableCell align="center" sx={{ minWidth: 140 }}>
                     <Label color={(patientReached === 'false' && 'error') || 'success'}>
                         {patientReached === 'true' ? 'Yes' : 'No'}
                     </Label>
                 </TableCell>
-                <TableCell>{time}</TableCell>
+                <TableCell align="center" sx={{ minWidth: 120 }}>
+                    {time}
+                </TableCell>
                 <TableCell sx={{ display: 'none' }}>{id}</TableCell>
-                <TableCell align="right">
+                <TableCell align="right" sx={{ minWidth: 60 }}>
                     <IconButton onClick={handleOpenMenu} aria-label="open actions menu">
                         <Iconify icon="eva:more-vertical-fill" />
                     </IconButton>

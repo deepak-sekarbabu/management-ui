@@ -33,7 +33,7 @@ export default function QueueTableHead({
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox">
+                <TableCell padding="checkbox" sx={{ width: 48 }}>
                     <Checkbox
                         indeterminate={numSelected > 0 && numSelected < rowCount}
                         checked={rowCount > 0 && numSelected === rowCount}
