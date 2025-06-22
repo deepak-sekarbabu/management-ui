@@ -310,25 +310,25 @@ const ClinicPage = () => {
                         >
                             <Stack spacing={2} sx={{ mt: 2 }}>
                                 <Typography color="textSecondary">
-                                    {clinic.clinicAddress}
+                                    🏥 {clinic.clinicAddress}
                                 </Typography>
                                 <Typography color="textSecondary">
-                                    Pin Code: {clinic.clinicPinCode}
+                                    🏷️ Pin Code: {clinic.clinicPinCode}
                                 </Typography>
                                 <Typography color="textSecondary">
-                                    Email: {clinic.clinicEmail}
+                                    📧 Email: {clinic.clinicEmail}
                                 </Typography>
                                 <Typography color="textSecondary">
-                                    Website: {clinic.clinicWebsite}
+                                    🌐 Website: {clinic.clinicWebsite}
                                 </Typography>
                                 <Typography color="textSecondary">
-                                    Timings: {clinic.clinicTimings}
+                                    🕒 Timings: {clinic.clinicTimings}
                                 </Typography>
                                 <Typography color="textSecondary">
-                                    Amenities: {clinic.clinicAmenities}
+                                    🛋️ Amenities: {clinic.clinicAmenities}
                                 </Typography>
                                 <Typography color="textSecondary">
-                                    Phone Numbers:{' '}
+                                    ☎️ Phone Numbers:{' '}
                                     {clinic.clinicPhoneNumbers.map((p) => p.phoneNumber).join(', ')}
                                 </Typography>
                                 <Box mt={3} display="flex" justifyContent="center">

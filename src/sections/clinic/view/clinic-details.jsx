@@ -198,7 +198,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
             <FormStack>
                 <StyledTextField
                     name="clinicName"
-                    label="Clinic Name"
+                    label="Clinic Name 🏥"
                     value={formValues.clinicName}
                     onChange={handleChange}
                     disabled={!isEditable}
@@ -219,7 +219,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
 
                 <StyledTextField
                     name="clinicAddress"
-                    label="Clinic Address"
+                    label="Clinic Address 📍"
                     value={formValues.clinicAddress}
                     onChange={handleChange}
                     disabled={!isEditable}
@@ -240,7 +240,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
 
                 <StyledTextField
                     name="clinicPinCode"
-                    label="Clinic Pin Code"
+                    label="Clinic Pin Code 🏷️"
                     value={formValues.clinicPinCode}
                     onChange={handleChange}
                     disabled={!isEditable}
@@ -267,7 +267,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
                             name={`clinicPhoneNumbers[${index}].phoneNumber`}
                             value={phone.phoneNumber}
                             onChange={(e) => handleChangePhoneNumber(e, index)}
-                            label={`Phone Number ${index + 1}`}
+                            label={`Phone Number ☎️ ${index + 1}`}
                             disabled={!isEditable}
                             variant="outlined"
                             InputProps={{
@@ -291,7 +291,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
 
                 <StyledTextField
                     name="clinicEmail"
-                    label="Clinic Email"
+                    label="Clinic Email 📧"
                     value={formValues.clinicEmail}
                     onChange={handleChange}
                     disabled={!isEditable}
@@ -309,7 +309,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
 
                 <StyledTextField
                     name="clinicWebsite"
-                    label="Clinic Website"
+                    label="Clinic Website 🌐"
                     value={formValues.clinicWebsite}
                     onChange={handleChange}
                     disabled={!isEditable}
@@ -326,7 +326,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
 
                 <StyledTextField
                     name="clinicTimings"
-                    label="Clinic Timings"
+                    label="Clinic Timings 🕒"
                     value={formValues.clinicTimings}
                     onChange={handleChange}
                     disabled={!isEditable}
@@ -343,7 +343,7 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
 
                 <StyledTextField
                     name="clinicAmenities"
-                    label="Clinic Amenities"
+                    label="Clinic Amenities 🛋️"
                     value={formValues.clinicAmenities}
                     onChange={handleChange}
                     disabled={!isEditable}
