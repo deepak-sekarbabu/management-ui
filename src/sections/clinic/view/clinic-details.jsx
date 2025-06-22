@@ -101,7 +101,8 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
 
     const isValidWebsite = useCallback((website) => {
         if (!website) return true;
-        const websiteRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+        // Require http(s) protocol and a valid domain
+        const websiteRegex = /^(https?:\/\/)([\w-]+\.)+[\w-]{2,}(\/.*)?$/i;
         return websiteRegex.test(website);
     }, []);
 
@@ -185,7 +186,9 @@ function ClinicDetails({ clinic, isEditable, onFormValuesChange }) {
     const helperTexts = useMemo(
         () => ({
             email: getEmailHelperText(),
-            website: websiteError ? 'Invalid website URL format' : '',
+            website: websiteError
+                ? 'Invalid website URL. Must start with http:// or https:// and be a valid domain.'
+                : '',
             timings: timingsError ? 'Clinic Timings should not exceed 149 characters' : '',
             amenities: amenitiesError ? 'Clinic Amenities should not exceed 149 characters' : '',
         }),

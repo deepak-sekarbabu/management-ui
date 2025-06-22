@@ -10,13 +10,18 @@ import {
     Stack,
     Avatar,
     Button,
+    Dialog,
     Divider,
     Snackbar,
     Container,
     IconButton,
     Typography,
     CardContent,
+    DialogTitle,
+    DialogActions,
+    DialogContent,
     CircularProgress,
+    DialogContentText,
 } from '@mui/material';
 
 import Iconify from 'src/components/iconify';
@@ -105,6 +110,7 @@ const ClinicPage = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [loadError, setLoadError] = useState(null);
     const [expandedClinic, setExpandedClinic] = useState(null);
+    const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
     // Memoized handlers for better performance
     const handleCloseError = useCallback(() => setErrorOpen(false), []);
@@ -181,13 +187,9 @@ const ClinicPage = () => {
 
     const handleCancel = useCallback(async () => {
         if (hasUnsavedChanges) {
-            // Show confirmation dialog before reloading
-            if (window.confirm('You have unsaved changes. Are you sure you want to cancel?')) {
-                window.location.reload();
-            }
+            setCancelDialogOpen(true);
             return;
         }
-
         try {
             const response = await axios.get(`${GET_CLINIC_INFO}${editedClinicData.clinicId}`);
             setEditedClinicData(response.data);
@@ -198,6 +200,23 @@ const ClinicPage = () => {
             showError('Failed to refresh clinic data');
         }
     }, [hasUnsavedChanges, editedClinicData.clinicId, showError]);
+
+    const confirmCancel = async () => {
+        setCancelDialogOpen(false);
+        try {
+            const response = await axios.get(`${GET_CLINIC_INFO}${editedClinicData.clinicId}`);
+            setEditedClinicData(response.data);
+            setEditMode(false);
+            setHasUnsavedChanges(false);
+        } catch (fetchError) {
+            console.error('Error fetching clinic data:', fetchError);
+            showError('Failed to refresh clinic data');
+        }
+    };
+
+    const cancelCancel = () => {
+        setCancelDialogOpen(false);
+    };
 
     const handleSave = useCallback(async () => {
         try {
@@ -483,6 +502,22 @@ const ClinicPage = () => {
                     {successMessage}
                 </Alert>
             </Snackbar>
+            <Dialog open={cancelDialogOpen} onClose={cancelCancel}>
+                <DialogTitle>Unsaved Changes</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        You have unsaved changes. Are you sure you want to cancel?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={cancelCancel} color="primary">
+                        Continue Editing
+                    </Button>
+                    <Button onClick={confirmCancel} color="error" autoFocus>
+                        Cancel Changes
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </StyledCard>
     );
 };
