@@ -2,12 +2,12 @@ import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect, useCallback } from 'react';
 
-// MUI date pickers and adapter
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// MUI date pickers and adapter
 import { TimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 // MUI core components for table and form elements
 import {
-    Box, // Added Box for flexible layout
+    Box,
     Paper,
     Table,
     Button,
@@ -19,8 +19,8 @@ import {
     TableHead,
     TextField,
     FormControl,
-    TableContainer,
     FormHelperText,
+    TableContainer,
 } from '@mui/material';
 
 // Component to manage doctor's availability schedule
@@ -131,9 +131,60 @@ const DoctorAvailability = ({
                 processedValue = value === '' ? '' : Number(value); // Allow empty string for intermediate input state
             }
 
-            const updatedAvailability = editedAvailability.map((item, i) =>
-                i === index ? { ...item, [field]: processedValue } : item
-            );
+            let updatedAvailability;
+            if (field === 'shiftTime' && value === 'MORNING') {
+                // If shiftTime is set to MORNING, auto-set start and end times
+                updatedAvailability = editedAvailability.map((item, i) =>
+                    i === index
+                        ? {
+                              ...item,
+                              shiftTime: processedValue,
+                              shiftStartTime: '06:00:00',
+                              shiftEndTime: '11:59:00',
+                          }
+                        : item
+                );
+            } else if (field === 'shiftTime' && value === 'AFTERNOON') {
+                // If shiftTime is set to AFTERNOON, auto-set start and end times
+                updatedAvailability = editedAvailability.map((item, i) =>
+                    i === index
+                        ? {
+                              ...item,
+                              shiftTime: processedValue,
+                              shiftStartTime: '12:00:00',
+                              shiftEndTime: '15:00:00',
+                          }
+                        : item
+                );
+            } else if (field === 'shiftTime' && value === 'EVENING') {
+                // If shiftTime is set to EVENING, auto-set start and end times
+                updatedAvailability = editedAvailability.map((item, i) =>
+                    i === index
+                        ? {
+                              ...item,
+                              shiftTime: processedValue,
+                              shiftStartTime: '16:00:00',
+                              shiftEndTime: '21:00:00',
+                          }
+                        : item
+                );
+            } else if (field === 'shiftTime' && value === 'NIGHT') {
+                // If shiftTime is set to NIGHT, auto-set start and end times
+                updatedAvailability = editedAvailability.map((item, i) =>
+                    i === index
+                        ? {
+                              ...item,
+                              shiftTime: processedValue,
+                              shiftStartTime: '20:00:00',
+                              shiftEndTime: '23:00:00',
+                          }
+                        : item
+                );
+            } else {
+                updatedAvailability = editedAvailability.map((item, i) =>
+                    i === index ? { ...item, [field]: processedValue } : item
+                );
+            }
             setEditedAvailability(updatedAvailability);
             validateRow(index, updatedAvailability[index]); // Validate after state update
             onAvailabilityChange(updatedAvailability); // Propagate changes to parent
