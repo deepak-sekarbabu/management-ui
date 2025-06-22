@@ -27,6 +27,7 @@ import {
     Stack,
     Table,
     Button,
+    Dialog,
     Select,
     Tooltip,
     MenuItem,
@@ -39,9 +40,13 @@ import {
     TableHead,
     TextField,
     Typography,
+    DialogTitle,
+    DialogActions,
+    DialogContent,
     useMediaQuery,
     TableContainer,
     CircularProgress,
+    DialogContentText,
 } from '@mui/material';
 
 import { useAuth } from 'src/components/AuthProvider';
@@ -888,6 +893,8 @@ const DoctorAbsencePage = () => {
     const [isAdding, setIsAdding] = useState(false);
     const [doctorData, setDoctorData] = useState([]);
     const [isLoading, setLoading] = useState(true);
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+    const [pendingRemoveId, setPendingRemoveId] = useState(null);
 
     // Memoized clinic ID to prevent unnecessary recalculations
     const clinicId = useMemo(() => user?.clinicIds?.[0], [user?.clinicIds]);
@@ -973,16 +980,20 @@ const DoctorAbsencePage = () => {
         fetchDoctorAbsence();
     }, [fetchDoctorData, fetchDoctorAbsence]);
 
-    /**
-     * Handles removal of a doctor absence record
-     * @param {number|string} id - The ID of the record to remove
-     * @returns {Promise<void>}
-     */
-    const handleRemove = async (id) => {
+    // Handles the removal of a doctor absence (with confirmation)
+    const handleRemove = (id) => {
+        setPendingRemoveId(id);
+        setConfirmDialogOpen(true);
+    };
+
+    const confirmRemove = async () => {
+        if (!pendingRemoveId) return;
+        setConfirmDialogOpen(false);
+        const id = pendingRemoveId;
+        setPendingRemoveId(null);
         try {
             const token = localStorage.getItem('token');
             if (!token) throw new Error('No authentication token found');
-
             const response = await fetch(`api/doctor-absence/${id}`, {
                 method: 'DELETE',
                 headers: {
@@ -990,15 +1001,17 @@ const DoctorAbsencePage = () => {
                     'Content-Type': 'application/json',
                 },
             });
-
             if (!response.ok) throw new Error('Failed to delete the record');
-
             setDoctorAbsence((prev) => prev.filter((absence) => absence.id !== id));
             showSuccess('Absence record deleted successfully!');
         } catch (error) {
-            console.error('Error deleting the record:', error);
             showError('Failed to delete absence record.');
         }
+    };
+
+    const cancelRemove = () => {
+        setConfirmDialogOpen(false);
+        setPendingRemoveId(null);
     };
 
     /**
@@ -1273,6 +1286,24 @@ const DoctorAbsencePage = () => {
                 severity="success"
                 onClose={() => setSuccessOpen(false)}
             />
+
+            <Dialog open={confirmDialogOpen} onClose={cancelRemove}>
+                <DialogTitle>Confirm Removal</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to remove this doctor absence record? This action
+                        cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={cancelRemove} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={confirmRemove} color="error" autoFocus>
+                        Remove
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Card>
     );
 };
