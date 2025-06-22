@@ -386,7 +386,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                             // EDITING MODE: Render form fields
                             <>
                                 <TextField
-                                    label="Doctor Name"
+                                    label="Doctor Name 🧑‍⚕️"
                                     value={formState.doctorName || ''}
                                     onChange={(e) =>
                                         handleInputChange('doctorName', e.target.value)
@@ -397,7 +397,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     required
                                 />
                                 <TextField
-                                    label="Doctor ID"
+                                    label="Doctor ID 🆔"
                                     // For new doctors, doctorId might be backend-generated or user-input.
                                     // If it's backend-generated after save, it might be read-only here or handled differently.
                                     value={formState.doctorId || ''}
@@ -418,17 +418,17 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     <FormControlLabel
                                         value="Male"
                                         control={<Radio />}
-                                        label="Male"
+                                        label="Male 🚹"
                                     />
                                     <FormControlLabel
                                         value="Female"
                                         control={<Radio />}
-                                        label="Female"
+                                        label="Female 🚺"
                                     />
                                     {/* Consider adding "Other" if applicable */}
                                 </RadioGroup>
                                 <TextField
-                                    label="Email"
+                                    label="Email 📧"
                                     type="email" // Use type="email" for basic browser validation
                                     value={formState.doctorEmail || ''}
                                     onChange={(e) =>
@@ -439,7 +439,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     fullWidth
                                 />
                                 <TextField
-                                    label="Doctor Specialty"
+                                    label="Doctor Specialty 🏥"
                                     value={formState.doctorSpeciality || ''}
                                     onChange={(e) =>
                                         handleInputChange('doctorSpeciality', e.target.value)
@@ -450,7 +450,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     required
                                 />
                                 <TextField
-                                    label="Doctor Experience (years)"
+                                    label="Doctor Experience (years) 🗓️"
                                     value={formState.doctorExperience || ''}
                                     onChange={(e) =>
                                         handleInputChange('doctorExperience', e.target.value)
@@ -467,7 +467,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     }}
                                 />
                                 <TextField
-                                    label="Consultation Fee - Appointment (₹)"
+                                    label="Consultation Fee - Appointment (💵)"
                                     value={formState.doctorConsultationFee || ''}
                                     onChange={(e) =>
                                         handleInputChange('doctorConsultationFee', e.target.value)
@@ -480,7 +480,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     inputProps={{ min: 0 }} // Fee cannot be negative
                                 />
                                 <TextField
-                                    label="Consultation Fee - Queue (₹)"
+                                    label="Consultation Fee - Queue (💵)"
                                     value={formState.doctorConsultationFeeOther || ''}
                                     onChange={(e) =>
                                         handleInputChange(
@@ -539,7 +539,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                         <TextField
                                             {...params}
                                             variant="outlined"
-                                            label="Languages Spoken"
+                                            label="Languages Spoken 🗣️"
                                             placeholder="Type and press Enter or Tab"
                                             fullWidth
                                         />
@@ -582,7 +582,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                         <TextField
                                             {...params}
                                             variant="outlined"
-                                            label="Qualifications"
+                                            label="Qualifications 🎓"
                                             placeholder="Type and press Enter or Tab"
                                             fullWidth
                                         />
@@ -640,37 +640,37 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                             // VIEW MODE: Display doctor information as text
                             <>
                                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                                    <strong>Doctor ID:</strong> {doctor.doctorId}
+                                    <strong>Doctor ID 🆔:</strong> {doctor.doctorId}
                                 </Typography>
                                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                                    <strong>Gender:</strong> {doctor.gender}
+                                    <strong>Gender 🚻:</strong> {doctor.gender}
                                 </Typography>
                                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                                    <strong>Email:</strong> {doctor.doctorEmail || 'N/A'}
+                                    <strong>Email 📧:</strong> {doctor.doctorEmail || 'N/A'}
                                 </Typography>
                                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                                    <strong>Specialty:</strong> {doctor.doctorSpeciality}
+                                    <strong>Specialty 🏥:</strong> {doctor.doctorSpeciality}
                                 </Typography>
                                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                                    <strong>Experience:</strong> {doctor.doctorExperience} years
+                                    <strong>Experience 🗓️:</strong> {doctor.doctorExperience} years
                                 </Typography>
                                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                                    <strong>Consultation Fee (Appointment):</strong> ₹
+                                    <strong>Consultation Fee (Appointment) 💵:</strong> ₹
                                     {doctor.doctorConsultationFee}
                                 </Typography>
                                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                                    <strong>Consultation Fee (Queue):</strong> ₹
+                                    <strong>Consultation Fee (Queue) 💵:</strong> ₹
                                     {doctor.doctorConsultationFeeOther}
                                 </Typography>
                                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                                    <strong>Languages Spoken:</strong>{' '}
+                                    <strong>Languages Spoken 🗣️:</strong>{' '}
                                     {Array.isArray(doctor.languagesSpoken) &&
                                     doctor.languagesSpoken.length > 0
                                         ? doctor.languagesSpoken.join(', ')
                                         : 'N/A'}
                                 </Typography>
                                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                                    <strong>Qualifications:</strong>{' '}
+                                    <strong>Qualifications 🎓:</strong>{' '}
                                     {Array.isArray(doctor.qualifications) &&
                                     doctor.qualifications.length > 0
                                         ? doctor.qualifications.join(', ')
@@ -681,12 +681,14 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     phoneNumbers={doctor.phoneNumbers || []}
                                     onPhoneNumberChange={() => {}} // No-op in view mode
                                     isEditing={false}
+                                    labelPrefix="☎️ "
                                 />
                                 {/* Display availability (view mode) */}
                                 <DoctorAvailability
                                     availability={normalizedDoctorAvailability}
                                     onAvailabilityChange={() => {}} // No-op in view mode
                                     isEditing={false}
+                                    labelPrefix="🕒 "
                                 />
                                 {/* Action Buttons for View Mode */}
                                 <Box

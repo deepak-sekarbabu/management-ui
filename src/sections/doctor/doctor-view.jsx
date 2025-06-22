@@ -174,7 +174,7 @@ const DoctorPage = () => {
                     shiftTime: '',
                     shiftStartTime: '',
                     shiftEndTime: '',
-                    consultationTime: 0,
+                    consultationTime: 5, // Default to 5 minutes
                     configType: 'APPOINTMENT',
                 },
             ],

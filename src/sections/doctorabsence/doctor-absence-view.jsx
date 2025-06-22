@@ -175,13 +175,13 @@ NotificationSnackbar.propTypes = {
 const AbsenceTableHeader = memo(() => (
     <TableHead>
         <TableRow>
-            <TableCell scope="col">Doctor ID</TableCell>
-            <TableCell scope="col">Doctor Name</TableCell>
-            <TableCell scope="col">Absence Date</TableCell>
-            <TableCell scope="col">Absence Start Time</TableCell>
-            <TableCell scope="col">Absence End Time</TableCell>
-            <TableCell scope="col">Optional Message</TableCell>
-            <TableCell scope="col">Actions</TableCell>
+            <TableCell scope="col">Doctor ID 🆔</TableCell>
+            <TableCell scope="col">Doctor Name 🧑‍⚕️</TableCell>
+            <TableCell scope="col">Absence Date 📅</TableCell>
+            <TableCell scope="col">Absence Start Time ⏰</TableCell>
+            <TableCell scope="col">Absence End Time ⏰</TableCell>
+            <TableCell scope="col">Optional Message 📝</TableCell>
+            <TableCell scope="col">Actions ⚡</TableCell>
         </TableRow>
     </TableHead>
 ));
@@ -322,15 +322,16 @@ const AbsenceTableRow = memo(({ absence, onRemove }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            // Add role for accessibility
             role="row"
         >
-            <TableCell role="cell">{absence.doctorId}</TableCell>
-            <TableCell role="cell">{absence.doctorName}</TableCell>
-            <TableCell role="cell">{absence.absenceDate}</TableCell>
-            <TableCell role="cell">{absence.absenceStartTime}</TableCell>
-            <TableCell role="cell">{absence.absenceEndTime}</TableCell>
-            <TableCell role="cell">{absence.optionalMessage || '-'}</TableCell>
+            <TableCell role="cell">{absence.doctorId} 🆔</TableCell>
+            <TableCell role="cell">{absence.doctorName} 🧑‍⚕️</TableCell>
+            <TableCell role="cell">{absence.absenceDate} 📅</TableCell>
+            <TableCell role="cell">{absence.absenceStartTime} ⏰</TableCell>
+            <TableCell role="cell">{absence.absenceEndTime} ⏰</TableCell>
+            <TableCell role="cell">
+                {absence.optionalMessage ? `${absence.optionalMessage} 📝` : '-'}
+            </TableCell>
             <TableCell role="cell">
                 <Tooltip title={`Remove absence for ${absence.doctorName}`}>
                     <StyledButton
@@ -341,7 +342,7 @@ const AbsenceTableRow = memo(({ absence, onRemove }) => {
                         aria-label={`Remove absence record for ${absence.doctorName}`}
                         tabIndex={0}
                     >
-                        Remove
+                        Remove ⚡
                     </StyledButton>
                 </Tooltip>
             </TableCell>
@@ -809,17 +810,17 @@ const DoctorAbsenceCard = memo(({ absence, onRemove }) => (
         aria-label={`Absence for ${absence.doctorName}`}
     >
         <Typography variant="subtitle1" fontWeight="bold">
-            {absence.doctorName} ({absence.doctorId})
+            {absence.doctorName} 🧑‍⚕️ ({absence.doctorId} 🆔)
         </Typography>
         <Typography variant="body2">
-            <b>Date:</b> {absence.absenceDate}
+            <b>Date 📅:</b> {absence.absenceDate}
         </Typography>
         <Typography variant="body2">
-            <b>Start:</b> {absence.absenceStartTime} <b>End:</b> {absence.absenceEndTime}
+            <b>Start ⏰:</b> {absence.absenceStartTime} <b>End ⏰:</b> {absence.absenceEndTime}
         </Typography>
         {absence.optionalMessage && (
             <Typography variant="body2" color="text.secondary">
-                <b>Note:</b> {absence.optionalMessage}
+                <b>Note 📝:</b> {absence.optionalMessage}
             </Typography>
         )}
         <Box mt={1} display="flex" justifyContent="flex-end">
@@ -831,7 +832,7 @@ const DoctorAbsenceCard = memo(({ absence, onRemove }) => (
                 tabIndex={0}
                 size="small"
             >
-                Remove
+                Remove ⚡
             </StyledButton>
         </Box>
     </Paper>
