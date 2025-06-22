@@ -8,15 +8,14 @@ import {
     Card,
     Alert,
     Stack,
+    Avatar,
     Button,
     Divider,
-    Collapse,
     Snackbar,
-    useTheme,
     Container,
     IconButton,
     Typography,
-    useMediaQuery,
+    CardContent,
     CircularProgress,
 } from '@mui/material';
 
@@ -69,21 +68,6 @@ const ClinicHeader = styled(Stack)(({ theme: muiTheme }) => ({
     },
 }));
 
-const ClinicInfo = styled(Box)(({ theme: muiTheme }) => ({
-    transition: 'all 0.3s ease-in-out',
-    '&:hover': {
-        backgroundColor: muiTheme.palette.action.hover,
-    },
-    padding: muiTheme.spacing(2),
-    borderRadius: muiTheme.shape.borderRadius,
-    marginBottom: muiTheme.spacing(2),
-    // Improved focus styles for accessibility
-    '&:focus-within': {
-        outline: `2px solid ${muiTheme.palette.primary.main}`,
-        outlineOffset: '2px',
-    },
-}));
-
 const ActionButton = styled(Button)(({ theme: muiTheme }) => ({
     transition: 'all 0.3s ease-in-out',
     '&:hover': {
@@ -108,9 +92,6 @@ const ActionButton = styled(Button)(({ theme: muiTheme }) => ({
  * - Form validation
  */
 const ClinicPage = () => {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
     // State management
     const [clinics, setClinics] = useState([]);
     const [isEditable, setEditMode] = useState(false);
@@ -248,43 +229,43 @@ const ClinicPage = () => {
         () => (
             <ClinicContainer>
                 {clinics.map((clinic) => (
-                    <ClinicInfo
+                    <Card
                         key={clinic.clinicId}
-                        role="region"
-                        aria-label={`Clinic information for ${clinic.clinicName}`}
+                        sx={{
+                            mb: 3,
+                            borderRadius: 2,
+                            boxShadow: 3,
+                            transition: 'box-shadow 0.3s',
+                            '&:hover': { boxShadow: 8 },
+                        }}
                     >
-                        <Stack
-                            direction={isMobile ? 'column' : 'row'}
-                            alignItems={isMobile ? 'flex-start' : 'center'}
-                            justifyContent="space-between"
-                            spacing={isMobile ? 1 : 0}
+                        <Box
+                            display="flex"
+                            alignItems="center"
+                            sx={{ cursor: 'pointer', p: 2 }}
+                            onClick={() => handleExpandClick(clinic.clinicId)}
+                            aria-expanded={expandedClinic === clinic.clinicId}
+                            aria-controls={`clinic-details-${clinic.clinicId}`}
+                            tabIndex={0}
+                            role="button"
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    handleExpandClick(clinic.clinicId);
+                                }
+                            }}
                         >
-                            <Typography
-                                variant="h5"
-                                component="h2"
-                                onClick={() => handleExpandClick(clinic.clinicId)}
-                                sx={{
-                                    cursor: 'pointer',
-                                    transition: 'color 0.3s ease-in-out',
-                                    '&:hover': {
-                                        color: 'primary.main',
-                                    },
-                                }}
-                                tabIndex={0}
-                                role="button"
-                                aria-expanded={expandedClinic === clinic.clinicId}
-                                aria-controls={`clinic-details-${clinic.clinicId}`}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
-                                        e.preventDefault();
-                                        handleExpandClick(clinic.clinicId);
-                                    }
-                                }}
-                            >
+                            <Avatar sx={{ width: 56, height: 56, mr: 2 }}>
+                                {clinic.clinicName?.[0] || 'C'}
+                            </Avatar>
+                            <Typography variant="h5" component="h2" sx={{ flexGrow: 1 }}>
                                 {clinic.clinicName}
                             </Typography>
                             <IconButton
-                                onClick={() => handleExpandClick(clinic.clinicId)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleExpandClick(clinic.clinicId);
+                                }}
                                 aria-label={
                                     expandedClinic === clinic.clinicId
                                         ? 'Collapse clinic details'
@@ -300,38 +281,36 @@ const ClinicPage = () => {
                             >
                                 <Iconify icon="eva:arrow-down-fill" />
                             </IconButton>
-                        </Stack>
-                        <Collapse
-                            in={expandedClinic === clinic.clinicId}
-                            id={`clinic-details-${clinic.clinicId}`}
-                            sx={{
-                                transition: 'all 0.3s ease-in-out',
-                            }}
-                        >
-                            <Stack spacing={2} sx={{ mt: 2 }}>
-                                <Typography color="textSecondary">
-                                    🏥 {clinic.clinicAddress}
-                                </Typography>
-                                <Typography color="textSecondary">
-                                    🏷️ Pin Code: {clinic.clinicPinCode}
-                                </Typography>
-                                <Typography color="textSecondary">
-                                    📧 Email: {clinic.clinicEmail}
-                                </Typography>
-                                <Typography color="textSecondary">
-                                    🌐 Website: {clinic.clinicWebsite}
-                                </Typography>
-                                <Typography color="textSecondary">
-                                    🕒 Timings: {clinic.clinicTimings}
-                                </Typography>
-                                <Typography color="textSecondary">
-                                    🛋️ Amenities: {clinic.clinicAmenities}
-                                </Typography>
-                                <Typography color="textSecondary">
-                                    ☎️ Phone Numbers:{' '}
-                                    {clinic.clinicPhoneNumbers.map((p) => p.phoneNumber).join(', ')}
-                                </Typography>
-                                <Box mt={3} display="flex" justifyContent="center">
+                        </Box>
+                        {expandedClinic === clinic.clinicId && (
+                            <CardContent sx={{ pt: 0 }}>
+                                <Stack spacing={2} sx={{ mt: 1, mb: 2, ml: 1 }}>
+                                    <Typography color="textSecondary">
+                                        🏥 {clinic.clinicAddress}
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        🏷️ Pin Code: {clinic.clinicPinCode}
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        📧 Email: {clinic.clinicEmail}
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        🌐 Website: {clinic.clinicWebsite}
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        🕒 Timings: {clinic.clinicTimings}
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        🛋️ Amenities: {clinic.clinicAmenities}
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        ☎️ Phone Numbers:{' '}
+                                        {clinic.clinicPhoneNumbers
+                                            .map((p) => p.phoneNumber)
+                                            .join(', ')}
+                                    </Typography>
+                                </Stack>
+                                <Box mt={2} display="flex" justifyContent="flex-end">
                                     <ActionButton
                                         variant="outlined"
                                         onClick={() => handleEdit(clinic)}
@@ -340,13 +319,13 @@ const ClinicPage = () => {
                                         Edit
                                     </ActionButton>
                                 </Box>
-                            </Stack>
-                        </Collapse>
-                    </ClinicInfo>
+                            </CardContent>
+                        )}
+                    </Card>
                 ))}
             </ClinicContainer>
         ),
-        [clinics, expandedClinic, handleExpandClick, handleEdit, isMobile]
+        [clinics, expandedClinic, handleExpandClick, handleEdit]
     );
 
     // Load data on component mount
