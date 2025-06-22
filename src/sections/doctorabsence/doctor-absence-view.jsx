@@ -388,12 +388,62 @@ AbsenceTableRow.propTypes = {
  */
 const AbsenceForm = memo(({ doctorData, newRow, setNewRow, onSave, onCancel, isMobile }) => {
     // Validate form fields
-    const isFormValid = () =>
-        newRow.doctorId &&
-        newRow.doctorName &&
-        newRow.absenceDate &&
-        newRow.absenceStartTime &&
-        newRow.absenceEndTime;
+    const [startTimeError, setStartTimeError] = useState(false);
+    const isFormValid = () => {
+        if (
+            !newRow.doctorId ||
+            !newRow.doctorName ||
+            !newRow.absenceDate ||
+            !newRow.absenceStartTime ||
+            !newRow.absenceEndTime
+        )
+            return false;
+        // Additional validation: start time must not be in the past if date is today
+        const today = new Date();
+        const selectedDate = new Date(newRow.absenceDate);
+        if (
+            selectedDate.getDate() === today.getDate() &&
+            selectedDate.getMonth() === today.getMonth() &&
+            selectedDate.getFullYear() === today.getFullYear()
+        ) {
+            if (newRow.absenceStartTime) {
+                const start = new Date(newRow.absenceStartTime);
+                if (
+                    start.getHours() < today.getHours() ||
+                    (start.getHours() === today.getHours() &&
+                        start.getMinutes() < today.getMinutes())
+                ) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    };
+
+    // Update error state on time change
+    useEffect(() => {
+        if (!newRow.absenceDate || !newRow.absenceStartTime) {
+            setStartTimeError(false);
+            return;
+        }
+        const today = new Date();
+        const selectedDate = new Date(newRow.absenceDate);
+        if (
+            selectedDate.getDate() === today.getDate() &&
+            selectedDate.getMonth() === today.getMonth() &&
+            selectedDate.getFullYear() === today.getFullYear()
+        ) {
+            const start = new Date(newRow.absenceStartTime);
+            if (
+                start.getHours() < today.getHours() ||
+                (start.getHours() === today.getHours() && start.getMinutes() < today.getMinutes())
+            ) {
+                setStartTimeError(true);
+                return;
+            }
+        }
+        setStartTimeError(false);
+    }, [newRow.absenceDate, newRow.absenceStartTime]);
 
     // Handle keyboard events for better accessibility
     const handleKeyDown = (e, action) =>
@@ -446,6 +496,7 @@ const AbsenceForm = memo(({ doctorData, newRow, setNewRow, onSave, onCancel, isM
                             value={newRow.absenceDate}
                             onChange={(date) => setNewRow({ ...newRow, absenceDate: date })}
                             format="dd/MM/yyyy"
+                            minDate={new Date()}
                             slotProps={{
                                 textField: {
                                     fullWidth: true,
@@ -470,15 +521,53 @@ const AbsenceForm = memo(({ doctorData, newRow, setNewRow, onSave, onCancel, isM
                                     absenceStartTime: newValue,
                                 })
                             }
+                            shouldDisableTime={(timeValue, clockType) => {
+                                if (!newRow.absenceDate) return false;
+                                const today = new Date();
+                                const selectedDate = new Date(newRow.absenceDate);
+                                if (
+                                    selectedDate.getDate() === today.getDate() &&
+                                    selectedDate.getMonth() === today.getMonth() &&
+                                    selectedDate.getFullYear() === today.getFullYear()
+                                ) {
+                                    if (clockType === 'hours') {
+                                        return timeValue < today.getHours();
+                                    }
+                                    if (clockType === 'minutes') {
+                                        if (
+                                            newRow.absenceStartTime &&
+                                            timeValue < today.getMinutes() &&
+                                            today.getHours() ===
+                                                (newRow.absenceStartTime.getHours?.() ??
+                                                    today.getHours())
+                                        ) {
+                                            return true;
+                                        }
+                                    }
+                                }
+                                return false;
+                            }}
                             slotProps={{
                                 textField: {
                                     fullWidth: true,
                                     size: 'small',
-                                    error: !newRow.absenceStartTime,
+                                    error: startTimeError || !newRow.absenceStartTime,
                                     required: true,
+                                    helperText: startTimeError
+                                        ? 'Start time cannot be in the past.'
+                                        : '',
                                     inputProps: {
                                         'aria-label': 'Absence Start Time',
                                         'aria-required': 'true',
+                                    },
+                                    sx: {
+                                        '& .MuiOutlinedInput-root': {
+                                            transition: 'all 0.3s ease',
+                                            '&:hover': {
+                                                transform: 'translateY(-2px)',
+                                                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                                            },
+                                        },
                                     },
                                 },
                             }}
@@ -623,6 +712,7 @@ const AbsenceForm = memo(({ doctorData, newRow, setNewRow, onSave, onCancel, isM
                         value={newRow.absenceDate}
                         onChange={(date) => setNewRow({ ...newRow, absenceDate: date })}
                         format="dd/MM/yyyy"
+                        minDate={new Date()}
                         slotProps={{
                             textField: {
                                 fullWidth: true,
@@ -658,12 +748,41 @@ const AbsenceForm = memo(({ doctorData, newRow, setNewRow, onSave, onCancel, isM
                                 absenceStartTime: newValue,
                             })
                         }
+                        shouldDisableTime={(timeValue, clockType) => {
+                            if (!newRow.absenceDate) return false;
+                            const today = new Date();
+                            const selectedDate = new Date(newRow.absenceDate);
+                            if (
+                                selectedDate.getDate() === today.getDate() &&
+                                selectedDate.getMonth() === today.getMonth() &&
+                                selectedDate.getFullYear() === today.getFullYear()
+                            ) {
+                                if (clockType === 'hours') {
+                                    return timeValue < today.getHours();
+                                }
+                                if (clockType === 'minutes') {
+                                    if (
+                                        newRow.absenceStartTime &&
+                                        timeValue < today.getMinutes() &&
+                                        today.getHours() ===
+                                            (newRow.absenceStartTime.getHours?.() ??
+                                                today.getHours())
+                                    ) {
+                                        return true;
+                                    }
+                                }
+                            }
+                            return false;
+                        }}
                         slotProps={{
                             textField: {
                                 fullWidth: true,
                                 size: isMobile ? 'small' : 'medium',
-                                error: !newRow.absenceStartTime,
+                                error: startTimeError || !newRow.absenceStartTime,
                                 required: true,
+                                helperText: startTimeError
+                                    ? 'Start time cannot be in the past.'
+                                    : '',
                                 inputProps: {
                                     'aria-label': 'Absence Start Time',
                                     'aria-required': 'true',
