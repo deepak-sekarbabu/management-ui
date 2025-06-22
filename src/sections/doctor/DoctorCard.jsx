@@ -10,7 +10,7 @@ import {
     Button,
     TextField,
     RadioGroup,
-    Typography, // For potential future use if needed for icons
+    Typography,
     CardContent,
     Autocomplete,
     FormControlLabel,
@@ -43,6 +43,9 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
     const [avatar, setAvatar] = useState(
         `/assets/images/avatars/avatar_${Math.floor(Math.random() * 25) + 1}.jpg`
     );
+
+    // Track validation state from DoctorAvailability
+    const [hasAvailabilityErrors, setHasAvailabilityErrors] = useState(false);
 
     // useEffect Hooks:
 
@@ -184,6 +187,10 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
     // `handleSave`: Validates the form data and calls the `onSave` prop function.
     // It constructs `dataToSave` ensuring arrays are correctly formatted and `validationErrors` is not included.
     const handleSave = useCallback(() => {
+        if (hasAvailabilityErrors) {
+            // Optionally show a message or notification here
+            return; // Block save if there are errors in availability
+        }
         const currentFormState = { ...formState }; // Create a copy to avoid direct mutation issues in validation
         const errors = validateDoctorData(currentFormState);
         if (Object.keys(errors).length > 0) {
@@ -207,7 +214,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
         if (onSave) {
             onSave(dataToSave, clinicId); // Pass data and clinicId to parent
         }
-    }, [formState, onSave, validateDoctorData, clinicId]); // Dependencies: `formState`, `onSave`, `validateDoctorData`, `clinicId`.
+    }, [formState, onSave, validateDoctorData, clinicId, hasAvailabilityErrors]); // Dependencies: `formState`, `onSave`, `validateDoctorData`, `clinicId`, `hasAvailabilityErrors`.
 
     // `handleCancel`: Reverts changes and exits editing mode.
     // If it's a new doctor, it calls `onRemove` to discard the new doctor entry.
@@ -599,6 +606,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                     )}
                                     onAvailabilityChange={handleAvailabilityChange}
                                     isEditing={isEditing}
+                                    onValidationStateChange={setHasAvailabilityErrors}
                                 />
                                 {/* Action Buttons for Edit Mode */}
                                 <Box
@@ -613,6 +621,7 @@ const DoctorCard = React.memo(({ doctor, isNewDoctor = false, onSave, onRemove, 
                                         onClick={handleSave}
                                         aria-label={`Save changes for ${formState.doctorName || 'new doctor'}`}
                                         sx={{ width: { xs: '100%', sm: 'auto' } }} // Full width on xs
+                                        disabled={hasAvailabilityErrors}
                                     >
                                         Save
                                     </Button>

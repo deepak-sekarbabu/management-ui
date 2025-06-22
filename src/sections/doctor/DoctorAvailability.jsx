@@ -28,6 +28,7 @@ const DoctorAvailability = ({
     availability, // Array of availability slots
     onAvailabilityChange = () => {}, // Callback function when availability changes
     isEditing = false, // Boolean to toggle edit mode
+    onValidationStateChange = () => {}, // Callback for validation state
 }) => {
     // State Variables:
     // `editedAvailability`: Local state to hold the availability data being edited.
@@ -47,6 +48,13 @@ const DoctorAvailability = ({
             : [];
         setEditedAvailability(validAvailability);
     }, [availability]);
+
+    // Watch errors and notify parent if any errors exist
+    useEffect(() => {
+        // Check if any error exists in any row
+        const hasErrors = Object.values(errors).some((row) => row && Object.keys(row).length > 0);
+        onValidationStateChange(hasErrors);
+    }, [errors, onValidationStateChange]);
 
     // Validation and Change Handling:
 
@@ -115,11 +123,39 @@ const DoctorAvailability = ({
                     }
                 }
             }
+
+            // Duplicate shift/config validation
+            if (rowData.availableDays && rowData.shiftTime && rowData.configType) {
+                const isDuplicate = editedAvailability.some(
+                    (item, i) =>
+                        i !== index &&
+                        item.availableDays === rowData.availableDays &&
+                        item.shiftTime === rowData.shiftTime &&
+                        item.configType === rowData.configType
+                );
+                if (isDuplicate) {
+                    newErrors[index].shiftTime = 'Duplicate shift for this day and config type.';
+                    newErrors[index].configType = 'Duplicate config type for this day and shift.';
+                } else {
+                    if (
+                        newErrors[index].shiftTime ===
+                        'Duplicate shift for this day and config type.'
+                    ) {
+                        delete newErrors[index].shiftTime;
+                    }
+                    if (
+                        newErrors[index].configType ===
+                        'Duplicate config type for this day and shift.'
+                    ) {
+                        delete newErrors[index].configType;
+                    }
+                }
+            }
             setErrors(newErrors);
             return Object.keys(newErrors[index] || {}).length === 0; // Return true if no errors for this row
         },
-        [errors]
-    ); // errors is a dependency
+        [errors, editedAvailability]
+    ); // errors and editedAvailability are dependencies
 
     // `handleAvailabilityChange`: Updates the `editedAvailability` state when a field changes.
     // Also triggers validation for the affected row.
@@ -493,6 +529,7 @@ DoctorAvailability.propTypes = {
     ), // Not isRequired, can be empty array initially. Defaulted in component.
     onAvailabilityChange: PropTypes.func, // Callback for changes
     isEditing: PropTypes.bool, // Toggles edit mode
+    onValidationStateChange: PropTypes.func, // Callback for validation state
 };
 
 // Default value for availability if not provided
@@ -500,6 +537,7 @@ DoctorAvailability.defaultProps = {
     availability: [],
     onAvailabilityChange: () => {},
     isEditing: false,
+    onValidationStateChange: () => {},
 };
 
 export default DoctorAvailability;
