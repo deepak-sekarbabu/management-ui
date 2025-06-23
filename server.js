@@ -1,10 +1,14 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const path = require('path');
+const compression = require('compression');
 
 const app = express();
 const port = process.env.PORT || 3030;
 const apiBaseUrl = process.env.VITE_API_BASE_URL || 'https://management-service-ozfh.onrender.com';
+
+// Enable gzip and brotli compression for all responses
+app.use(compression());
 
 // Serve static files
 app.use(express.static('dist'));
