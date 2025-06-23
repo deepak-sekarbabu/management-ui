@@ -357,7 +357,11 @@ const ClinicPage = () => {
         return (
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                    <Typography variant="h2" component="h1">
+                    <Typography
+                        variant="h2"
+                        component="h1"
+                        sx={{ color: 'primary.main', fontWeight: 'bold' }}
+                    >
                         Clinic Information
                     </Typography>
                 </Stack>
@@ -380,7 +384,11 @@ const ClinicPage = () => {
         return (
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                    <Typography variant="h2" component="h1">
+                    <Typography
+                        variant="h2"
+                        component="h1"
+                        sx={{ color: 'primary.main', fontWeight: 'bold' }}
+                    >
                         Clinic Information
                     </Typography>
                 </Stack>

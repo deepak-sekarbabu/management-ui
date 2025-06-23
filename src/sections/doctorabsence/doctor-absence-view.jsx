@@ -1239,7 +1239,9 @@ const DoctorAbsencePage = () => {
         >
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                    <Typography variant="h2">Doctor Absence Information</Typography>
+                    <Typography variant="h2" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
+                        Doctor Absence Information
+                    </Typography>
                 </Stack>
                 <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
                     <motion.div

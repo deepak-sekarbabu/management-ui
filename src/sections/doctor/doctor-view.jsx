@@ -124,17 +124,14 @@ const DoctorPage = () => {
     // Conditional rendering for loading state
     if (isLoading) {
         return (
-            // Container to center content and provide max width
             <Container maxWidth="md">
-                {/* Stack for centering loading indicator and error message */}
                 <Stack
                     display="flex"
                     flexDirection="column"
                     alignItems="center"
                     justifyContent="center"
-                    minHeight="80vh" // Use minHeight for better responsiveness than fixed height
+                    minHeight="80vh"
                 >
-                    {/* Page Title */}
                     <Typography
                         variant="h2"
                         component="h1"
@@ -143,20 +140,12 @@ const DoctorPage = () => {
                     >
                         Doctor Information
                     </Typography>
-                    {/* Conditional rendering for error message during loading */}
                     {error ? (
                         <Typography color="error" sx={{ mt: 2, textAlign: 'center' }}>
                             {error}
                         </Typography>
                     ) : (
-                        // Loading spinner
-                        <CircularProgress
-                            size={60}
-                            // Ensure CircularProgress is centered within the Stack, not fixed to viewport initially
-                            // Fixed positioning can be problematic if the Stack itself is not full height.
-                            // The Stack's alignment properties should handle centering.
-                            sx={{ mt: 3 }}
-                        />
+                        <CircularProgress size={60} sx={{ mt: 3 }} />
                     )}
                 </Stack>
             </Container>

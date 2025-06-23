@@ -11,7 +11,7 @@ const navConfig = [
         title: 'dashboard',
         path: '/',
         icon: icon('ic_analytics'),
-        roles: ['admin', 'user', 'doctor'],
+        roles: ['admin', 'nurse', 'doctor'],
     },
     {
         title: 'user',
@@ -23,25 +23,31 @@ const navConfig = [
         title: 'clinic',
         path: '/clinic',
         icon: icon('ic_user'),
-        roles: ['admin', 'user', 'doctor'],
+        roles: ['admin', 'nurse', 'doctor'],
     },
     {
         title: 'doctor',
         path: '/doctor',
         icon: icon('ic_user'),
-        roles: ['admin', 'user', 'doctor'],
+        roles: ['admin', 'nurse', 'doctor'],
     },
     {
         title: 'doctorabsence',
         path: '/doctorabsence',
         icon: icon('ic_user'),
-        roles: ['admin', 'user', 'doctor'],
+        roles: ['admin', 'nurse', 'doctor'],
     },
     {
         title: 'queue',
         path: '/queue',
         icon: icon('ic_user'),
-        roles: ['admin', 'user', 'doctor'],
+        roles: ['admin', 'nurse', 'doctor'],
+    },
+    {
+        title: 'add patient & appointment',
+        path: '/add-patient-appointment',
+        icon: icon('ic_user'),
+        roles: ['nurse', 'doctor', 'admin'],
     },
 ];
 

@@ -13,6 +13,7 @@ export const DoctorPage = lazy(() => import('src/pages/doctor'));
 export const DoctorAbsencePage = lazy(() => import('src/pages/doctorabsence'));
 export const QueuePage = lazy(() => import('src/pages/queue'));
 export const LoginPage = lazy(() => import('src/pages/login'));
+export const AddPatientAppointmentPage = lazy(() => import('src/pages/add-patient-appointment'));
 
 // ----------------------------------------------------------------------
 
@@ -46,6 +47,7 @@ export default function Router() {
                 { path: 'doctor', element: <DoctorPage /> },
                 { path: 'doctorabsence', element: <DoctorAbsencePage /> },
                 { path: 'queue', element: <QueuePage /> },
+                { path: 'add-patient-appointment', element: <AddPatientAppointmentPage /> },
             ],
         },
         {
