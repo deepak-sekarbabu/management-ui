@@ -48,44 +48,74 @@ export default function QueueTableHead({
                         sortDirection={orderBy === headCell.id ? order : false}
                         sx={{ width: headCell.width, minWidth: headCell.minWidth }}
                     >
-                        <TableSortLabel
-                            hideSortIcon
-                            active={orderBy === headCell.id}
-                            direction={orderBy === headCell.id ? order : 'asc'}
-                            onClick={onSort(headCell.id)}
-                        >
-                            {headCell.label}
-                            {orderBy === headCell.id ? (
-                                <Box sx={{ ...visuallyHidden }}>
-                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </Box>
-                            ) : null}
-                        </TableSortLabel>
-                        {headCell.id === 'shiftTime' && (
-                            <Select
-                                value={shiftTimeFilter}
-                                onChange={(e) => setShiftTimeFilter(e.target.value)}
-                                displayEmpty
-                                sx={{ marginTop: 1 }}
+                        {headCell.id === 'shiftTime' || headCell.id === 'patientReached' ? (
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                }}
                             >
-                                <MenuItem value="">All</MenuItem>
-                                <MenuItem value="MORNING">Morning</MenuItem>
-                                <MenuItem value="AFTERNOON">Afternoon</MenuItem>
-                                <MenuItem value="EVENING">Evening</MenuItem>
-                                <MenuItem value="NIGHT">Night</MenuItem>
-                            </Select>
-                        )}
-                        {headCell.id === 'patientReached' && (
-                            <Select
-                                value={patientReachedFilter}
-                                onChange={(e) => setPatientReachedFilter(e.target.value)}
-                                displayEmpty
-                                sx={{ marginTop: 1 }}
+                                <TableSortLabel
+                                    hideSortIcon
+                                    active={orderBy === headCell.id}
+                                    direction={orderBy === headCell.id ? order : 'asc'}
+                                    onClick={onSort(headCell.id)}
+                                >
+                                    <span style={{ fontWeight: 500, fontSize: 14 }}>
+                                        {headCell.label}
+                                    </span>
+                                    {orderBy === headCell.id ? (
+                                        <Box sx={{ ...visuallyHidden }}>
+                                            {order === 'desc'
+                                                ? 'sorted descending'
+                                                : 'sorted ascending'}
+                                        </Box>
+                                    ) : null}
+                                </TableSortLabel>
+                                {headCell.id === 'shiftTime' && (
+                                    <Select
+                                        value={shiftTimeFilter}
+                                        onChange={(e) => setShiftTimeFilter(e.target.value)}
+                                        displayEmpty
+                                        sx={{ marginTop: 1, minWidth: 120 }}
+                                    >
+                                        <MenuItem value="">All</MenuItem>
+                                        <MenuItem value="MORNING">Morning</MenuItem>
+                                        <MenuItem value="AFTERNOON">Afternoon</MenuItem>
+                                        <MenuItem value="EVENING">Evening</MenuItem>
+                                        <MenuItem value="NIGHT">Night</MenuItem>
+                                    </Select>
+                                )}
+                                {headCell.id === 'patientReached' && (
+                                    <Select
+                                        value={patientReachedFilter}
+                                        onChange={(e) => setPatientReachedFilter(e.target.value)}
+                                        displayEmpty
+                                        sx={{ marginTop: 1, minWidth: 120 }}
+                                    >
+                                        <MenuItem value="">All</MenuItem>
+                                        <MenuItem value="true">Yes</MenuItem>
+                                        <MenuItem value="false">No</MenuItem>
+                                    </Select>
+                                )}
+                            </Box>
+                        ) : (
+                            <TableSortLabel
+                                hideSortIcon
+                                active={orderBy === headCell.id}
+                                direction={orderBy === headCell.id ? order : 'asc'}
+                                onClick={onSort(headCell.id)}
                             >
-                                <MenuItem value="">All</MenuItem>
-                                <MenuItem value="true">Yes</MenuItem>
-                                <MenuItem value="false">No</MenuItem>
-                            </Select>
+                                {headCell.label}
+                                {orderBy === headCell.id ? (
+                                    <Box sx={{ ...visuallyHidden }}>
+                                        {order === 'desc'
+                                            ? 'sorted descending'
+                                            : 'sorted ascending'}
+                                    </Box>
+                                ) : null}
+                            </TableSortLabel>
                         )}
                     </TableCell>
                 ))}
