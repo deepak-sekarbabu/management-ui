@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-v",
+        "C:\\Users\\deepa\\OneDrive\\Documents\\Projects\\:/workspace",
+        "ghcr.io/mark3labs/mcp-filesystem-server:latest",
+        "/workspace"
+      ]
+    }
+  }
+}
